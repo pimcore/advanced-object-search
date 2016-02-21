@@ -6,7 +6,7 @@ Per object class one index with one document type.
 Sample script to delete index, create index, set mapping for object type.
 Deleting index might be necessary since update mapping is not always possible.
 
-```
+```php
 <?php
 $client = \ESBackendSearch\Plugin::getESClient();
 $service = new ESBackendSearch\Service();
@@ -41,7 +41,7 @@ foreach($classes as $class) {
 ## Update index data
 
 on object save or via script:
-```
+```php
 <?php
 $service = new ESBackendSearch\Service();
 
@@ -55,7 +55,7 @@ foreach($objects as $object) {
 
 ## Search/Filter for data
 
-```
+```php
 <?php
 $service = new ESBackendSearch\Service();
 
@@ -67,7 +67,8 @@ $results = $service->doFilter("Product",
             "id" => 75
         ],
 
-    ]
+    ],
+    ""
 );
 
 
