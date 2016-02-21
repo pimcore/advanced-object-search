@@ -2,6 +2,8 @@
   "name": "pimcore-plugins/ESBackendSearch",
   "type": "pimcore-plugin",
   "require": {
-    "pimcore/installer-plugin": ">=1"
+    "pimcore/installer-plugin": ">=1",
+    "elasticsearch\/elasticsearch": "~2.0",
+    "ongr\/elasticsearch-dsl": "1.1.2"
   }
 }
