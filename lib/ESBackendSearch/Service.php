@@ -4,6 +4,8 @@ namespace ESBackendSearch;
 
 use ESBackendSearch\FieldDefinitionAdapter\DefaultAdapter;
 use ESBackendSearch\FieldDefinitionAdapter\IFieldDefinitionAdapter;
+use ONGR\ElasticsearchDSL\BuilderInterface;
+use ONGR\ElasticsearchDSL\Query\QueryStringQuery;
 use Pimcore\Model\Object\ClassDefinition;
 use Pimcore\Model\Object\Concrete;
 
@@ -131,7 +133,7 @@ class Service {
         if($indexUpdateParams['body']['o_checksum'] != $originalChecksum) {
             $response = $client->index($indexUpdateParams);
             \Logger::info("Updates es index for object " . $object->getId());
-            \Logger::debug(print_r($response, true));
+            \Logger::debug(json_encode($response));
 
         } else {
             \Logger::info("Not updating index for object " . $object->getId() . " - nothing has changed.");
@@ -178,18 +180,26 @@ class Service {
      *     FIELD NAME => FIELD FILTER
      *   )
      *
+     * @param string|BuilderInterface $fullTextQuery
      * @return array
      */
-    public function doFilter($className, array $filters) {
+    public function doFilter($className, array $filters, $fullTextQuery) {
         $client = Plugin::getESClient();
         $search = $this->getFilter(\Pimcore\Model\Object\ClassDefinition::getByName($className), $filters);
 
+        if($fullTextQuery instanceof BuilderInterface) {
+            $search->addQuery($fullTextQuery);
+        } else if(!empty($fullTextQuery)) {
+            $search->addQuery(new QueryStringQuery($fullTextQuery));
+        }
+
         $params = [
             'index' => strtolower($className),
+            'type' => $className,
             'body' => $search->toArray(),
         ];
 
-        p_r($params);
+        \Logger::info("Filter-Params: " . json_encode($params));
 
         return $client->search($params);
     }
