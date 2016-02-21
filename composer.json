@@ -1,0 +1,7 @@
+{
+  "name": "pimcore-plugins/ESBackendSearch",
+  "type": "pimcore-plugin",
+  "require": {
+    "pimcore/installer-plugin": ">=1"
+  }
+}
