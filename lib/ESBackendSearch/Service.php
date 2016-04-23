@@ -235,15 +235,18 @@ class Service {
     }
 
     /**
-     * @param $className
+     * @param $classId
      * @param FilterEntry $filters
      *
      * @param string|BuilderInterface $fullTextQuery
      * @return array
      */
-    public function doFilter($className, array $filters, $fullTextQuery) {
+    public function doFilter($classId, array $filters, $fullTextQuery) {
         $client = Plugin::getESClient();
-        $search = $this->getFilter(\Pimcore\Model\Object\ClassDefinition::getByName($className), $filters);
+
+        $classDefinition = \Pimcore\Model\Object\ClassDefinition::getById($classId);
+
+        $search = $this->getFilter($classDefinition, $filters);
 
         if($fullTextQuery instanceof BuilderInterface) {
             $search->addQuery($fullTextQuery);
@@ -252,8 +255,8 @@ class Service {
         }
 
         $params = [
-            'index' => strtolower($className),
-            'type' => $className,
+            'index' => strtolower($classDefinition->getName()),
+            'type' => $classDefinition->getName(),
             'body' => $search->toArray()
         ];
 

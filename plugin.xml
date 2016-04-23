@@ -35,9 +35,12 @@
 				<path>/plugins/ESBackendSearch/static6/js/panel.js</path>
 				<path>/plugins/ESBackendSearch/static6/js/searchConfigPanel.js</path>
 				<path>/plugins/ESBackendSearch/static6/js/searchConfig/conditionPanel.js</path>
+				<path>/plugins/ESBackendSearch/static6/js/searchConfig/conditionEntryPanel.js</path>
 				<path>/plugins/ESBackendSearch/static6/js/searchConfig/fieldConditionPanel/default.js</path>
 				<path>/plugins/ESBackendSearch/static6/js/searchConfig/fieldConditionPanel/localizedfields.js</path>
 				<path>/plugins/ESBackendSearch/static6/js/searchConfig/fieldConditionPanel/numeric.js</path>
+				<path>/plugins/ESBackendSearch/static6/js/searchConfig/fieldConditionPanel/href.js</path>
+				<path>/plugins/ESBackendSearch/static6/js/searchConfig/fieldConditionPanel/objects.js</path>
 			</pluginJsPaths-extjs6>
 
 			<!-- css files with path relative to plugin-directory -->

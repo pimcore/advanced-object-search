@@ -25,7 +25,7 @@ class ESBackendSearch_AdminController extends \Pimcore\Controller\Action\Admin {
 
         $data = json_decode($this->getParam("data"), true);
 
-        $results = $service->doFilter("Product", $data['conditions'], null);
+        $results = $service->doFilter($data['classId'], $data['conditions'], null);
 
         p_r($results); die();
 

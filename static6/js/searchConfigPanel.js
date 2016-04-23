@@ -1,14 +1,17 @@
 
 pimcore.registerNS("pimcore.plugin.esbackendsearch.searchConfigPanel");
 pimcore.plugin.esbackendsearch.searchConfigPanel = Class.create(pimcore.element.abstract, {
-    initialize: function(data, parent) {
+    initialize: function(data, parent, skip) {
+        if(skip) {
+            return;
+        }
         this.parent = parent;
         this.data = data;
 
 
         this.tab = new Ext.TabPanel({
             activeTab: 0,
-            // title: "hugo",
+            title: "hugo",
             closable: true,
             deferredRender: false,
             forceLayout: true,
@@ -117,64 +120,43 @@ pimcore.plugin.esbackendsearch.searchConfigPanel = Class.create(pimcore.element.
 
 
         getConditions: function() {
-            // drop down menu for adding new conditions
-            var addMenu = [];
+            this.conditionPanelContainer =  Ext.create('Ext.panel.Panel', {});
 
-            //var itemTypes = Object.keys(pimcore.plugin.savedsearch.conditions);
+            var classStore = pimcore.globalmanager.get("object_types_store");
 
-            // get all keys that start with "item" and add them to the menu
-            /*for(var i=0; i<itemTypes.length; i++) {
-                if(itemTypes[i].indexOf("item") == 0) {
-                    addMenu.push({
-                        iconCls: "pimcore_icon_add",
+            this.classSelection = Ext.create('Ext.form.ComboBox',
+                {
+                    fieldLabel: t("class"),
+                    store: classStore,
+                    valueField: 'id',
+                    displayField: 'translatedText',
+                    triggerAction: 'all',
+                    // value: data.condition,
+                    queryMode: 'local',
+                    style: "margin: 10px",
+                    width: 300,
+                    forceSelection: true,
+                    listeners: {
+                        change: function( item, newValue, oldValue, eOpts ) {
 
-                        handler: this.addCondition.bind(this, itemTypes[i]),
-                        // true => returns pretty name
-                        text: pimcore.plugin.savedsearch.conditions[itemTypes[i]](null, null,true)
-                    });
+                            if(newValue != oldValue) {
+                                this.conditionPanelContainer.removeAll();
+                                this.conditionPanel = new pimcore.plugin.esbackendsearch.searchConfig.conditionPanel(newValue);
+                                this.conditionPanelContainer.add(this.conditionPanel.getConditionPanel());
+                            }
+
+                        }.bind(this)
+                    }
                 }
-            }*/
+            );
 
-            addMenu.push({
-                iconCls: "pimcore_icon_add",
 
-                handler: function(type, data) {
-                    var itemClass = new pimcore.plugin.esbackendsearch.searchConfig.conditionPanel();
-                    var item = itemClass.getConditionPanel(this, data);
-                    this.conditionsContainerInner.add(item);
-                    item.updateLayout();
-                    this.conditionsContainerInner.updateLayout();
-
-                    this.currentIndex++;
-                }.bind(this),
-                // true => returns pretty name
-                text: "condition"
+            return new Ext.Panel({
+                scrollable: true,
+                title: t("plugin_esbackendsearch_filter"),
+                items: [this.classSelection, this.conditionPanelContainer]
             });
 
-
-            this.conditionsContainerInner = new Ext.Panel({
-                region: "center",
-                autoScroll: true,
-                forceLayout: true,
-                viewConfig: {
-                    forceFit: true
-                },
-                tbar: [{
-                    iconCls: "pimcore_icon_add",
-                    menu: addMenu
-                }],
-                border: false,
-                items: []
-            });
-
-            this.conditionsContainer = new Ext.Panel({
-                title: t("conditions"),
-                layout: "border",
-                items: [this.conditionsContainerInner]
-
-            });
-
-            return this.conditionsContainer;
         },
 
         getSource: function () {
@@ -353,40 +335,6 @@ pimcore.plugin.esbackendsearch.searchConfigPanel = Class.create(pimcore.element.
             return this.data.source.selectedClass;
         },
 
-        addCondition: function (type, data) {
-            var item = pimcore.plugin.savedsearch.conditions[type](this, data);
-
-            // add logic for brackets
-            /*item.on("afterrender", function (el) {
-                el.getEl().applyStyles({position: "relative", "min-height": "40px"});
-                var leftBracket = el.getEl().insertHtml("beforeEnd", '<div class="pimcore_targeting_bracket pimcore_targeting_bracket_left">(</div>', true);
-                var rightBracket = el.getEl().insertHtml("beforeEnd", '<div class="pimcore_targeting_bracket pimcore_targeting_bracket_right">)</div>', true);
-
-                if(data["bracketLeft"]){
-                    leftBracket.addCls("pimcore_targeting_bracket_active");
-                }
-                if(data["bracketRight"]){
-                    rightBracket.addCls("pimcore_targeting_bracket_active");
-                }
-
-                leftBracket.on("click", function (ev, el) {
-                    Ext.get(el).toggleCls("pimcore_targeting_bracket_active");
-                });
-
-                rightBracket.on("click", function (ev, el) {
-                    Ext.get(el).toggleCls("pimcore_targeting_bracket_active");
-                });
-            });*/
-
-            this.conditionsContainerInner.add(item);
-            item.updateLayout();
-            this.conditionsContainerInner.updateLayout();
-
-            this.currentIndex++;
-
-            this.recalculateButtonStatus();
-        },
-
         getSaveData: function() {
             var saveData = {};
             //saveData["settings"] = this.settingsForm.getForm().getFieldValues();
@@ -400,33 +348,11 @@ pimcore.plugin.esbackendsearch.searchConfigPanel = Class.create(pimcore.element.
                 };
             }*/
 
-            var conditionsData = [];
-            var condition, tb, operator;
-            var conditions = this.conditionsContainerInner.items.getRange();
-            for (var i=0; i<conditions.length; i++) {
-                var condition = conditions[i].panelInstance.getFilterValues();
-                /*
-                condition = conditions[i].getForm().getFieldValues();
+            saveData['classId'] = this.classSelection.getValue();
 
-                // get the operator (AND, OR, AND_NOT)
-                var tb = conditions[i].getDockedItems()[0];
-                if (tb.getComponent("toggle_or").pressed) {
-                    operator = "or";
-                } else if (tb.getComponent("toggle_and_not").pressed) {
-                    operator = "and_not";
-                } else {
-                    operator = "and";
-                }
-                condition["operator"] = operator;
-
-                // get the brackets
-                var foo = conditions[i];
-                condition["bracketLeft"] = Ext.get(conditions[i].getEl().query(".pimcore_targeting_bracket_left")[0]).hasCls("pimcore_targeting_bracket_active");
-                condition["bracketRight"] = Ext.get(conditions[i].getEl().query(".pimcore_targeting_bracket_right")[0]).hasCls("pimcore_targeting_bracket_active");
-*/
-                conditionsData.push(condition);
+            if(this.conditionPanel) {
+                saveData["conditions"] = this.conditionPanel.getSaveData();
             }
-            saveData["conditions"] = conditionsData;
             return Ext.encode(saveData);
         },
 
@@ -454,215 +380,7 @@ pimcore.plugin.esbackendsearch.searchConfigPanel = Class.create(pimcore.element.
                 }.bind(this)
             });
 
-        },
-
-        recalculateButtonStatus: function () {
-            var conditions = this.conditionsContainerInner.items.getRange();
-            var tb;
-            for (var i=0; i<conditions.length; i++) {
-                var tb = conditions[i].getDockedItems()[0];
-                if(i==0) {
-                    // tb.getComponent("toggle_and").hide();
-                    // tb.getComponent("toggle_or").hide();
-                    // tb.getComponent("toggle_and_not").hide();
-                } else {
-                    // tb.getComponent("toggle_and").show();
-                    // tb.getComponent("toggle_or").show();
-                }
-            }
         }
     }
 
 );
-
-
-/* CONDITION TYPES */
-
-pimcore.registerNS("pimcore.plugin.savedsearch.conditions");
-
-pimcore.plugin.savedsearch.conditions = {
-    itemCondition: function (panel, data, getName) {
-        var niceName = "Condition";
-
-        if(typeof getName != "undefined" && getName) {
-            return niceName;
-        }
-
-        if(typeof data == "undefined") {
-            data = {};
-        }
-        var myId = Ext.id();
-
-        var textField = new Ext.form.TextField(
-            {
-
-                fieldLabel: "Condition",
-                name: "condition",
-                value: data.condition,
-                width: 400
-                // cls: "pimcore_droptarget_input"
-            }
-        );
-
-
-        textField.on("render", function (el) {
-
-            // add drop zone
-            new Ext.dd.DropZone(el.getEl(), {
-                reference: this,
-                dropAllowed: true,
-                ddGroup: "columnconfigelement",
-                getTargetFromEvent: function(e) {
-                    return this.getEl();
-                },
-
-                onNodeOver : function(target, dd, e, data) {
-                    return Ext.dd.DropZone.prototype.dropAllowed;
-                },
-
-                onNodeDrop : function(target, dd, e, data) {
-                    this.setValue(data.node.attributes.key + this.getValue());
-                    return true;
-                }.bind(this)
-            });
-
-        });
-
-
-
-        var item =  new Ext.form.FormPanel({
-            id: myId,
-            forceLayout: true,
-            style: "margin: 10px 0 0 0",
-            bodyStyle: "padding: 10px 30px 10px 30px; min-height:40px;",
-            tbar: this.getTopBar(niceName, myId, panel, data),
-
-
-
-            items: [textField,
-            {
-                xtype: "hidden",
-                name: "type",
-                value: "condition"
-            }]
-        });
-
-        return item;
-    },
-
-
-    getTopBar: function (name, index, parent, data) {
-
-        var toggleGroup = "g_" + index + parent.data.id;
-        if(!data["operator"]) {
-            data.operator = "and";
-        }
-
-        return [{
-            xtype: "tbtext",
-            text: "<b>" + name + "</b>"
-        },"-",{
-            iconCls: "pimcore_icon_up",
-            handler: function (blockId, parent) {
-
-                var container = parent.conditionsContainer;
-                var containerInner = parent.conditionsContainerInner;
-                var blockElement = Ext.getCmp(blockId);
-                var index = this.detectBlockIndex(blockElement, container);
-                var tmpContainer = pimcore.viewport;
-
-                var newIndex = index-1;
-                if(newIndex < 0) {
-                    newIndex = 0;
-                }
-
-                // move this node temorary to an other so ext recognizes a change
-                containerInner.remove(blockElement, false);
-                tmpContainer.add(blockElement);
-                containerInner.updateLayout();
-                tmpContainer.updateLayout();
-
-                // move the element to the right position
-                tmpContainer.remove(blockElement,false);
-                containerInner.insert(newIndex, blockElement);
-                containerInner.updateLayout();
-                tmpContainer.updateLayout();
-
-                parent.recalculateButtonStatus();
-
-                pimcore.layout.refresh();
-            }.bind(this, index, parent)
-        },{
-            iconCls: "pimcore_icon_down",
-            handler: function (blockId, parent) {
-
-                var container = parent.conditionsContainer;
-                var containerInner = parent.conditionsContainerInner;
-                var blockElement = Ext.getCmp(blockId);
-                var index = this.detectBlockIndex(blockElement, container);
-                var tmpContainer = pimcore.viewport;
-
-                // move this node temorary to an other so ext recognizes a change
-                containerInner.remove(blockElement, false);
-                tmpContainer.add(blockElement);
-                containerInner.updateLayout();
-                tmpContainer.updateLayout();
-
-                // move the element to the right position
-                tmpContainer.remove(blockElement,false);
-                containerInner.insert(index+1, blockElement);
-                container.updateLayout();
-                tmpContainer.updateLayout();
-
-                parent.recalculateButtonStatus();
-
-                pimcore.layout.refresh();
-            }.bind(this, index, parent)
-        },"-", {
-            text: t("AND"),
-            toggleGroup: toggleGroup,
-            enableToggle: true,
-            itemId: "toggle_and",
-            pressed: (data.operator == "and") ? true : false
-        },{
-            text: t("OR"),
-            toggleGroup: toggleGroup,
-            enableToggle: true,
-            itemId: "toggle_or",
-            pressed: (data.operator == "or") ? true : false
-        },
-
-            {
-                text: t("AND_NOT"),
-                hidden: true,
-                toggleGroup: toggleGroup,
-                enableToggle: true,
-                itemId: "toggle_and_not",
-                pressed: (data.operator == "and_not") ? true : false
-            },
-            "->",{
-                iconCls: "pimcore_icon_delete",
-                handler: function (index, parent) {
-                    parent.conditionsContainerInner.remove(Ext.getCmp(index));
-                    parent.recalculateButtonStatus();
-                }.bind(window, index, parent)
-            }];
-    },
-
-    detectBlockIndex: function (blockElement, container) {
-        // detect index
-        var index;
-
-        for(var s=0; s < container.items.items.length; s++) {
-            if(container.items.items[s].key == blockElement.key) {
-                index = s;
-                break;
-            }
-        }
-        return index;
-    }
-
-
-
-
-};

@@ -2,6 +2,8 @@
 
 namespace ESBackendSearch\FieldDefinitionAdapter;
 
+use ESBackendSearch\FieldSelectionInformation;
+use ESBackendSearch\FilterEntry;
 use ONGR\ElasticsearchDSL\BuilderInterface;
 use ONGR\ElasticsearchDSL\Query\BoolQuery;
 use ONGR\ElasticsearchDSL\Query\NestedQuery;
@@ -51,7 +53,7 @@ class Href extends DefaultAdapter implements IFieldDefinitionAdapter {
      *   - array with sub query
      *      [
      *         'type'      => 'object|asset|document'
-     *         'className' => 'CLASSNAME' (optional only with type object),
+     *         'classId' => 'CLASSID' (optional only with type object),
      *         'filters'   => [ STANDARD FULL FEATURED FILTER ARRAY ]
      *      ]
      *       --> creates a sub query with given information, receives ids and then creates TermsQuery
@@ -78,9 +80,9 @@ class Href extends DefaultAdapter implements IFieldDefinitionAdapter {
                         $boolQuery->add(new TermQuery($path . ".id", $fieldFilter['id']));
                     }
 
-                } else if($fieldFilter['className'] && $fieldFilter['filters']) {
+                } else if($fieldFilter['classId'] && $fieldFilter['filters']) {
 
-                    $results = $this->service->doFilter($fieldFilter['className'], $fieldFilter['filters'], "");
+                    $results = $this->service->doFilter($fieldFilter['classId'], $fieldFilter['filters'], "");
                     $ids = [];
                     foreach($results['hits']['hits'] as $hit) {
                         $ids[] = $hit['_id'];
@@ -101,6 +103,42 @@ class Href extends DefaultAdapter implements IFieldDefinitionAdapter {
         }
     }
 
+
+    /**
+     * returns selectable fields with their type information for search frontend
+     *
+     * @return FieldSelectionInformation[]
+     */
+    public function getFieldSelectionInformation()
+    {
+        $allowedTypes = [];
+        $allowedClasses = [];
+        if($this->fieldDefinition->getAssetsAllowed()) {
+            $allowedTypes[] = ["asset", "asset_ids"];
+        }
+        if($this->fieldDefinition->getDocumentsAllowed()) {
+            $allowedTypes[] = ["document", "document_ids"];
+        }
+        if($this->fieldDefinition->getObjectsAllowed()) {
+            $allowedTypes[] = ["object", "object_ids"];
+            $allowedTypes[] = ["object_filter", "object_filter"];
+
+            foreach($this->fieldDefinition->getClasses() as $class) {
+                $allowedClasses[] = $class['classes'];
+            }
+        }
+
+        return [new FieldSelectionInformation(
+            $this->fieldDefinition->getName(),
+            $this->fieldDefinition->getTitle(),
+            $this->fieldType,
+            [
+                'operators' => [BoolQuery::MUST, BoolQuery::SHOULD, BoolQuery::MUST_NOT, FilterEntry::EXISTS, FilterEntry::NOT_EXISTS],
+                'allowedTypes' => $allowedTypes,
+                'allowedClasses' => $allowedClasses
+            ]
+        )];
+    }
 
 
 }

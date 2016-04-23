@@ -60,7 +60,7 @@ foreach($objects as $object) {
 $service = new ESBackendSearch\Service();
 
 //filter for relations via ID
-$results = $service->doFilter("Product",
+$results = $service->doFilter(3,
     [
         new \ESBackendSearch\FilterEntry(
             "objects",
@@ -77,7 +77,7 @@ $results = $service->doFilter("Product",
 
 
 //filter for relations via sub query
-$results = $service->doFilter("Product",
+$results = $service->doFilter(3,
     [
         [
             "fieldname" => "objects",
@@ -99,14 +99,14 @@ $results = $service->doFilter("Product",
 
 
 // full text search query without filters
-$results = $service->doFilter("Product",
+$results = $service->doFilter(3,
     [],
     "sony"
 );
 
 
 // filter for several attributes - e.g. number field, input, localized fields
-$results = $service->doFilter("Product",
+$results = $service->doFilter(3,
     [
         [
             "fieldname" => "price",

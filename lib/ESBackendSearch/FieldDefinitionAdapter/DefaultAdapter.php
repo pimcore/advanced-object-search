@@ -48,6 +48,9 @@ class DefaultAdapter implements IFieldDefinitionAdapter {
             $this->fieldDefinition->getName(),
             [
                 'type' => 'string',
+                'fields' => [
+                    "raw" =>  [ "type" => "string", "index" => "not_analyzed" ]
+                ]
                 //'index' => 'not_analyzed'
             ]
         ];
