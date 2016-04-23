@@ -41,7 +41,7 @@ pimcore.plugin.esbackendsearch.searchConfig.fieldConditionPanel.localizedfields 
         subValue[this.languageField.getValue()] = [this.subPanel.getFilterValues()];
 
         return {
-            "fielname": this.fieldSelectionInformation.fieldType,
+            "fieldname": this.fieldSelectionInformation.fieldType,
             "filterEntryData": subValue
         };
     }

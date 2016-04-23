@@ -62,11 +62,14 @@ $service = new ESBackendSearch\Service();
 //filter for relations via ID
 $results = $service->doFilter("Product",
     [
-        "objects" => (object)[
-            "type" => "object",
-            "id" => 75
-        ],
-
+        new \ESBackendSearch\FilterEntry(
+            "objects",
+            [
+                "type" => "object",
+                "id" => 75
+            ],
+            \ONGR\ElasticsearchDSL\Query\BoolQuery::SHOULD
+        )
     ],
     ""
 );
@@ -76,11 +79,17 @@ $results = $service->doFilter("Product",
 //filter for relations via sub query
 $results = $service->doFilter("Product",
     [
-        "objects" => (object)[
-            "type" => "object",
-            "className" => "Customer",
-            "filters" => [
-                "firstname" => "tom"
+        [
+            "fieldname" => "objects",
+            "filterEntryData" => [
+                "type" => "object",
+                "className" => "Customer",
+                "filters" => [
+                    [
+                        "fieldname" => "firstname",
+                        "filterEntryData" => "tom"
+                    ]
+                ]
             ]
         ],
 
@@ -99,34 +108,37 @@ $results = $service->doFilter("Product",
 // filter for several attributes - e.g. number field, input, localized fields
 $results = $service->doFilter("Product",
     [
-        /*"price" => (object)[
-            "gte" => 50.77,
-            "lte" => 50.77
-        ],*/
-        /*"price" => 50.77,*/
-        "price" => [
-            50.77,
-            (object)[
+        [
+            "fieldname" => "price",
+            "filterEntryData" => 50.77
+        ],
+            "fieldname" => "price2",
+            "filterEntryData" => [
                 "gte" => 50.77,
                 "lte" => 50.77
             ]
         ],
-        "keywords" => "test2",
-        "localizedfields" => (object)[
-            "en" => [
-                "locprice" => [
-                    55,
-                    (object)[
-                        "gte" => 53
-                    ]
-                ],
-                "locname" => "englname"
-            ],
+        [
+            "fieldname" => "keywords",
+            "filterEntryData" => "test2",
+            "operator" => \ONGR\ElasticsearchDSL\Query\BoolQuery::SHOULD
+        ],
+        [
+            "fieldname" => "localizedfields",
+            "filterEntryData" => [
+                "en" => [
+                    "locname" => "englname"
+                ]
+            ]
+        ],
+        [
+            "fieldname" => "localizedfields",
+            "filterEntryData" => [
             "de" => [
                 "locname" => "deutname"
             ]
         ],
-
+        new \ESBackendSearch\FilterEntry("keywords", "testx", \ONGR\ElasticsearchDSL\Query\BoolQuery::SHOULD)
     ],
     ""
 );
