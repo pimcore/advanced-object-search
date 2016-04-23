@@ -1,0 +1,6 @@
+plugin_esbackendsearch,ES Backend Search
+plugin_esbackendsearch_field,Field
+plugin_esbackendsearch_condition,Condition
+plugin_esbackendsearch_term,Term
+plugin_esbackendsearch_operator,Operator
+plugin_esbackendsearch_language,Language

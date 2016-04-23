@@ -70,9 +70,18 @@ class Plugin extends PluginLib\AbstractPlugin implements PluginLib\PluginInterfa
     public static function getESClient() {
 
         if(empty(self::$esClient)) {
-            self::$esClient = \Elasticsearch\ClientBuilder::create()->setHosts(["frischeis.dev.elements.pm"])->build();
+            self::$esClient = \Elasticsearch\ClientBuilder::create()->setHosts(["dev-elasticsearch"])->build();
         }
 
         return self::$esClient;
+    }
+
+    /**
+     * @param string $language
+     * @return string path to the translation file relative to plugin directory
+     */
+    public static function getTranslationFile($language)
+    {
+        return sprintf('/ESBackendSearch/texts/%s.csv', $language);
     }
 }

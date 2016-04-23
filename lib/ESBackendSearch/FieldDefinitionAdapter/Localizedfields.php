@@ -2,10 +2,10 @@
 
 namespace ESBackendSearch\FieldDefinitionAdapter;
 
+use ESBackendSearch\FieldSelectionInformation;
 use ONGR\ElasticsearchDSL\BuilderInterface;
 use ONGR\ElasticsearchDSL\Query\BoolQuery;
 use ONGR\ElasticsearchDSL\Query\NestedQuery;
-use Pimcore\Config;
 use Pimcore\Model\Object\ClassDefinition\Data;
 use Pimcore\Model\Object\Concrete;
 use Pimcore\Tool;
@@ -71,19 +71,13 @@ class Localizedfields extends DefaultAdapter implements IFieldDefinitionAdapter 
      *
      * filter field format as follows:
      *  stdObject with language as key and languageFilter array as values like
-     *   (object) [
-     *      'en' => [
-     *         FIELD NAME => LANGUAGE FILTER
-     *      ]
+     *    [
+     *      'en' => FilterEntry[]  - FULL FEATURES FILTER ENTRY ARRAY
      *    ]
-     *
-     *  LANGUAGE FILTER format is like normal filter field format, e.g. as follows
-     *     - simple string like
-     *         "filter for value"
-     *     - array of simple strings like
-     *        [ "filter for value1", "filter for value2" ]
-     *  see other FieldDefinitionAdapters for details
-     *
+     *   e.g.
+     *      'en' => [
+     *          ["fieldnme" => "locname", "filterEntryData" => "englname"]
+     *       ]
      *
      * @param string $path
      * @return BoolQuery
@@ -96,14 +90,20 @@ class Localizedfields extends DefaultAdapter implements IFieldDefinitionAdapter 
             $path = $this->fieldDefinition->getName() . "." . $language;
             $languageBoolQuery = new BoolQuery();
 
-            foreach($languageFilters as $field => $localizedFieldFilter) {
+            foreach($languageFilters as $localizedFieldFilter) {
+                $filterEntryObject = $this->service->buildFilterEntryObject($localizedFieldFilter);
 
-                $fieldDefinition = $this->fieldDefinition->getFielddefinition($field);
-                $adapter = $this->service->getFieldDefinitionAdapter($fieldDefinition);
-
-                $languageBoolQuery->add($adapter->getQueryPart($localizedFieldFilter, $path . "."));
+                if($filterEntryObject->getFilterEntryData() instanceof BuilderInterface) {
+                    $languageBoolQuery->add($filterEntryObject->getFilterEntryData(), $filterEntryObject->getOperator());
+                } else {
+                    $fieldDefinition = $this->fieldDefinition->getFielddefinition($filterEntryObject->getFieldname());
+                    $fieldDefinitionAdapter = $this->service->getFieldDefinitionAdapter($fieldDefinition);
+                    $languageBoolQuery->add(
+                        $fieldDefinitionAdapter->getQueryPart($filterEntryObject->getFilterEntryData(), $path . "."),
+                        $filterEntryObject->getOperator()
+                    );
+                }
             }
-
             $languageQueries[] = new NestedQuery($path, $languageBoolQuery);
         }
 
@@ -116,6 +116,36 @@ class Localizedfields extends DefaultAdapter implements IFieldDefinitionAdapter 
             }
             return $boolQuery;
         }
+    }
+
+
+    /**
+     * returns selectable fields with their type information for search frontend
+     *
+     * @return FieldSelectionInformation[]
+     */
+    public function getFieldSelectionInformation()
+    {
+        $fieldSelectionInformationEntries = [];
+
+        $children = $this->fieldDefinition->getChilds();
+        foreach($children as $child) {
+            $fieldDefinitionAdapter = $this->service->getFieldDefinitionAdapter($child);
+
+            $subEntries = $fieldDefinitionAdapter->getFieldSelectionInformation();
+            foreach($subEntries as $subEntry) {
+                $context = $subEntry->getContext();
+                $context['subType'] = $subEntry->getFieldType();
+                $context['languages'] = Tool::getValidLanguages();
+                $subEntry->setContext($context);
+
+                $subEntry->setFieldType("localizedfields");
+            }
+
+            $fieldSelectionInformationEntries = array_merge($fieldSelectionInformationEntries, $subEntries);
+        }
+
+        return $fieldSelectionInformationEntries;
     }
 
 }

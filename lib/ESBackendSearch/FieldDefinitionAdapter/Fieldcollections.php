@@ -9,6 +9,13 @@ use Pimcore\Model\Object\Fieldcollection;
 class Fieldcollections extends DefaultAdapter implements IFieldDefinitionAdapter {
 
     /**
+     * field type for search frontend
+     *
+     * @var string
+     */
+    protected $fieldType = "fieldcollections";
+
+    /**
      * @var Data\Fieldcollections
      */
     protected $fieldDefinition;

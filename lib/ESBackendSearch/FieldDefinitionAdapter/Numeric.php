@@ -2,14 +2,20 @@
 
 namespace ESBackendSearch\FieldDefinitionAdapter;
 
+use ESBackendSearch\FieldSelectionInformation;
 use ONGR\ElasticsearchDSL\BuilderInterface;
-use ONGR\ElasticsearchDSL\Filter\RangeFilter;
-use ONGR\ElasticsearchDSL\Query\BoolQuery;
 use ONGR\ElasticsearchDSL\Query\RangeQuery;
 use ONGR\ElasticsearchDSL\Query\TermQuery;
 use Pimcore\Model\Object\ClassDefinition\Data;
 
 class Numeric extends DefaultAdapter implements IFieldDefinitionAdapter {
+
+    /**
+     * field type for search frontend
+     *
+     * @var string
+     */
+    protected $fieldType = "numeric";
 
     /**
      * @return array
@@ -31,29 +37,34 @@ class Numeric extends DefaultAdapter implements IFieldDefinitionAdapter {
      * filter field format as follows:
      *   - simple number like
      *       234.54   --> creates TermQuery
-     *   - stdObject with gt, gte, lt, lte like
-     *      (object) ["gte" => 40, "lte" => 45] --> creates RangeQuery
-     *   - array of simple numbers and sttObjects like
-     *      [ 234.54, (object) ["gte" => 40, "lte" => 45] ]
+     *   - array with gt, gte, lt, lte like
+     *      ["gte" => 40, "lte" => 45] --> creates RangeQuery
      *
      * @param string $path
      * @return BuilderInterface
      */
     public function getQueryPart($fieldFilter, $path = "") {
-        return parent::getQueryPart($fieldFilter, $path);
+        if(is_array($fieldFilter)) {
+            return new RangeQuery($path . $this->fieldDefinition->getName(), $fieldFilter);
+        } else {
+            return new TermQuery($path . $this->fieldDefinition->getName(), $fieldFilter);
+        }
     }
 
+
+
     /**
-     * @param $filterEntry
-     * @param $path
-     * @return BuilderInterface
+     * returns selectable fields with their type information for search frontend
+     *
+     * @return FieldSelectionInformation[]
      */
-    protected function buildQueryEntry($filterEntry, $path) {
-        if($filterEntry instanceof \stdClass) {
-            return new RangeQuery($path . $this->fieldDefinition->getName(), get_object_vars($filterEntry));
-        } else {
-            return new TermQuery($path . $this->fieldDefinition->getName(), $filterEntry);
-        }
+    public function getFieldSelectionInformation()
+    {
+        return [new FieldSelectionInformation(
+            $this->fieldDefinition->getName(),
+            $this->fieldDefinition->getTitle(),
+            $this->fieldType, ['operators' => ['lt', 'lte', 'eq', 'gte', 'gt']
+        ])];
     }
 
 }

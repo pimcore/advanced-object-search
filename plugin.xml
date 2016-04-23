@@ -30,13 +30,19 @@
 			</pluginNamespaces>
 
 			<!-- js files with path relative to plugin-directory -->
-			<pluginJsPaths>
-                <path>/plugins/ESBackendSearch/static/js/startup.js</path>
-			</pluginJsPaths>
+			<pluginJsPaths-extjs6>
+                <path>/plugins/ESBackendSearch/static6/js/startup.js</path>
+				<path>/plugins/ESBackendSearch/static6/js/panel.js</path>
+				<path>/plugins/ESBackendSearch/static6/js/searchConfigPanel.js</path>
+				<path>/plugins/ESBackendSearch/static6/js/searchConfig/conditionPanel.js</path>
+				<path>/plugins/ESBackendSearch/static6/js/searchConfig/fieldConditionPanel/default.js</path>
+				<path>/plugins/ESBackendSearch/static6/js/searchConfig/fieldConditionPanel/localizedfields.js</path>
+				<path>/plugins/ESBackendSearch/static6/js/searchConfig/fieldConditionPanel/numeric.js</path>
+			</pluginJsPaths-extjs6>
 
 			<!-- css files with path relative to plugin-directory -->
 			<pluginCssPaths>
-                <path>/plugins/ESBackendSearch/static/css/example.css</path>
+                <path>/plugins/ESBackendSearch/static6/css/example.css</path>
 			</pluginCssPaths>
 		</plugin>
 </zend-config>

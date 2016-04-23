@@ -2,6 +2,7 @@
 
 namespace ESBackendSearch\FieldDefinitionAdapter;
 
+use ESBackendSearch\FieldSelectionInformation;
 use ESBackendSearch\Service;
 use ONGR\ElasticsearchDSL\BuilderInterface;
 use Pimcore\Model\Object\ClassDefinition\Data;
@@ -33,4 +34,12 @@ interface IFieldDefinitionAdapter {
      * @return BuilderInterface
      */
     public function getQueryPart($fieldFilter, $path = "");
+
+
+    /**
+     * returns selectable fields with their type information for search frontend
+     *
+     * @return FieldSelectionInformation[]
+     */
+    public function getFieldSelectionInformation();
 }

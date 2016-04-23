@@ -2,6 +2,7 @@
 
 namespace ESBackendSearch\FieldDefinitionAdapter;
 
+use ESBackendSearch\FieldSelectionInformation;
 use ESBackendSearch\Service;
 use ONGR\ElasticsearchDSL\BuilderInterface;
 use ONGR\ElasticsearchDSL\Query\BoolQuery;
@@ -10,6 +11,13 @@ use Pimcore\Model\Object\ClassDefinition\Data;
 use Pimcore\Model\Object\Concrete;
 
 class DefaultAdapter implements IFieldDefinitionAdapter {
+
+    /**
+     * field type for search frontend
+     *
+     * @var string
+     */
+    protected $fieldType = "default";
 
     /**
      * @var Data
@@ -57,15 +65,15 @@ class DefaultAdapter implements IFieldDefinitionAdapter {
      * filter field format as follows:
      *   - simple string like
      *       "filter for value"  --> creates QueryStringQuery
-     *   - array of simple strings like
-     *      [ "filter for value1", "filter for value2" ]
-     *      --> creates BoolQuery with QueryStringQueries combined as SHOULD (min_should_match = 1)
      *
      * @param string $path
      * @return BuilderInterface
      */
     public function getQueryPart($fieldFilter, $path = "") {
 
+        return new QueryStringQuery($fieldFilter, ["fields" => [$path . $this->fieldDefinition->getName()]]);
+
+        /*
         if(is_array($fieldFilter)) {
             $boolQuery = new BoolQuery();
             $boolQuery->addParameter("minimum_should_match", 1);
@@ -76,15 +84,20 @@ class DefaultAdapter implements IFieldDefinitionAdapter {
         } else {
             return $this->buildQueryEntry($fieldFilter, $path);
         }
-
+*/
     }
 
     /**
-     * @param $filterEntry
-     * @param $path
-     * @return BuilderInterface
+     * returns selectable fields with their type information for search frontend
+     *
+     * @return FieldSelectionInformation[]
      */
-    protected function buildQueryEntry($filterEntry, $path) {
-        return new QueryStringQuery($filterEntry, ["fields" => [$path . $this->fieldDefinition->getName()]]);
+    public function getFieldSelectionInformation()
+    {
+        return [new FieldSelectionInformation(
+            $this->fieldDefinition->getName(),
+            $this->fieldDefinition->getTitle(),
+            $this->fieldType, ['operators' => ['must', 'should', 'must_not']
+        ])];
     }
 }

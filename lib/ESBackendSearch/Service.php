@@ -30,6 +30,26 @@ class Service {
     }
 
     /**
+     * returns selectable fields with their type information for search frontend
+     *
+     * @param ClassDefinition $objectClass
+     *
+     * @return FieldSelectionInformation[]
+     */
+    public function getFieldSelectionInformationForClassDefinition(ClassDefinition $objectClass) {
+
+        $fieldSelectionInformationEntries = [];
+
+        $fieldDefinitions = $objectClass->getFieldDefinitions();
+        foreach($fieldDefinitions as $fieldDefinition) {
+            $fieldDefinitionAdapter = $this->getFieldDefinitionAdapter($fieldDefinition);
+            $fieldSelectionInformationEntries = array_merge($fieldSelectionInformationEntries, $fieldDefinitionAdapter->getFieldSelectionInformation());
+        }
+
+        return $fieldSelectionInformationEntries;
+    }
+
+    /**
      * generates and returns mapping for given class definition
      *
      * @param ClassDefinition $objectClass
@@ -144,14 +164,19 @@ class Service {
 
     /**
      * @param ClassDefinition $objectClass
-     * @param array $filters
+     * @param FilterEntry[] $filters
      *
-     * array format as follows:
-     *   array(
-     *     FIELD NAME => FIELD FILTER (see FieldDefinitionAdapters for details),
-     *     FIELD NAME => FIELD FILTER,
-     *     FIELD NAME => FIELD FILTER
-     *   )
+     * either array of FilterEntry objects like
+     *   new \ESBackendSearch\FilterEntry("keywords", "testx", \ONGR\ElasticsearchDSL\Query\BoolQuery::SHOULD)
+     * or associative array like
+     *  [
+     *      "fieldname" => "price",
+     *      "filterEntryData" => ["gte" => 50.77,"lte" => 50.77],
+     *      "operator" => \ONGR\ElasticsearchDSL\Query\BoolQuery::MUST
+     *  ]
+     *  --> gets converted into FilterEntry objects
+     *
+     *
      *
      * @return \ONGR\ElasticsearchDSL\Search
      */
@@ -159,26 +184,44 @@ class Service {
 
         $search = new \ONGR\ElasticsearchDSL\Search();
 
-        foreach($filters as $fieldName => $fieldFilter) {
-            $fieldDefinition = $objectClass->getFieldDefinition($fieldName);
-            $fieldDefinitionAdapter = $this->getFieldDefinitionAdapter($fieldDefinition);
-            $search->addFilter($fieldDefinitionAdapter->getQueryPart($fieldFilter));
+        foreach($filters as $filterEntry) {
+
+            $filterEntryObject = $this->buildFilterEntryObject($filterEntry);
+
+            if($filterEntryObject->getFilterEntryData() instanceof BuilderInterface) {
+                $search->addFilter($filterEntryObject->getFilterEntryData(), $filterEntryObject->getOperator());
+            } else {
+                $fieldDefinition = $objectClass->getFieldDefinition($filterEntryObject->getFieldname());
+                $fieldDefinitionAdapter = $this->getFieldDefinitionAdapter($fieldDefinition);
+                $search->addFilter($fieldDefinitionAdapter->getQueryPart($filterEntryObject->getFilterEntryData()), $filterEntryObject->getOperator());
+            }
         }
 
         return $search;
 
     }
 
+
+    /**
+     * checks filter entry and creates FilterEntry object if necessary
+     *
+     * @param $filterEntry
+     * @return FilterEntry
+     * @throws \Exception
+     */
+    public function buildFilterEntryObject($filterEntry) {
+        if(is_array($filterEntry)) {
+            return new FilterEntry($filterEntry['fieldname'], $filterEntry['filterEntryData'], $filterEntry['operator']);
+        } else if($filterEntry instanceof FilterEntry) {
+            return $filterEntry;
+        } else {
+            throw new \Exception("invalid filter entry: " . print_r($filterEntry, true));
+        }
+    }
+
     /**
      * @param $className
-     * @param array $filters
-     *
-     * array format as follows:
-     *   array(
-     *     FIELD NAME => FIELD FILTER (see FieldDefinitionAdapters for details),
-     *     FIELD NAME => FIELD FILTER,
-     *     FIELD NAME => FIELD FILTER
-     *   )
+     * @param FilterEntry $filters
      *
      * @param string|BuilderInterface $fullTextQuery
      * @return array
@@ -196,7 +239,7 @@ class Service {
         $params = [
             'index' => strtolower($className),
             'type' => $className,
-            'body' => $search->toArray(),
+            'body' => $search->toArray()
         ];
 
         \Logger::info("Filter-Params: " . json_encode($params));
