@@ -2,7 +2,9 @@
 
 namespace ESBackendSearch\FieldDefinitionAdapter;
 
+use DeepCopy\Filter\Filter;
 use ESBackendSearch\FieldSelectionInformation;
+use ESBackendSearch\FilterEntry;
 use ONGR\ElasticsearchDSL\BuilderInterface;
 use ONGR\ElasticsearchDSL\Query\RangeQuery;
 use ONGR\ElasticsearchDSL\Query\TermQuery;
@@ -63,7 +65,7 @@ class Numeric extends DefaultAdapter implements IFieldDefinitionAdapter {
         return [new FieldSelectionInformation(
             $this->fieldDefinition->getName(),
             $this->fieldDefinition->getTitle(),
-            $this->fieldType, ['operators' => ['lt', 'lte', 'eq', 'gte', 'gt']
+            $this->fieldType, ['operators' => ['lt', 'lte', 'eq', 'gte', 'gt', FilterEntry::EXISTS, FilterEntry::NOT_EXISTS ]
         ])];
     }
 

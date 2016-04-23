@@ -3,9 +3,11 @@
 namespace ESBackendSearch\FieldDefinitionAdapter;
 
 use ESBackendSearch\FieldSelectionInformation;
+use ESBackendSearch\FilterEntry;
 use ESBackendSearch\Service;
 use ONGR\ElasticsearchDSL\BuilderInterface;
 use ONGR\ElasticsearchDSL\Query\BoolQuery;
+use ONGR\ElasticsearchDSL\Query\ExistsQuery;
 use ONGR\ElasticsearchDSL\Query\QueryStringQuery;
 use Pimcore\Model\Object\ClassDefinition\Data;
 use Pimcore\Model\Object\Concrete;
@@ -73,18 +75,11 @@ class DefaultAdapter implements IFieldDefinitionAdapter {
 
         return new QueryStringQuery($fieldFilter, ["fields" => [$path . $this->fieldDefinition->getName()]]);
 
-        /*
-        if(is_array($fieldFilter)) {
-            $boolQuery = new BoolQuery();
-            $boolQuery->addParameter("minimum_should_match", 1);
-            foreach($fieldFilter as $filterEntry) {
-                $boolQuery->add($this->buildQueryEntry($filterEntry, $path), BoolQuery::SHOULD);
-            }
-            return $boolQuery;
-        } else {
-            return $this->buildQueryEntry($fieldFilter, $path);
-        }
-*/
+    }
+
+    public function getExistsFilter($fieldFilter, $path = "")
+    {
+        return new ExistsQuery($path . $this->fieldDefinition->getName());
     }
 
     /**
@@ -97,7 +92,7 @@ class DefaultAdapter implements IFieldDefinitionAdapter {
         return [new FieldSelectionInformation(
             $this->fieldDefinition->getName(),
             $this->fieldDefinition->getTitle(),
-            $this->fieldType, ['operators' => ['must', 'should', 'must_not']
+            $this->fieldType, ['operators' => [BoolQuery::MUST, BoolQuery::SHOULD, BoolQuery::MUST_NOT, FilterEntry::EXISTS, FilterEntry::NOT_EXISTS]
         ])];
     }
 }

@@ -24,16 +24,24 @@ pimcore.plugin.esbackendsearch.searchConfig.fieldConditionPanel.numeric = Class.
     getFilterValues: function() {
 
         var filterEntryData = {};
-        if(this.operatorField.getValue() == "eq") {
+        var operatorFieldValue = this.operatorField.getValue();
+
+        if(operatorFieldValue == "eq") {
             filterEntryData = this.termField.getValue()
         } else {
-            filterEntryData[this.operatorField.getValue()] = this.termField.getValue();
+            filterEntryData[operatorFieldValue] = this.termField.getValue();
+        }
+
+
+        var operator = "must";
+        if(operatorFieldValue == "exists" || operatorFieldValue == "not_exists") {
+            operator = operatorFieldValue;
         }
 
         return {
             "fieldname": this.fieldSelectionInformation.fieldName,
             "filterEntryData": filterEntryData,
-            "operator": "must"
+            "operator": operator
         };
 
     }

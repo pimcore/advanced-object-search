@@ -34,7 +34,6 @@ pimcore.plugin.esbackendsearch.searchConfig.fieldConditionPanel.default = Class.
             {
 
                 fieldLabel:  t("plugin_esbackendsearch_operator"),
-                name: "condition",
                 store: this.fieldSelectionInformation.context.operators,
                 // value: data.condition,
                 queryMode: 'local',
@@ -43,10 +42,10 @@ pimcore.plugin.esbackendsearch.searchConfig.fieldConditionPanel.default = Class.
                 displayField: 'fieldLabel',
                 listeners: {
                     change: function( item, newValue, oldValue, eOpts ) {
-                        // var record = item.getStore().findRecord('fieldName', newValue);
-                        // var data = record.data;
-                        //
-                        // this.itemPanel.setTitle("BBBB");
+
+                        if(this.termField) {
+                            this.termField.setDisabled(newValue == "exists" || newValue == "not_exists");
+                        }
 
                     }.bind(this)
                 }

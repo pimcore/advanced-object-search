@@ -35,6 +35,8 @@ interface IFieldDefinitionAdapter {
      */
     public function getQueryPart($fieldFilter, $path = "");
 
+    
+    public function getExistsFilter($fieldFilter, $path = "");
 
     /**
      * returns selectable fields with their type information for search frontend

@@ -7,6 +7,9 @@ use ONGR\ElasticsearchDSL\Query\BoolQuery;
 
 class FilterEntry {
 
+    const EXISTS = "exists";
+    const NOT_EXISTS = "not_exists";
+
     /**
      * operator for combining filters, default = MUST
      *
@@ -50,6 +53,16 @@ class FilterEntry {
     public function getOperator()
     {
         return $this->operator;
+    }
+
+    public function getOuterOperator() {
+        if($this->operator == self::EXISTS) {
+            return BoolQuery::MUST;
+        } else if($this->operator == self::NOT_EXISTS) {
+            return BoolQuery::MUST_NOT;
+        } else {
+            return $this->operator;
+        }
     }
 
     /**
