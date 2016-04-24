@@ -46,7 +46,7 @@
 
 			<!-- css files with path relative to plugin-directory -->
 			<pluginCssPaths>
-                <path>/plugins/ESBackendSearch/static6/css/example.css</path>
+                <path>/plugins/ESBackendSearch/static6/css/admin.css</path>
 			</pluginCssPaths>
 		</plugin>
 </zend-config>

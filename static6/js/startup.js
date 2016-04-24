@@ -10,9 +10,9 @@ pimcore.plugin.esbackendsearch = Class.create(pimcore.plugin.admin, {
     },
  
     pimcoreReady: function (params,broker){
-        pimcore.globalmanager.get("layout_toolbar").settingsMenu.add({
-            text: t("plugin_es_search"),
-            iconCls: "saved_search_icon",
+        pimcore.globalmanager.get("layout_toolbar").searchMenu.add({
+            text: t("plugin_esbackendsearch"),
+            iconCls: "pimcore_icon_esbackendsearch",
             handler: function () {
                 try {
                     pimcore.globalmanager.get("plugin_es_search").activate();

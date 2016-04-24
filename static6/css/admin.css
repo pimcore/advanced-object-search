@@ -1,0 +1,27 @@
+
+
+.pimcore_icon_esbackendsearch_saveAndShare {
+    background: url("/pimcore/static6/img/flat-color-icons/collaboration.svg") center center no-repeat !important;
+}
+
+.pimcore_icon_esbackendsearch_grid {
+    background: url("/pimcore/static6/img/flat-color-icons/grid.svg") center center no-repeat !important;
+}
+
+.pimcore_icon_esbackendsearch_filter {
+    background: url("/pimcore/static6/img/flat-color-icons/filled_filter.svg") center center no-repeat !important;
+}
+
+.pimcore_icon_esbackendsearch {
+    background: url("/pimcore/static6/img/flat-color-icons/search.svg") center center no-repeat !important;
+}
+
+.pimcore_icon_esbackendsearch:before {
+    position: absolute;
+    width: 12px;
+    height: 12px;
+    bottom: 0px;
+    left: 0px;
+    content: "";
+    background: url(/pimcore/static6/img/flat-color-icons/opened_folder.svg) center center no-repeat !important;
+}

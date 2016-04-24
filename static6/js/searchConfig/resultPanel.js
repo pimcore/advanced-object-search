@@ -16,7 +16,7 @@ pimcore.plugin.esbackendsearch.searchConfig.resultPanel = Class.create(pimcore.o
             this.layout = new Ext.Panel({
                 title: t('plugin_esbackendsearch_results'),
                 border: false,
-                iconCls: "pimcore_icon_search",
+                iconCls: "pimcore_icon_esbackendsearch_grid",
                 layout: "fit",
                 listeners: {
                     activate: function() {
