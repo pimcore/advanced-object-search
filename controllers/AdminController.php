@@ -68,7 +68,7 @@ class ESBackendSearch_AdminController extends \Pimcore\Controller\Action\Admin {
 
 
             //get ID list from ES Service
-            $service = new ESBackendSearch\Service();
+            $service = new ESBackendSearch\Service($this->getUser());
             $data = json_decode($this->getParam("filter"), true);
             $results = $service->doFilter($data['classId'], $data['conditions']['filters'], $data['conditions']['fulltextSearchTerm'], $start, $limit);
 

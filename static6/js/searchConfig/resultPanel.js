@@ -165,6 +165,7 @@ pimcore.plugin.esbackendsearch.searchConfig.resultPanel = Class.create(pimcore.o
                 forceFit: false,
                 xtype: 'patchedgridview'
             },
+            sortableColumns: false,
             selModel: gridHelper.getSelectionColumn(),
             bbar: this.pagingtoolbar,
             tbar: [
@@ -226,23 +227,50 @@ pimcore.plugin.esbackendsearch.searchConfig.resultPanel = Class.create(pimcore.o
     },
 
     onRowContextmenu: function (grid, record, tr, rowIndex, e, eOpts ) {
-        //$(grid.getView().getRow(rowIndex)).animate( { backgroundColor: '#E0EAEE' }, 100)
-        //                                                .animate( { backgroundColor: '#fff' }, 400);
 
         var menu = new Ext.menu.Menu();
         var data = grid.getStore().getAt(rowIndex);
+        var selectedRows = grid.getSelectionModel().getSelection();
 
-        menu.add(new Ext.menu.Item({
-            text: t('rename'),
-            iconCls: "pimcore_icon_key pimcore_icon_overlay_go",
-            handler: function (data) {
-                Ext.MessageBox.prompt(t('rename'), t('please_enter_the_new_name'),
-                                                this.editKey.bind(this, data.id), null, null, data.data.filename);
-            }.bind(this, data)
-        }));
+        if (selectedRows.length <= 1) {
+
+            menu.add(new Ext.menu.Item({
+                text: t('open'),
+                iconCls: "pimcore_icon_open",
+                handler: function (data) {
+                    pimcore.helpers.openObject(data.data.id, "object");
+                }.bind(this, data)
+            }));
+            menu.add(new Ext.menu.Item({
+                text: t('show_in_tree'),
+                iconCls: "pimcore_icon_show_in_tree",
+                handler: function () {
+                    try {
+                        try {
+                            pimcore.treenodelocator.showInTree(record.id, "object", this);
+                        } catch (e) {
+                            console.log(e);
+                        }
+
+                    } catch (e2) { console.log(e2); }
+                }
+            }));
+
+        } else {
+            menu.add(new Ext.menu.Item({
+                text: t('open_selected'),
+                iconCls: "pimcore_icon_open",
+                handler: function (data) {
+                    var selectedRows = grid.getSelectionModel().getSelection();
+                    for (var i = 0; i < selectedRows.length; i++) {
+                        pimcore.helpers.openObject(selectedRows[i].data.id, "object");
+                    }
+                }.bind(this, data)
+            }));
+        }
 
         e.stopEvent();
-        menu.showAt(e.getXY());
+        menu.showAt(e.pageX, e.pageY);
     },
 
     startCsvExport: function () {

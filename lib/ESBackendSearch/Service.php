@@ -5,11 +5,29 @@ namespace ESBackendSearch;
 use ESBackendSearch\FieldDefinitionAdapter\DefaultAdapter;
 use ESBackendSearch\FieldDefinitionAdapter\IFieldDefinitionAdapter;
 use ONGR\ElasticsearchDSL\BuilderInterface;
+use ONGR\ElasticsearchDSL\Query\BoolQuery;
 use ONGR\ElasticsearchDSL\Query\QueryStringQuery;
+use ONGR\ElasticsearchDSL\Query\WildcardQuery;
+use ONGR\ElasticsearchDSL\Search;
 use Pimcore\Model\Object\ClassDefinition;
 use Pimcore\Model\Object\Concrete;
+use Pimcore\Model\User;
 
 class Service {
+
+    /**
+     * @var User
+     */
+    protected $user;
+
+    /**
+     * Service constructor.
+     * @param User|null $user  - if user is set, filtering considers user permissions
+     */
+    public function __construct(User $user = null)
+    {
+        $this->user = $user;
+    }
 
     /**
      * returns field definition adapter for given field definition
@@ -261,6 +279,10 @@ class Service {
             $search->setFrom($from);
         }
 
+        if($this->user) {
+            $this->addPermissionsExcludeFilter($search);
+        }
+
         $params = [
             'index' => strtolower($classDefinition->getName()),
             'type' => $classDefinition->getName(),
@@ -270,6 +292,30 @@ class Service {
         \Logger::info("Filter-Params: " . json_encode($params));
 
         return $client->search($params);
+    }
+
+    /**
+     * adds filter to exclude forbidden paths
+     *
+     * @param Search $search
+     * @throws \Exception
+     */
+    protected function addPermissionsExcludeFilter(Search $search) {
+        //exclude forbidden objects
+        if (!$this->user->isAllowed("objects")) {
+            throw new \Exception("User not allowed to search for objects");
+        } else {
+            $forbiddenObjectPaths = \Pimcore\Model\Element\Service::findForbiddenPaths("object", $this->user);
+            if (count($forbiddenObjectPaths) > 0) {
+                $boolFilter = new BoolQuery();
+
+                for ($i = 0; $i < count($forbiddenObjectPaths); $i++) {
+                    $boolFilter->add(new WildcardQuery("path", $forbiddenObjectPaths[$i] . "*"), BoolQuery::MUST);
+                }
+
+                $search->addFilter($boolFilter, BoolQuery::MUST_NOT);
+            }
+        }
     }
 
     public function extractTotalCountFromResult($searchResult) {
