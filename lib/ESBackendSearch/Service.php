@@ -241,7 +241,7 @@ class Service {
      * @param string|BuilderInterface $fullTextQuery
      * @return array
      */
-    public function doFilter($classId, array $filters, $fullTextQuery) {
+    public function doFilter($classId, array $filters, $fullTextQuery, $from, $size) {
         $client = Plugin::getESClient();
 
         $classDefinition = \Pimcore\Model\Object\ClassDefinition::getById($classId);
@@ -254,6 +254,13 @@ class Service {
             $search->addQuery(new QueryStringQuery($fullTextQuery));
         }
 
+        if($size) {
+            $search->setSize($size);
+        }
+        if($from) {
+            $search->setFrom($from);
+        }
+
         $params = [
             'index' => strtolower($classDefinition->getName()),
             'type' => $classDefinition->getName(),
@@ -263,5 +270,19 @@ class Service {
         \Logger::info("Filter-Params: " . json_encode($params));
 
         return $client->search($params);
+    }
+
+    public function extractTotalCountFromResult($searchResult) {
+        return $searchResult['hits']['total'];
+    }
+
+    public function extractIdsFromResult($searchResult) {
+        $ids = [];
+
+        foreach($searchResult['hits']['hits'] as $hit) {
+            $ids[] = $hit['_id'];
+        }
+
+        return $ids;
     }
 }

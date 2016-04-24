@@ -61,7 +61,12 @@ class DefaultAdapter implements IFieldDefinitionAdapter {
      * @return mixed
      */
     public function getIndexData($object) {
-        return $this->fieldDefinition->getForWebserviceExport($object);
+        $value = $this->fieldDefinition->getForWebserviceExport($object);
+        if($value) {
+            return $value;
+        } else {
+            return null;
+        }
     }
 
     /**

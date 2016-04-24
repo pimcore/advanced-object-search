@@ -8,3 +8,4 @@ plugin_esbackendsearch_subclass, Class
 plugin_esbackendsearch_filter, Filter
 plugin_esbackendsearch_type, Type
 plugin_esbackendsearch_ids, IDs
+plugin_esbackendsearch_results, Results

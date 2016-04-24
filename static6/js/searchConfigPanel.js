@@ -1,28 +1,25 @@
 
 pimcore.registerNS("pimcore.plugin.esbackendsearch.searchConfigPanel");
 pimcore.plugin.esbackendsearch.searchConfigPanel = Class.create(pimcore.element.abstract, {
-    initialize: function(data, parent, skip) {
-        if(skip) {
-            return;
-        }
+    initialize: function(data, parent) {
         this.parent = parent;
         this.data = data;
 
 
         this.tab = new Ext.TabPanel({
             activeTab: 0,
-            title: "hugo",
+            id: "plugin_es_search_configpanel",
+            title: t("plugin_esbackendsearch"),
             closable: true,
-            deferredRender: false,
             forceLayout: true,
             // Note, this must be the same id as used in panel.js
-            id: "pimcore_plugin_es_backendsearch_panel",
+            //id: "pimcore_plugin_es_backendsearch_panel",
             buttons: [{
                 text: t("save"),
                 iconCls: "pimcore_icon_apply",
                 handler: this.save.bind(this)
             }],
-            items: [/*this.getSettings(), this.getSource() ,*/ this.getConditions()]
+            items: [this.getConditions(), this.getResults()]
         });
 
 /*
@@ -39,9 +36,20 @@ pimcore.plugin.esbackendsearch.searchConfigPanel = Class.create(pimcore.element.
         }
 
         this.updateClassDefPanel();
-
+ */
         this.tab.on("activate", this.tabactivated.bind(this));
-*/
+
+        var tabPanel = Ext.getCmp("pimcore_panel_tabs");
+        tabPanel.add(this.tab);
+        tabPanel.setActiveItem("plugin_es_search_configpanel");
+
+        this.tab.on("destroy", function () {
+            pimcore.globalmanager.remove("plugin_es_search");
+        }.bind(this));
+
+        pimcore.layout.refresh();
+
+/*
         this.parent.editPanel.add(this.tab);
         this.parent.editPanel.setActiveTab(this.tab);
         this.parent.editPanel.updateLayout();
@@ -49,9 +57,15 @@ pimcore.plugin.esbackendsearch.searchConfigPanel = Class.create(pimcore.element.
         this.addPreviewPanel();*/
     },
 
-        tabactivated: function() {
+    activate: function () {
+        var tabPanel = Ext.getCmp("pimcore_panel_tabs");
+        tabPanel.activate("plugin_es_search_configpanel");
+    },
+
+
+    tabactivated: function() {
             this.checkForChanges();
-            // this.setupChangeDetector();
+            this.setupChangeDetector();
         },
 
         setColumnConfig: function(columnConfig) {
@@ -83,12 +97,6 @@ pimcore.plugin.esbackendsearch.searchConfigPanel = Class.create(pimcore.element.
             if (this.data.source.selectedClass) {
                 this.tab.add(this.getPreview());
             }
-        },
-
-        getClassTree: function(url, id) {
-            var classTreeHelper = new pimcore.object.helpers.classTree(true);
-            var tree = classTreeHelper.getClassTree(url, id);
-            return tree;
         },
 
         getSettings: function () {
@@ -159,6 +167,11 @@ pimcore.plugin.esbackendsearch.searchConfigPanel = Class.create(pimcore.element.
 
         },
 
+        getResults: function() {
+            this.resultPanel = new pimcore.plugin.esbackendsearch.searchConfig.resultPanel(this);
+            return this.resultPanel.getLayout();
+        },
+
         getSource: function () {
 
             var classStore = pimcore.globalmanager.get("object_types_store");
@@ -218,86 +231,6 @@ pimcore.plugin.esbackendsearch.searchConfigPanel = Class.create(pimcore.element.
             return this.sourceForm;
         },
 
-
-        updateBrickConfig: function(selectedClass) {
-            if (this.bricksFieldSet) {
-                this.sourceForm.remove(this.bricksFieldSet);
-                delete this.bricksFieldSet;
-            }
-
-            Ext.Ajax.request({
-                url: "/plugin/SavedSearch/admin/get-brick-config",
-                params: {
-                    id: selectedClass
-//                     ,
-//                     data: Ext.encode(saveData)
-                },
-                method: "post",
-                success: function (response) {
-
-                    var data = Ext.decode(response.responseText);
-
-                    var allowedBrickTypes = data.allowedBrickTypes;
-
-                    if (allowedBrickTypes.length > 0) {
-                        this.bricksFieldSet = new Ext.form.FieldSet(
-                            {
-                                title: t("plugin_savedsearch_fieldset_bricks")
-                            }
-                        );
-
-                        for (var i=0; i < allowedBrickTypes.length; i++) {
-                            var brickType = allowedBrickTypes[i];
-                            var isChecked = this.data.source["~" + brickType];
-
-                            var checkBox = new Ext.form.Checkbox(
-                                {
-                                    fieldLabel: ts(brickType),
-                                    name: "~" + brickType,
-                                    checked: isChecked
-                                }
-                            );
-
-                            this.bricksFieldSet.add(checkBox);
-                        }
-
-                        this.sourceForm.add(this.bricksFieldSet);
-                        this.sourceForm.updateLayout();
-                    }
-
-                }.bind(this)
-            });
-        },
-
-        updateClassDefPanel: function() {
-            // oly add the class panel if we have a class
-
-            if (!this.classOverviewContainerPanel) {
-                this.classOverviewContainerPanel = new Ext.Panel({
-                    region: "east",
-                    width: 300,
-                    autoScroll: true,
-                    items: []
-                });
-                this.conditionsContainer.add(this.classOverviewContainerPanel);
-
-            }
-
-
-            if (this.data.source.selectedClass) {
-
-                var classTreeInner = this.getClassTree("/admin/class/get-class-definition-for-column-config",
-                    this.data.source.selectedClass);
-                this.classTreeInner = classTreeInner;
-
-                this.classOverviewContainerPanel.removeAll();
-                this.classOverviewContainerPanel.add(classTreeInner);
-                classTreeInner.updateLayout();
-
-                this.classOverviewContainerPanel.updateLayout();
-            }
-        },
-
         changeClassSelect: function (field, newValue, oldValue) {
             if (newValue == oldValue) {
                 return;
@@ -325,17 +258,7 @@ pimcore.plugin.esbackendsearch.searchConfigPanel = Class.create(pimcore.element.
             pimcore.layout.refresh();
         },
 
-        setClass: function (classId) {
-            this.data.source.selectedClass = classId;
-
-        },
-
-
-        getClass: function() {
-            return this.data.source.selectedClass;
-        },
-
-        getSaveData: function() {
+        getSaveData: function(raw) {
             var saveData = {};
             //saveData["settings"] = this.settingsForm.getForm().getFieldValues();
             //saveData["source"] = this.sourceForm.getForm().getFieldValues();
@@ -353,7 +276,11 @@ pimcore.plugin.esbackendsearch.searchConfigPanel = Class.create(pimcore.element.
             if(this.conditionPanel) {
                 saveData["conditions"] = this.conditionPanel.getSaveData();
             }
-            return Ext.encode(saveData);
+            if(raw) {
+                return saveData;
+            } else {
+                return Ext.encode(saveData);
+            }
         },
 
         save: function () {
@@ -363,7 +290,7 @@ pimcore.plugin.esbackendsearch.searchConfigPanel = Class.create(pimcore.element.
                 url: "/plugin/ESBackendSearch/admin/filter",
                 params: {
                     id: this.data.id,
-                    data: saveData,
+                    filter: saveData,
                     language: this.language
                 },
                 method: "post",

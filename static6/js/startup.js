@@ -18,7 +18,7 @@ pimcore.plugin.esbackendsearch = Class.create(pimcore.plugin.admin, {
                     pimcore.globalmanager.get("plugin_es_search").activate();
                 }
                 catch (e) {
-                    pimcore.globalmanager.add("plugin_es_search", new pimcore.plugin.esbackendsearch.configpanel());
+                    pimcore.globalmanager.add("plugin_es_search", new pimcore.plugin.esbackendsearch.searchConfigPanel());
                 }
             }
         });
