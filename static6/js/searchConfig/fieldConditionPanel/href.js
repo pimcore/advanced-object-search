@@ -81,6 +81,7 @@ pimcore.plugin.esbackendsearch.searchConfig.fieldConditionPanel.href = Class.cre
 
 
                             this.subPanel.add(this.classSelection, this.subConditionsPanel);
+                            pimcore.layout.refresh();
 
                         }
                     }.bind(this)
@@ -105,11 +106,15 @@ pimcore.plugin.esbackendsearch.searchConfig.fieldConditionPanel.href = Class.cre
 
             subValue.type = "object";
             subValue.classId = this.classSelection.getValue();
-            subValue.filters = this.subConditions.getSaveData();
+            var saveData = this.subConditions.getSaveData();
+            subValue.filters = saveData.filters;
+            subValue.fulltextSearchTerm = saveData.fulltextSearchTerm;
 
         } else {
+
             subValue.type = this.typeField.getValue();
             subValue.id = this.idsField.getValue().split(",");
+
         }
 
         return {

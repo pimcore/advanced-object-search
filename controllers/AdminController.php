@@ -26,7 +26,7 @@ class ESBackendSearch_AdminController extends \Pimcore\Controller\Action\Admin {
 
         $data = json_decode($this->getParam("filter"), true);
 
-        $results = $service->doFilter($data['classId'], $data['conditions'], null);
+        $results = $service->doFilter($data['classId'], $data['conditions']['filters'], $data['conditions']['fulltextSearchTerm']);
 
         p_r($results); die();
 
@@ -70,7 +70,7 @@ class ESBackendSearch_AdminController extends \Pimcore\Controller\Action\Admin {
             //get ID list from ES Service
             $service = new ESBackendSearch\Service();
             $data = json_decode($this->getParam("filter"), true);
-            $results = $service->doFilter($data['classId'], $data['conditions'], null, $start, $limit);
+            $results = $service->doFilter($data['classId'], $data['conditions']['filters'], $data['conditions']['fulltextSearchTerm'], $start, $limit);
 
             $total = $service->extractTotalCountFromResult($results);
             $ids = $service->extractIdsFromResult($results);

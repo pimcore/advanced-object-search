@@ -6,6 +6,8 @@ plugin_esbackendsearch_operator,Operator
 plugin_esbackendsearch_language,Language
 plugin_esbackendsearch_subclass, Class
 plugin_esbackendsearch_filter, Filter
+plugin_esbackendsearch_filters, Filters
 plugin_esbackendsearch_type, Type
 plugin_esbackendsearch_ids, IDs
 plugin_esbackendsearch_results, Results
+plugin_esbackendsearch_fulltextterm, Search Term

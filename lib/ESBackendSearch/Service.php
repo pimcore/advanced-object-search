@@ -241,7 +241,7 @@ class Service {
      * @param string|BuilderInterface $fullTextQuery
      * @return array
      */
-    public function doFilter($classId, array $filters, $fullTextQuery, $from, $size) {
+    public function doFilter($classId, array $filters, $fullTextQuery, $from = null, $size = null) {
         $client = Plugin::getESClient();
 
         $classDefinition = \Pimcore\Model\Object\ClassDefinition::getById($classId);

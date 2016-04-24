@@ -52,9 +52,10 @@ class Href extends DefaultAdapter implements IFieldDefinitionAdapter {
      *
      *   - array with sub query
      *      [
-     *         'type'      => 'object|asset|document'
-     *         'classId' => 'CLASSID' (optional only with type object),
-     *         'filters'   => [ STANDARD FULL FEATURED FILTER ARRAY ]
+     *         'type'               => 'object|asset|document'
+     *         'classId'            => 'CLASSID' (optional only with type object),
+     *         'fulltextSearchTerm' => string as fulltext term
+     *         'filters'            => [ STANDARD FULL FEATURED FILTER ARRAY ]
      *      ]
      *       --> creates a sub query with given information, receives ids and then creates TermsQuery
      *
@@ -80,13 +81,11 @@ class Href extends DefaultAdapter implements IFieldDefinitionAdapter {
                         $boolQuery->add(new TermQuery($path . ".id", $fieldFilter['id']));
                     }
 
-                } else if($fieldFilter['classId'] && $fieldFilter['filters']) {
+                } else if($fieldFilter['classId'] && ($fieldFilter['filters'] || $fieldFilter['fulltextSearchTerm'])) {
 
-                    $results = $this->service->doFilter($fieldFilter['classId'], $fieldFilter['filters'], "");
-                    $ids = [];
-                    foreach($results['hits']['hits'] as $hit) {
-                        $ids[] = $hit['_id'];
-                    }
+                    $results = $this->service->doFilter($fieldFilter['classId'], $fieldFilter['filters'], $fieldFilter['fulltextSearchTerm']);
+                    
+                    $ids = $this->service->extractIdsFromResult($results);
 
                     $boolQuery->add(new TermsQuery($path . ".id", $ids));
 

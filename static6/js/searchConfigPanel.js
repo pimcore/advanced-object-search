@@ -141,7 +141,7 @@ pimcore.plugin.esbackendsearch.searchConfigPanel = Class.create(pimcore.element.
                     triggerAction: 'all',
                     // value: data.condition,
                     queryMode: 'local',
-                    style: "margin: 10px",
+                    //style: "margin: 10px",
                     width: 300,
                     forceSelection: true,
                     listeners: {
@@ -161,6 +161,8 @@ pimcore.plugin.esbackendsearch.searchConfigPanel = Class.create(pimcore.element.
 
             return new Ext.Panel({
                 scrollable: true,
+                style: "padding: 10px",
+                labelWidth: 400,
                 title: t("plugin_esbackendsearch_filter"),
                 items: [this.classSelection, this.conditionPanelContainer]
             });

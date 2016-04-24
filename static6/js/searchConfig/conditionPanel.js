@@ -32,16 +32,31 @@ pimcore.plugin.esbackendsearch.searchConfig.conditionPanel = Class.create({
         });
 
 
-        this.conditionsContainerInner = new Ext.Panel({
+        this.conditionsContainerInner = Ext.create('Ext.panel.Panel',{
             tbar: [{
                 iconCls: "pimcore_icon_add",
                 menu: addMenu
             }],
+            collapsible: true,
+            title: t("plugin_esbackendsearch_filters"),
             border: false,
             items: []
         });
 
-        return this.conditionsContainerInner;
+        this.termField = Ext.create('Ext.form.field.Text',
+            {
+                fieldLabel:  t("plugin_esbackendsearch_fulltextterm"),
+                width: "100%"
+            }
+        );
+
+        return Ext.create('Ext.panel.Panel',{
+            border: false,
+            items: [
+                this.termField,
+                this.conditionsContainerInner
+            ]
+        });
     },
 
     getSaveData: function() {
@@ -51,7 +66,10 @@ pimcore.plugin.esbackendsearch.searchConfig.conditionPanel = Class.create({
             var condition = conditions[i].panelInstance.getFilterValues();
             conditionsData.push(condition);
         }
-        return conditionsData;
+        return {
+            "filters": conditionsData,
+            "fulltextSearchTerm": this.termField.getValue()
+        };
     }
 
 
