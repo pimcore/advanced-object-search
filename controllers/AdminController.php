@@ -20,18 +20,6 @@ class ESBackendSearch_AdminController extends \Pimcore\Controller\Action\Admin {
         $this->_helper->json(['data' => $fields]);
     }
 
-
-    public function filterAction() {
-        $service = new ESBackendSearch\Service();
-
-        $data = json_decode($this->getParam("filter"), true);
-
-        $results = $service->doFilter($data['classId'], $data['conditions']['filters'], $data['conditions']['fulltextSearchTerm']);
-
-        p_r($results); die();
-
-    }
-
     public function gridProxyAction() {
         $requestedLanguage = $this->getParam("language");
         if ($requestedLanguage) {

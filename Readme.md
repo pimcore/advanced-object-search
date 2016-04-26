@@ -15,11 +15,11 @@ $classes = ["Product", "Customer"];
 
 foreach($classes as $class) {
 
-    $response = $client->indices()->delete(["index" => strtolower($class)]);
+    $response = $client->indices()->delete(["index" => $service->getIndexName($class)]);
     p_r($response);
 
 
-    $response = $client->indices()->create(["index" => strtolower($class)]);
+    $response = $client->indices()->create(["index" => $service->getIndexName($class)]);
     p_r($response);
 
 
@@ -28,7 +28,7 @@ foreach($classes as $class) {
     p_r($response);
 
     $params = [
-        'index' => strtolower($class),
+        'index' => $service->getIndexName($class),
         'type' => $class
     ];
     $response = $client->indices()->getMapping($params);

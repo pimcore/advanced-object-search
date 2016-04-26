@@ -68,6 +68,18 @@ class Service {
     }
 
     /**
+     * returns index name for given class name
+     *
+     * @param $classname string
+     * @return string
+     */
+    public function getIndexName($classname) {
+        $config = Plugin::getConfig();
+        return $config['index-prefix'] . strtolower($classname);
+    }
+
+
+    /**
      * generates and returns mapping for given class definition
      *
      * @param ClassDefinition $objectClass
@@ -91,7 +103,7 @@ class Service {
         }
 
         $mappingParams = [
-            "index" => strtolower($objectClass->getName()),
+            "index" => $this->getIndexName($objectClass->getName()),
             "type" => $objectClass->getName(),
             "body" => [
                 $objectClass->getName() => [
@@ -133,7 +145,7 @@ class Service {
         $data['o_checksum'] = $checksum;
 
         $params = [
-            'index' => strtolower($object->getClassName()),
+            'index' => $this->getIndexName($object->getClassName()),
             'type' =>  $object->getClassName(),
             'id' => $object->getId(),
             'body' => $data
@@ -284,7 +296,7 @@ class Service {
         }
 
         $params = [
-            'index' => strtolower($classDefinition->getName()),
+            'index' => $this->getIndexName($classDefinition->getName()),
             'type' => $classDefinition->getName(),
             'body' => $search->toArray()
         ];

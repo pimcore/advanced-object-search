@@ -42,20 +42,31 @@ class Plugin extends PluginLib\AbstractPlugin implements PluginLib\PluginInterfa
 
     public static function install()
     {
-        // implement your own logic here
+        if(!file_exists(PIMCORE_WEBSITE_PATH . "/config/esbackendsearch")) {
+            \Pimcore\File::mkdir(PIMCORE_WEBSITE_PATH . "/config/esbackendsearch");
+            copy(PIMCORE_PLUGINS_PATH . "/ESBackendSearch/install/config.php", PIMCORE_WEBSITE_PATH . "/config/esbackendsearch/config.php");
+        }
+
+        \Pimcore\File::mkdir(PIMCORE_WEBSITE_VAR . "/plugins/ESBackendSearch");
+        file_put_contents(PIMCORE_WEBSITE_VAR . "/plugins/ESBackendSearch/installed.dummy", "true");
+
         return true;
     }
-    
+
+    public static function needsReloadAfterInstall()
+    {
+        return true;
+    }
+
+
     public static function uninstall()
     {
-        // implement your own logic here
-        return true;
+        unlink(PIMCORE_WEBSITE_VAR . "/plugins/ESBackendSearch/installed.dummy");
     }
 
     public static function isInstalled()
     {
-        // implement your own logic here
-        return true;
+        return file_exists(PIMCORE_WEBSITE_VAR . "/plugins/ESBackendSearch/installed.dummy");
     }
 
 
@@ -70,11 +81,31 @@ class Plugin extends PluginLib\AbstractPlugin implements PluginLib\PluginInterfa
     public static function getESClient() {
 
         if(empty(self::$esClient)) {
-            self::$esClient = \Elasticsearch\ClientBuilder::create()->setHosts(["dev-elasticsearch"])->build();
+            $config = self::getConfig();
+            self::$esClient = \Elasticsearch\ClientBuilder::create()->setHosts($config['hosts'])->build();
         }
 
         return self::$esClient;
     }
+
+    /**
+     * @var array
+     */
+    protected static $config;
+    public static function getConfig() {
+        if(empty(self::$config)) {
+            $file = \Pimcore\Config::locateConfigFile("esbackendsearch/config.php");
+            if(file_exists($file)) {
+                $config = include($file);
+            } else {
+                throw new \Exception($file . " doesn't exist");
+            }
+            self::$config = $config;
+        }
+
+        return self::$config;
+    }
+
 
     /**
      * @param string $language
