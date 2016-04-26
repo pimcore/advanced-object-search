@@ -273,6 +273,57 @@ pimcore.plugin.esbackendsearch.searchConfig.resultPanel = Class.create(pimcore.o
         menu.showAt(e.pageX, e.pageY);
     },
 
+    batchPrepare: function(columnIndex, onlySelected){
+        // no batch for system properties
+        if(this.systemColumns.indexOf(this.grid.getColumns()[columnIndex].dataIndex) > -1) {
+            return;
+        }
+
+        var jobs = [];
+        if(onlySelected) {
+            var selectedRows = this.grid.getSelectionModel().getSelection();
+            for (var i=0; i<selectedRows.length; i++) {
+                jobs.push(selectedRows[i].get("id"));
+            }
+            this.batchOpen(columnIndex,jobs);
+
+        } else {
+
+            var filters = "";
+            var condition = "";
+
+            if(this.sqlButton.pressed) {
+                condition = this.sqlEditor.getValue();
+            } else {
+                var filterData = this.store.getFilters().items;
+                if(filterData.length > 0) {
+                    filters = this.store.getProxy().encodeFilters(filterData);
+                }
+            }
+
+            var params = {
+                filter: this.parent.getSaveData(),
+                classId: this.classId,
+                objecttype: this.objecttype,
+                language: this.gridLanguage
+            };
+
+
+            Ext.Ajax.request({
+                url: "/plugin/ESBackendSearch/admin/get-batch-jobs",
+                params: params,
+                success: function (columnIndex,response) {
+                    var rdata = Ext.decode(response.responseText);
+                    if (rdata.success && rdata.jobs) {
+                        this.batchOpen(columnIndex, rdata.jobs);
+                    }
+
+                }.bind(this,columnIndex)
+            });
+        }
+
+    },
+    
     startCsvExport: function () {
         var values = [];
         var filters = "";

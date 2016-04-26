@@ -99,5 +99,36 @@ class ESBackendSearch_AdminController extends \Pimcore\Controller\Action\Admin {
         }
     }
 
+    public function getBatchJobsAction()
+    {
+        if ($this->getParam("language")) {
+            $this->setLanguage($this->getParam("language"), true);
+        }
+
+        $class = Object\ClassDefinition::getById($this->getParam("classId"));
+
+        //get ID list from ES Service
+        $service = new ESBackendSearch\Service($this->getUser());
+        $data = json_decode($this->getParam("filter"), true);
+        $results = $service->doFilter($data['classId'], $data['conditions']['filters'], $data['conditions']['fulltextSearchTerm']);
+
+        $ids = $service->extractIdsFromResult($results);
+
+        $className = $class->getName();
+        $listClass = "\\Pimcore\\Model\\Object\\" . ucfirst($className) . "\\Listing";
+        $list = new $listClass();
+        $list->setCondition("o_id IN (" . implode(",", $ids) . ")");
+        $list->setOrder("ASC");
+        $list->setOrderKey("o_id");
+
+        if ($this->getParam("objecttype")) {
+            $list->setObjectTypes(array($this->getParam("objecttype")));
+        }
+
+        $jobs = $list->loadIdList();
+
+        $this->_helper->json(array("success"=>true, "jobs"=>$jobs));
+    }
+
 
 }
