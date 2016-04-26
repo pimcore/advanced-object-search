@@ -118,8 +118,7 @@ class ESBackendSearch_AdminController extends \Pimcore\Controller\Action\Admin {
         $listClass = "\\Pimcore\\Model\\Object\\" . ucfirst($className) . "\\Listing";
         $list = new $listClass();
         $list->setCondition("o_id IN (" . implode(",", $ids) . ")");
-        $list->setOrder("ASC");
-        $list->setOrderKey("o_id");
+        $list->setOrderKey(" FIELD(o_id, " . implode(",", $ids) . ")", false);
 
         if ($this->getParam("objecttype")) {
             $list->setObjectTypes(array($this->getParam("objecttype")));
@@ -128,6 +127,45 @@ class ESBackendSearch_AdminController extends \Pimcore\Controller\Action\Admin {
         $jobs = $list->loadIdList();
 
         $this->_helper->json(array("success"=>true, "jobs"=>$jobs));
+    }
+
+
+    protected function getCsvFile($fileHandle) {
+        return PIMCORE_SYSTEM_TEMP_DIRECTORY . "/" . $fileHandle . ".csv";
+    }
+
+    public function getExportJobsAction() {
+        if ($this->getParam("language")) {
+            $this->setLanguage($this->getParam("language"), true);
+        }
+
+        $class = Object\ClassDefinition::getById($this->getParam("classId"));
+
+        //get ID list from ES Service
+        $service = new ESBackendSearch\Service($this->getUser());
+        $data = json_decode($this->getParam("filter"), true);
+        $results = $service->doFilter($data['classId'], $data['conditions']['filters'], $data['conditions']['fulltextSearchTerm'], 0, 9999);
+
+        $ids = $service->extractIdsFromResult($results);
+
+//        $className = $class->getName();
+//        $listClass = "\\Pimcore\\Model\\Object\\" . ucfirst($className) . "\\Listing";
+//        $list = new $listClass();
+//        $list->setCondition("o_id IN (" . implode(",", $ids) . ")");
+//        $list->setOrderKey(" FIELD(o_id, " . implode(",", $ids) . ")", false);
+//
+//        if ($this->getParam("objecttype")) {
+//            $list->setObjectTypes(array($this->getParam("objecttype")));
+//        }
+//
+//        $ids = $list->loadIdList();
+
+        $jobs = array_chunk($ids, 20);
+
+        $fileHandle = uniqid("export-");
+        file_put_contents($this->getCsvFile($fileHandle), "");
+
+        $this->_helper->json(array("success"=>true, "jobs"=> $jobs, "fileHandle" => $fileHandle));
     }
 
 

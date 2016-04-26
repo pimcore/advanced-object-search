@@ -181,7 +181,7 @@ pimcore.plugin.esbackendsearch.searchConfig.resultPanel = Class.create(pimcore.o
                             buttons: Ext.Msg.OKCANCEL ,
                             fn: function(btn){
                                 if (btn == 'ok'){
-                                    this.startCsvExport();
+                                    this.exportPrepare();
                                 }
                             }.bind(this),
                             icon: Ext.MessageBox.WARNING
@@ -323,53 +323,33 @@ pimcore.plugin.esbackendsearch.searchConfig.resultPanel = Class.create(pimcore.o
         }
 
     },
-    
-    startCsvExport: function () {
-        var values = [];
-        var filters = "";
-        var condition = "";
 
-        var fields = this.getGridConfig().columns;
-        var fieldKeys = Object.keys(fields);
+    exportPrepare: function(){
+        var jobs = [];
 
-        if(this.sqlButton.pressed) {
-            condition = this.sqlEditor.getValue();
-        } else {
-            var store = this.grid.getStore();
-            var filterData = store.getFilters();
+        var params = {
+            filter: this.parent.getSaveData(),
+            classId: this.classId,
+            objecttype: this.objecttype,
+            language: this.gridLanguage
+        };
 
-            var filters = [];
-            for (var i = 0; i < filterData.length; i++) {
-                var filterItem = filterData.getAt(i);
+        Ext.Ajax.request({
+            url: "/plugin/ESBackendSearch/admin/get-export-jobs",
+            params: params,
+            success: function (response) {
+                var rdata = Ext.decode(response.responseText);
 
-                var fieldname = filterItem.getProperty();
-                var type = this.gridfilters[fieldname];
-                if (typeof type == 'object') {
-                    type = type.type;
+                var fields = this.getGridConfig().columns;
+                var fieldKeys = Object.keys(fields);
+
+                if (rdata.success && rdata.jobs) {
+                    this.exportProcess(rdata.jobs, rdata.fileHandle, fieldKeys, true);
                 }
-                filters.push({
-                    property: fieldname,
-                    type: type,
-                    comparison: filterItem.getOperator(),
-                    value: filterItem.getValue()
-                });
-            }
-            filters = Ext.encode(filters);
 
-        }
-
-        var path = "/admin/object-helper/export/classId/" + this.classId + "/folderId/" + this.element.id ;
-        path = path + "/?extjs6=1&" + Ext.urlEncode({
-                language: this.gridLanguage,
-                filter: filters,
-                condition: condition,
-                objecttype: this.objecttype,
-                "fields[]": fieldKeys
-            });
-        console.log(path);
-        pimcore.helpers.download(path);
-    }
-
+            }.bind(this)
+        });
+    },
 
 
 });
