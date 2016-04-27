@@ -60,6 +60,13 @@ pimcore.plugin.esbackendsearch.searchConfig.resultPanel = Class.create(pimcore.o
 
     createGrid: function(fromConfig, response) {
         var fields = [];
+
+        var itemsPerPage = 20;
+
+        if (response.pageSize) {
+            itemsPerPage = response.pageSize;
+        }
+
         if (response.responseText) {
             response = Ext.decode(response.responseText);   // initial config
             fields = response.availableFields;
@@ -84,15 +91,21 @@ pimcore.plugin.esbackendsearch.searchConfig.resultPanel = Class.create(pimcore.o
             this.selectedClass,
             fields,
             "/plugin/ESBackendSearch/admin/grid-proxy/classId/" + this.classId,
-            {language: this.gridLanguage},
+            {
+                language: this.gridLanguage,
+                limit: itemsPerPage
+            },
             false
         );
 
         gridHelper.showSubtype = false;
         gridHelper.showKey = true;
         gridHelper.enableEditor = true;
+        gridHelper.limit = itemsPerPage;
 
         this.store = gridHelper.getStore();
+        this.store.setPageSize(itemsPerPage);
+
         var proxy = this.store.getProxy();
         proxy.setActionMethods({
             create : 'GET',
@@ -122,8 +135,8 @@ pimcore.plugin.esbackendsearch.searchConfig.resultPanel = Class.create(pimcore.o
         });
 
 
-        this.pagingtoolbar = new Ext.PagingToolbar({
-            pageSize: 25,
+        this.pagingtoolbar = Ext.create("Ext.PagingToolbar", {
+            pageSize: itemsPerPage,
             store: this.store,
             displayInfo: true,
             displayMsg: '{0} - {1} / {2}',

@@ -67,6 +67,7 @@ class ESBackendSearch_AdminController extends \Pimcore\Controller\Action\Admin {
              * @var $list \Pimcore\Model\Object\Listing
              */
             $list = new $listClass();
+            $list->setObjectTypes(["object", "folder", "variant"]);
 
             if(!empty($ids)) {
                 $list->setCondition("o_id IN (" . implode(",", $ids) . ")");
@@ -105,6 +106,7 @@ class ESBackendSearch_AdminController extends \Pimcore\Controller\Action\Admin {
         $className = $class->getName();
         $listClass = "\\Pimcore\\Model\\Object\\" . ucfirst($className) . "\\Listing";
         $list = new $listClass();
+        $list->setObjectTypes(["object", "folder", "variant"]);
         $list->setCondition("o_id IN (" . implode(",", $ids) . ")");
         $list->setOrderKey(" FIELD(o_id, " . implode(",", $ids) . ")", false);
 
