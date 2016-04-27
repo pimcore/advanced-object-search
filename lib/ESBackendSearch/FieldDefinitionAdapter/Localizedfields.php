@@ -148,7 +148,7 @@ class Localizedfields extends DefaultAdapter implements IFieldDefinitionAdapter 
     {
         $fieldSelectionInformationEntries = [];
 
-        $children = $this->fieldDefinition->getChilds();
+        $children = $this->fieldDefinition->getFieldDefinitions();
         foreach($children as $child) {
             $fieldDefinitionAdapter = $this->service->getFieldDefinitionAdapter($child);
 

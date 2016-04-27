@@ -10,18 +10,25 @@ pimcore.plugin.esbackendsearch = Class.create(pimcore.plugin.admin, {
     },
  
     pimcoreReady: function (params,broker){
-        pimcore.globalmanager.get("layout_toolbar").searchMenu.add({
-            text: t("plugin_esbackendsearch"),
-            iconCls: "pimcore_icon_esbackendsearch",
-            handler: function () {
-                try {
-                    pimcore.globalmanager.get("plugin_es_search").activate();
+
+        var perspectiveCfg = pimcore.globalmanager.get("perspective");
+
+        var searchMenu = pimcore.globalmanager.get("layout_toolbar").searchMenu;
+        if(searchMenu && perspectiveCfg.inToolbar("search.esBackendSearch")) {
+            searchMenu.add({
+                text: t("plugin_esbackendsearch"),
+                iconCls: "pimcore_icon_esbackendsearch",
+                handler: function () {
+                    try {
+                        pimcore.globalmanager.get("plugin_es_search").activate();
+                    }
+                    catch (e) {
+                        pimcore.globalmanager.add("plugin_es_search", new pimcore.plugin.esbackendsearch.searchConfigPanel());
+                    }
                 }
-                catch (e) {
-                    pimcore.globalmanager.add("plugin_es_search", new pimcore.plugin.esbackendsearch.searchConfigPanel());
-                }
-            }
-        });
+            });
+        }
+
     }
 });
 

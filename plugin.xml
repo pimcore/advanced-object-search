@@ -32,7 +32,6 @@
 			<!-- js files with path relative to plugin-directory -->
 			<pluginJsPaths-extjs6>
                 <path>/plugins/ESBackendSearch/static6/js/startup.js</path>
-				<path>/plugins/ESBackendSearch/static6/js/panel.js</path>
 				<path>/plugins/ESBackendSearch/static6/js/searchConfigPanel.js</path>
 				<path>/plugins/ESBackendSearch/static6/js/searchConfig/conditionPanel.js</path>
 				<path>/plugins/ESBackendSearch/static6/js/searchConfig/resultPanel.js</path>
