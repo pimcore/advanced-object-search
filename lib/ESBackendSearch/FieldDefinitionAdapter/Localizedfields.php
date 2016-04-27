@@ -24,7 +24,7 @@ class Localizedfields extends DefaultAdapter implements IFieldDefinitionAdapter 
      */
     public function getESMapping() {
 
-        $children = $this->fieldDefinition->getChilds();
+        $children = $this->fieldDefinition->getFieldDefinitions();
         $childMappingProperties = [];
         foreach($children as $child) {
             $fieldDefinitionAdapter = $this->service->getFieldDefinitionAdapter($child);

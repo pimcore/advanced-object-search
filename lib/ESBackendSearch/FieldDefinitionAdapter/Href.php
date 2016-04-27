@@ -139,5 +139,17 @@ class Href extends DefaultAdapter implements IFieldDefinitionAdapter {
         )];
     }
 
+    /**
+     * @param Concrete $object
+     * @return mixed
+     */
+    public function getIndexData($object) {
+        $value = $this->fieldDefinition->getForWebserviceExport($object);
+        if($value) {
+            return $value;
+        } else {
+            return null;
+        }
+    }
 
 }
