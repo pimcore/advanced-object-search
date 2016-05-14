@@ -10,6 +10,8 @@ class FilterEntry {
     const EXISTS = "exists";
     const NOT_EXISTS = "not_exists";
 
+    const FIELDNAME_GROUP = "~~group~~";
+
     /**
      * operator for combining filters, default = MUST
      *
@@ -35,7 +37,7 @@ class FilterEntry {
     /**
      * FilterEntry constructor.
      * @param string $fieldname
-     * @param BuilderInterface|string|\stdClass $filterEntryData
+     * @param BuilderInterface|string|\stdClass|array $filterEntryData
      * @param string $operator
      */
     public function __construct($fieldname, $filterEntryData, $operator = BoolQuery::MUST)
@@ -90,7 +92,7 @@ class FilterEntry {
     }
 
     /**
-     * @return \stdClass | BuilderInterface | string
+     * @return \stdClass | BuilderInterface | string | array
      */
     public function getFilterEntryData()
     {
@@ -98,11 +100,15 @@ class FilterEntry {
     }
 
     /**
-     * @param \stdClass | BuilderInterface | string $filterEntryData
+     * @param \stdClass | BuilderInterface | string | array $filterEntryData
      */
     public function setFilterEntryData($filterEntryData)
     {
         $this->filterEntryData = $filterEntryData;
+    }
+
+    public function isGroup() {
+        return $this->fieldname == self::FIELDNAME_GROUP;
     }
 
 }

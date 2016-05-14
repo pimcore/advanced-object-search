@@ -33,9 +33,12 @@
 			<pluginJsPaths-extjs6>
                 <path>/plugins/ESBackendSearch/static6/js/startup.js</path>
 				<path>/plugins/ESBackendSearch/static6/js/searchConfigPanel.js</path>
+				<path>/plugins/ESBackendSearch/static6/js/searchConfig/helper.js</path>
 				<path>/plugins/ESBackendSearch/static6/js/searchConfig/conditionPanel.js</path>
 				<path>/plugins/ESBackendSearch/static6/js/searchConfig/resultPanel.js</path>
+				<path>/plugins/ESBackendSearch/static6/js/searchConfig/conditionAbstractPanel.js</path>
 				<path>/plugins/ESBackendSearch/static6/js/searchConfig/conditionEntryPanel.js</path>
+				<path>/plugins/ESBackendSearch/static6/js/searchConfig/conditionGroupPanel.js</path>
 				<path>/plugins/ESBackendSearch/static6/js/searchConfig/fieldConditionPanel/default.js</path>
 				<path>/plugins/ESBackendSearch/static6/js/searchConfig/fieldConditionPanel/localizedfields.js</path>
 				<path>/plugins/ESBackendSearch/static6/js/searchConfig/fieldConditionPanel/numeric.js</path>

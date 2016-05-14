@@ -13,35 +13,8 @@ pimcore.plugin.esbackendsearch.searchConfig.conditionPanel = Class.create({
     },
 
     getConditionPanel: function() {
-        // drop down menu for adding new conditions
-        var addMenu = [];
-
-        addMenu.push({
-            iconCls: "pimcore_icon_add",
-
-            handler: function(type, data) {
-                var itemClass = new pimcore.plugin.esbackendsearch.searchConfig.conditionEntryPanel(this.classId, this.conditionEntryPanelLayout);
-                var item = itemClass.getConditionPanel(this, data);
-                this.conditionsContainerInner.add(item);
-                item.updateLayout();
-                this.conditionsContainerInner.updateLayout();
-
-            }.bind(this),
-            // true => returns pretty name
-            text: t("plugin_esbackendsearch_condition")
-        });
-
-
-        this.conditionsContainerInner = Ext.create('Ext.panel.Panel',{
-            tbar: [{
-                iconCls: "pimcore_icon_add",
-                menu: addMenu
-            }],
-            collapsible: true,
-            title: t("plugin_esbackendsearch_filters"),
-            border: false,
-            items: []
-        });
+        var helper = new pimcore.plugin.esbackendsearch.searchConfig.helper();
+        this.conditionsContainerInner = helper.buildConditionsContainerInner(this.classId, this, "root-panel", this.conditionEntryPanelLayout);
 
         this.termField = Ext.create('Ext.form.field.Text',
             {
@@ -64,7 +37,9 @@ pimcore.plugin.esbackendsearch.searchConfig.conditionPanel = Class.create({
         var conditions = this.conditionsContainerInner.items.getRange();
         for (var i=0; i<conditions.length; i++) {
             var condition = conditions[i].panelInstance.getFilterValues();
-            conditionsData.push(condition);
+            if(condition) {
+                conditionsData.push(condition);
+            }
         }
         return {
             "filters": conditionsData,

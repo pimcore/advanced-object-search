@@ -13,3 +13,7 @@ plugin_esbackendsearch_results, Results
 plugin_esbackendsearch_fulltextterm, Search Term
 plugin_esbackendsearch_save_and_share, Save And Share
 plugin_esbackendsearch_share, Sharing
+plugin_esbackendsearch_combine_entries_with, Combine Entries with
+plugin_esbackendsearch_combine_entries_with_must, MUST
+plugin_esbackendsearch_combine_entries_with_should, SHOULD
+plugin_esbackendsearch_group,Group
