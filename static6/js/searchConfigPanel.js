@@ -142,12 +142,18 @@ pimcore.plugin.esbackendsearch.searchConfigPanel = Class.create(pimcore.element.
                 height: 100
                 //value: this.data.description
             }, {
+                xtype: "textfield",
+                fieldLabel: t("plugin_esbackendsearch_category"),
+                name: "category",
+                width: 500
+                //value: this.data.name,
+            }, {
                 xtype: "fieldset",
                 title: "plugin_esbackendsearch_share",
                 closeable: true,
                 items: [
                     {
-                        name: "description",
+                        name: "description1",
                         fieldLabel: t("xsdf"),
                         xtype: "textarea",
                         width: 500,
@@ -190,6 +196,13 @@ pimcore.plugin.esbackendsearch.searchConfigPanel = Class.create(pimcore.element.
         if(this.conditionPanel) {
             saveData["conditions"] = this.conditionPanel.getSaveData();
         }
+        if(this.resultPanel) {
+            saveData["gridConfig"] = this.resultPanel.getGridConfig();
+        }
+
+        if(this.settingsForm) {
+            saveData["settings"] = this.settingsForm.getForm().getFieldValues();
+        }
         if(raw) {
             return saveData;
         } else {
@@ -201,23 +214,27 @@ pimcore.plugin.esbackendsearch.searchConfigPanel = Class.create(pimcore.element.
         var saveData = this.getSaveData();
 
         Ext.Ajax.request({
-            url: "/plugin/ESBackendSearch/admin/filter",
+            url: "/plugin/ESBackendSearch/admin/save",
             params: {
-                id: this.data.id,
-                filter: saveData,
-                language: this.language
+                id: this.data ? this.data.id : null,
+                data: saveData
             },
             method: "post",
             success: function (response) {
-                //var rdata = Ext.decode(response.responseText);
-                /*if (rdata && rdata.success) {
-                    pimcore.helpers.showNotification(t("success"), t("plugin_savedsearch_save_success"), "success");
+                var rdata = Ext.decode(response.responseText);
+                if (rdata && rdata.success) {
+                    pimcore.helpers.showNotification(t("success"), t("plugin_esbackendsearch_save_success"), "success");
+
+                    if(!this.data) {
+                        this.data = {};
+                    }
+                    this.data.id = rdata.id;
+
                     this.resetChanges();
                 }
                 else {
-                    pimcore.helpers.showNotification(t("error"), t("plugin_savedsearch_save_error"), "error",t(rdata.message));
-                }*/
-                console.log(response.responseText);
+                    pimcore.helpers.showNotification(t("error"), t("plugin_esbackendsearch_save_error"), "error",t(rdata.message));
+                }
             }.bind(this)
         });
 

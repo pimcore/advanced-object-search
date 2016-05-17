@@ -17,3 +17,6 @@ plugin_esbackendsearch_combine_entries_with, Combine Entries with
 plugin_esbackendsearch_combine_entries_with_must, MUST
 plugin_esbackendsearch_combine_entries_with_should, SHOULD
 plugin_esbackendsearch_group,Group
+plugin_esbackendsearch_save_success,Search saved successfully
+plugin_esbackendsearch_save_error,Error occurred during save search
+plugin_esbackendsearch_category, Category

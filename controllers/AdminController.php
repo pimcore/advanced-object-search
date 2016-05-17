@@ -150,4 +150,46 @@ class ESBackendSearch_AdminController extends \Pimcore\Controller\Action\Admin {
     }
 
 
+    public function saveAction() {
+
+        $data = $this->getParam("data");
+        $data = json_decode($data);
+
+        $id = (intval($this->getParam("id")));
+        if($id) {
+            $savedSearch = \ESBackendSearch\SavedSearch::getById($id);
+        } else {
+            $savedSearch = new \ESBackendSearch\SavedSearch();
+            $savedSearch->setOwner($this->getUser());
+        }
+
+        $savedSearch->setName($data->settings->name);
+        $savedSearch->setDescription($data->settings->description);
+        $savedSearch->setCategory($data->settings->category);
+
+        $config = ['classId' => $data->classId, "gridConfig" => $data->gridConfig, "conditions" => $data->conditions];
+        $savedSearch->setConfig(json_encode($config));
+
+        $savedSearch->save();
+
+        $this->_helper->json(["success" => true, "id" => $savedSearch->getId()]);
+    }
+
+    public function testAction() {
+
+        $x = new \ESBackendSearch\SavedSearch();
+        $x->setName("Meins");
+        $x->setOwner($this->user);
+        $x->setCategory("mycategory");
+
+        $x->save();
+
+
+        $y = \ESBackendSearch\SavedSearch::getById(1);
+        p_r($y);
+
+
+        die("meins");
+    }
+
 }

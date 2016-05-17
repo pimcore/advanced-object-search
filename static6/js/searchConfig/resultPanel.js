@@ -128,7 +128,7 @@ pimcore.plugin.esbackendsearch.searchConfig.resultPanel = Class.create(pimcore.o
                     icon: "/pimcore/static6/img/flat-color-icons/cursor.svg",
                     handler: function (grid, rowIndex) {
                         var data = grid.getStore().getAt(rowIndex);
-                        pimcore.helpers.openObject(data.id, "variant");
+                        pimcore.helpers.openObject(data.id);
                     }.bind(this)
                 }
             ]
@@ -363,6 +363,20 @@ pimcore.plugin.esbackendsearch.searchConfig.resultPanel = Class.create(pimcore.o
             }.bind(this)
         });
     },
+
+
+    getGridConfig: function($super) {
+
+        if(this.grid) {
+            var config = $super();
+            config.pageSize = this.pagingtoolbar.pageSize;
+            return config;
+        } else {
+            return this.parent.getColumnConfig();
+        }
+
+    }
+
 
 
 });

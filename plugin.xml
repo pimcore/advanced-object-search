@@ -22,6 +22,7 @@
             <!-- include paths relative to plugin-directory -->
 			<pluginIncludePaths>
 				<path>/ESBackendSearch/lib</path>
+				<path>/ESBackendSearch/models</path>
 			</pluginIncludePaths>
 
 			<!-- namespaces to register with autoloader-->
