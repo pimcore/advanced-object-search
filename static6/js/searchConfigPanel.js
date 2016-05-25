@@ -1,19 +1,23 @@
 
 pimcore.registerNS("pimcore.plugin.esbackendsearch.searchConfigPanel");
 pimcore.plugin.esbackendsearch.searchConfigPanel = Class.create(pimcore.element.abstract, {
+
     initialize: function(data, parent) {
         this.parent = parent;
         this.data = data;
 
+        var title = t("plugin_esbackendsearch");
+        if(this.data && this.data.name) {
+            title = title + ": " + this.data.name;
+        }
 
         this.tab = new Ext.TabPanel({
             activeTab: 0,
-            id: "plugin_es_search_configpanel",
-            title: t("plugin_esbackendsearch"),
+            id: this.getTabId(),
+            title: title,
             iconCls: "pimcore_icon_esbackendsearch",
             closable: true,
             forceLayout: true,
-            // Note, this must be the same id as used in panel.js
             items: [this.getConditions(), this.getResults(), this.getSaveAndShare()]
         });
 
@@ -36,18 +40,29 @@ pimcore.plugin.esbackendsearch.searchConfigPanel = Class.create(pimcore.element.
 
         var tabPanel = Ext.getCmp("pimcore_panel_tabs");
         tabPanel.add(this.tab);
-        tabPanel.setActiveItem("plugin_es_search_configpanel");
+        tabPanel.setActiveItem(this.getTabId());
 
         this.tab.on("destroy", function () {
-            pimcore.globalmanager.remove("plugin_es_search");
+            pimcore.globalmanager.remove(this.getTabId());
         }.bind(this));
 
         pimcore.layout.refresh();
     },
 
+    getTabId: function() {
+        if(!this.tabId) {
+            if(this.data && this.data.id) {
+                this.tabId = "pimcore_search_" + this.data.id;
+            } else {
+                this.tabId = "pimcore_search_" + uniqid();
+            }
+        }
+        return this.tabId;
+    },
+
     activate: function () {
         var tabPanel = Ext.getCmp("pimcore_panel_tabs");
-        tabPanel.activate("plugin_es_search_configpanel");
+        tabPanel.setActiveItem(this.getTabId());
     },
 
 

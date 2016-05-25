@@ -175,6 +175,115 @@ class ESBackendSearch_AdminController extends \Pimcore\Controller\Action\Admin {
         $this->_helper->json(["success" => true, "id" => $savedSearch->getId()]);
     }
 
+    public function findAction() {
+
+        $user = $this->getUser();
+
+        $query = $this->getParam("query");
+        if ($query == "*") {
+            $query = "";
+        }
+
+        $query = str_replace("%", "*", $query);
+
+        $offset = intval($this->getParam("start"));
+        $limit = intval($this->getParam("limit"));
+
+        $offset = $offset ? $offset : 0;
+        $limit = $limit ? $limit : 50;
+
+        $searcherList = new \ESBackendSearch\SavedSearch\Listing();
+        $conditionParts = array();
+        $conditionParams = array();
+        $db = \Pimcore\Db::get();
+
+        if (!empty($query)) {
+            $conditionParts[] = "(name LIKE ? OR description LIKE ? OR category LIKE ?)";
+            $conditionParams[] = "%" . $query . "%";
+            $conditionParams[] = "%" . $query . "%";
+            $conditionParams[] = "%" . $query . "%";
+        }
+
+
+        // filtering for objects
+        if ($this->getParam("filter")) {
+
+            //TODO
+//            $conditionFilters = Object\Service::getFilterCondition($this->getParam("filter"), $class);
+//            $join = "";
+//            foreach ($bricks as $ob) {
+//                $join .= " LEFT JOIN object_brick_query_" . $ob . "_" . $class->getId();
+//
+//                $join .= " `" . $ob . "`";
+//                $join .= " ON `" . $ob . "`.o_id = `object_" . $class->getId() . "`.o_id";
+//            }
+//
+//            $conditionParts[] = "( id IN (SELECT `object_" . $class->getId() . "`.o_id FROM object_" . $class->getId() . $join . " WHERE " . $conditionFilters . ") )";
+        }
+
+
+        if (count($conditionParts) > 0) {
+            $condition = implode(" AND ", $conditionParts);
+
+            //echo $condition; die();
+            $searcherList->setCondition($condition, $conditionParams);
+        }
+
+
+        $searcherList->setOffset($offset);
+        $searcherList->setLimit($limit);
+
+        $sortingSettings = \Pimcore\Admin\Helper\QueryParams::extractSortingSettings($this->getAllParams());
+        if ($sortingSettings['orderKey']) {
+            $searcherList->setOrderKey($sortingSettings['orderKey']);
+        }
+        if ($sortingSettings['order']) {
+            $searcherList->setOrder($sortingSettings['order']);
+        }
+
+        $results = []; //$searcherList->load();
+        foreach($searcherList->load() as $result) {
+            $results[] = [
+                'id' => $result->getId(),
+                'name' => $result->getName(),
+                'description' => $result->getDescription(),
+                'category' => $result->getCategory(),
+                'owner' => $result->getOwner() ? $result->getOwner()->getFirstname() . " " . $result->getOwner()->getLastName() . "(" . $result->getOwner()->getUsername() . ")": "",
+                'ownerId' => $result->getOwnerId()
+            ];
+        }
+
+        // only get the real total-count when the limit parameter is given otherwise use the default limit
+        if ($this->getParam("limit")) {
+            $totalMatches = $searcherList->getTotalCount();
+        } else {
+            $totalMatches = count($results);
+        }
+
+        $this->_helper->json(array("data" => $results, "success" => true, "total" => $totalMatches));
+
+        $this->removeViewRenderer();
+    }
+
+    public function loadSearchAction() {
+
+        $id = intval($this->getParam("id"));
+        $savedSearch = \ESBackendSearch\SavedSearch::getById($id);
+        if($savedSearch) {
+            $config = json_decode($savedSearch->getConfig(), true);
+            $this->_helper->json([
+                'id' => $savedSearch->getId(),
+                'classId' => $config['classId'],
+                'settings' => [
+                    'name' => $savedSearch->getName(),
+                    'description' => $savedSearch->getDescription()
+                ],
+                'conditions' => $config['conditions'],
+                'gridConfig' => $config['gridConfig']
+            ]);
+        }
+    }
+
     public function testAction() {
 
         $x = new \ESBackendSearch\SavedSearch();
@@ -193,3 +302,4 @@ class ESBackendSearch_AdminController extends \Pimcore\Controller\Action\Admin {
     }
 
 }
+

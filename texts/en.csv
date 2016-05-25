@@ -20,3 +20,4 @@ plugin_esbackendsearch_group,Group
 plugin_esbackendsearch_save_success,Search saved successfully
 plugin_esbackendsearch_save_error,Error occurred during save search
 plugin_esbackendsearch_category, Category
+plugin_esbackendsearch_open_saved_searches, Open saved Searches
