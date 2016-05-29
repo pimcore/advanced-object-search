@@ -9,6 +9,8 @@ pimcore.plugin.esbackendsearch.searchConfig.conditionEntryPanel = Class.create(p
             data = {};
         }
 
+        console.log(data);
+
         var fieldStore = new Ext.data.JsonStore({
             autoDestroy: true,
             autoLoad: true,
@@ -24,20 +26,33 @@ pimcore.plugin.esbackendsearch.searchConfig.conditionEntryPanel = Class.create(p
             fields: ['fieldName','fieldLabel', 'fieldType', 'context'],
             listeners: {
                 load: function (store) {
-                    // if(this.fieldsCombobox) {
-                    //     this.fieldsCombobox.setValue(this.data);
-                    // }
+                    if(data.fieldname) {
+
+                        if(data.fieldname == "localizedfields") {
+                            //need to get real fieldname of localized fields
+                            var language = Object.keys(data.filterEntryData)[0];
+                            if(language) {
+                                var fieldname = data.filterEntryData[language][0].fieldname;
+                                if(fieldname) {
+                                    this.fieldSelection.setValue(fieldname);
+                                }
+                            }
+
+                        } else {
+                            this.fieldSelection.setValue(data.fieldname);
+                        }
+
+                    }
                 }.bind(this)
             }
         });
 
-        var fieldSelection = Ext.create('Ext.form.ComboBox',
+        this.fieldSelection = Ext.create('Ext.form.ComboBox',
             {
 
                 fieldLabel: t("plugin_esbackendsearch_field"),
                 name: "condition",
                 store: fieldStore,
-                // value: data.condition,
                 queryMode: 'local',
                 width: 400,
                 valueField: 'fieldName',
@@ -45,14 +60,19 @@ pimcore.plugin.esbackendsearch.searchConfig.conditionEntryPanel = Class.create(p
                 listeners: {
                     change: function( item, newValue, oldValue, eOpts ) {
                         var record = item.getStore().findRecord('fieldName', newValue);
-                        var data = record.data;
+                        if(record) {
+                            var fieldSelectionInformation = record.data;
 
-                        this.fieldConditionPanel.removeAll();
-                        if(pimcore.plugin.esbackendsearch.searchConfig.fieldConditionPanel[data.fieldType]) {
-                            this.fieldCondition = new pimcore.plugin.esbackendsearch.searchConfig.fieldConditionPanel[data.fieldType](data);
-                            this.fieldConditionPanel.add(this.fieldCondition.getConditionPanel());
-                        } else {
-                            console.log("ERROR - no implementation for field condition panel for " + data.fieldType);
+                            this.fieldConditionPanel.removeAll();
+                            if(pimcore.plugin.esbackendsearch.searchConfig.fieldConditionPanel[fieldSelectionInformation.fieldType]) {
+                                this.fieldCondition = new pimcore.plugin.esbackendsearch.searchConfig.fieldConditionPanel[fieldSelectionInformation.fieldType](fieldSelectionInformation, data);
+                                this.fieldConditionPanel.add(this.fieldCondition.getConditionPanel());
+                            } else {
+                                console.log("ERROR - no implementation for field condition panel for " + fieldSelectionInformation.fieldType);
+                            }
+
+                            //after first change, reset data
+                            data = {};
                         }
 
                     }.bind(this)
@@ -71,13 +91,13 @@ pimcore.plugin.esbackendsearch.searchConfig.conditionEntryPanel = Class.create(p
         return Ext.create('Ext.panel.Panel', {
             id: myId,
             bodyStyle: "padding: 15px 10px;",
-            tbar: this.getTopBar(niceName, myId, panel, data),
+            tbar: this.getTopBar(niceName, myId, panel),
             layout: this.mainPanelLayout,
             scrollable: true,
             border: 1,
             panelInstance: this,
             items: [
-                fieldSelection, this.fieldConditionPanel
+                this.fieldSelection, this.fieldConditionPanel
             ]
         });
 

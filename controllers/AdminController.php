@@ -276,7 +276,8 @@ class ESBackendSearch_AdminController extends \Pimcore\Controller\Action\Admin {
                 'classId' => $config['classId'],
                 'settings' => [
                     'name' => $savedSearch->getName(),
-                    'description' => $savedSearch->getDescription()
+                    'description' => $savedSearch->getDescription(),
+                    'category' => $savedSearch->getCategory()
                 ],
                 'conditions' => $config['conditions'],
                 'gridConfig' => $config['gridConfig']

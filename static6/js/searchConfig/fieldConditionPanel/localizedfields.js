@@ -3,27 +3,30 @@ pimcore.registerNS("pimcore.plugin.esbackendsearch.searchConfig.fieldConditionPa
 pimcore.plugin.esbackendsearch.searchConfig.fieldConditionPanel.localizedfields = Class.create(pimcore.plugin.esbackendsearch.searchConfig.fieldConditionPanel.default, {
 
     getConditionPanel: function() {
-        this.subPanel = new pimcore.plugin.esbackendsearch.searchConfig.fieldConditionPanel[this.fieldSelectionInformation.context.subType](this.fieldSelectionInformation);
+
+        var language = "";
+        var subData = null;
+        if(this.data && this.data.filterEntryData) {
+            language = Object.keys(this.data.filterEntryData)[0];
+            
+            if(language) {
+                subData = this.data.filterEntryData[language][0];
+            }
+            
+        }
+
+        this.subPanel = new pimcore.plugin.esbackendsearch.searchConfig.fieldConditionPanel[this.fieldSelectionInformation.context.subType](this.fieldSelectionInformation, subData);
 
         this.languageField = Ext.create('Ext.form.ComboBox',
             {
                 fieldLabel: t("plugin_esbackendsearch_language"),
                 name: "language",
                 store: this.fieldSelectionInformation.context.languages,
-                // value: data.condition,
+                value: language,
                 queryMode: 'local',
                 width: 300,
                 displayField: 'data',
-                forceSelection: true,
-                listeners: {
-                    change: function( item, newValue, oldValue, eOpts ) {
-                        // var record = item.getStore().findRecord('fieldName', newValue);
-                        // var data = record.data;
-                        //
-                        // this.itemPanel.setTitle("BBBB");
-
-                    }.bind(this)
-                }
+                forceSelection: true
             }
         );
 

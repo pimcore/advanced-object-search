@@ -10,39 +10,43 @@ pimcore.plugin.esbackendsearch.searchConfig.conditionGroupPanel = Class.create(p
         return Ext.create('Ext.panel.Panel', {
             id: myId,
             bodyStyle: "padding: 15px 10px;",
-            tbar: this.getTopBar(niceName, myId, panel, data),
+            tbar: this.getTopBar(niceName, myId, panel),
             layout: this.mainPanelLayout,
             scrollable: true,
             border: 1,
             panelInstance: this,
             items: [
-                this.getInnerConditionPanel(myId)
+                this.getInnerConditionPanel(myId, data)
             ]
         });
 
     },
 
-    getInnerConditionPanel: function(myId) {
-        var helper = new pimcore.plugin.esbackendsearch.searchConfig.helper();
-        this.conditionsContainerInner = helper.buildConditionsContainerInner(this.classId, this, myId, this.conditionEntryPanelLayout);
+    getInnerConditionPanel: function(myId, data) {
+        var helper = new pimcore.plugin.esbackendsearch.searchConfig.conditionPanelContainerBuilder(this.classId, this, myId, this.conditionEntryPanelLayout);
+        this.conditionsContainerInner = helper.buildConditionsContainerInner();
+
+        if(data.filterEntryData) {
+            helper.populateConditionsContainerInner(data.filterEntryData);
+        }
 
         return Ext.create('Ext.panel.Panel',{
             border: false,
             width: "100%",
             items: [
-                this.getOperatorCombobox(),
+                this.getOperatorCombobox(data),
                 this.conditionsContainerInner
             ]
         });
     },
 
-    getOperatorCombobox: function() {
+    getOperatorCombobox: function(data) {
         this.operatorField = Ext.create('Ext.form.ComboBox',
             {
 
                 fieldLabel:  t("plugin_esbackendsearch_operator"),
                 store: ["must", "should"],
-                // value: data.condition,
+                value: data ? data.operator : "",
                 queryMode: 'local',
                 width: 300,
                 listeners: {

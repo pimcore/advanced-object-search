@@ -42,28 +42,7 @@ pimcore.plugin.esbackendsearch = Class.create(pimcore.plugin.admin, {
                 text: t("plugin_esbackendsearch_search"),
                 iconCls: "pimcore_icon_esbackendsearch",
                 handler: function () {
-                    new pimcore.plugin.esbackendsearch.selector(function(selection)  {
-
-                        var id = selection.id;
-                        if(id) {
-                            Ext.Ajax.request({
-                                url: "/plugin/ESBackendSearch/admin/load-search",
-                                params: {
-                                    id: id
-                                },
-                                method: "get",
-                                success: function (response) {
-                                    var rdata = Ext.decode(response.responseText);
-
-                                    console.log(rdata);
-
-                                }.bind(this)
-                            });
-
-
-                        }
-                        console.log(selection);
-                    });
+                    new pimcore.plugin.esbackendsearch.selector();
                 }
             });
         }

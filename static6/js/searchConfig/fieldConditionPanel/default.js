@@ -3,11 +3,15 @@ pimcore.registerNS("pimcore.plugin.esbackendsearch.searchConfig.fieldConditionPa
 pimcore.plugin.esbackendsearch.searchConfig.fieldConditionPanel.default = Class.create({
 
     fieldSelectionInformation: null,
+    data: {},
     termField: null,
     operatorField: null,
 
-    initialize: function(fieldSelectionInformation) {
+    initialize: function(fieldSelectionInformation, data) {
         this.fieldSelectionInformation = fieldSelectionInformation;
+        if(data) {
+            this.data = data;
+        }
     },
 
     getConditionPanel: function() {
@@ -16,26 +20,27 @@ pimcore.plugin.esbackendsearch.searchConfig.fieldConditionPanel.default = Class.
             {
                 fieldLabel:  t("plugin_esbackendsearch_term"),
                 width: 400,
-                style: "padding-left: 20px"
+                style: "padding-left: 20px",
+                value: this.data.filterEntryData
             }
         );
 
         return Ext.create('Ext.panel.Panel', {
             layout: 'hbox',
             items: [
-                this.getOperatorCombobox(),
+                this.getOperatorCombobox(this.data.operator),
                 this.termField
             ]
         });
     },
 
-    getOperatorCombobox: function() {
+    getOperatorCombobox: function(value) {
         this.operatorField = Ext.create('Ext.form.ComboBox',
             {
 
                 fieldLabel:  t("plugin_esbackendsearch_operator"),
                 store: this.fieldSelectionInformation.context.operators,
-                // value: data.condition,
+                value: value,
                 queryMode: 'local',
                 width: 300,
                 valueField: 'fieldName',

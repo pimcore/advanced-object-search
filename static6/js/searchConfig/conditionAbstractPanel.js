@@ -15,12 +15,7 @@ pimcore.plugin.esbackendsearch.searchConfig.conditionAbstractPanel = Class.creat
 
     },
 
-    getTopBar: function (name, index, parent, data) {
-
-        if(!data["operator"]) {
-            data.operator = "and";
-        }
-
+    getTopBar: function (name, index, parent) {
         return [{
             xtype: "tbtext",
             text: "<b>" + name + "</b>"

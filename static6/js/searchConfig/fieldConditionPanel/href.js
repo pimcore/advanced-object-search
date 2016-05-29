@@ -29,7 +29,8 @@ pimcore.plugin.esbackendsearch.searchConfig.fieldConditionPanel.href = Class.cre
                             this.idsField = Ext.create('Ext.form.field.Text',
                                 {
                                     fieldLabel:  t("plugin_esbackendsearch_ids"),
-                                    width: 400
+                                    width: 400,
+                                    value: this.data.filterEntryData && this.data.filterEntryData.id ? this.data.filterEntryData.id.join() : ""
                                 }
                             );
 
@@ -59,7 +60,7 @@ pimcore.plugin.esbackendsearch.searchConfig.fieldConditionPanel.href = Class.cre
                                     valueField: 'id',
                                     displayField: 'translatedText',
                                     triggerAction: 'all',
-                                    // value: data.condition,
+                                    value: this.data.filterEntryData.classId,
                                     queryMode: 'local',
                                     width: 300,
                                     forceSelection: true,
@@ -68,7 +69,7 @@ pimcore.plugin.esbackendsearch.searchConfig.fieldConditionPanel.href = Class.cre
 
                                             if(newValue != oldValue) {
                                                 this.subConditionsPanel.removeAll();
-                                                this.subConditions = new pimcore.plugin.esbackendsearch.searchConfig.conditionPanel(newValue, "auto");
+                                                this.subConditions = new pimcore.plugin.esbackendsearch.searchConfig.conditionPanel(newValue, null, "auto");
                                                 this.subConditionsPanel.add(this.subConditions.getConditionPanel());
                                             }
 
@@ -79,6 +80,10 @@ pimcore.plugin.esbackendsearch.searchConfig.fieldConditionPanel.href = Class.cre
 
                             this.subConditionsPanel = Ext.create('Ext.panel.Panel', {});
 
+                            if(this.data.filterEntryData.classId) {
+                                this.subConditions = new pimcore.plugin.esbackendsearch.searchConfig.conditionPanel(this.data.filterEntryData.classId, this.data.filterEntryData, "auto");
+                                this.subConditionsPanel.add(this.subConditions.getConditionPanel());
+                            }
 
                             this.subPanel.add(this.classSelection, this.subConditionsPanel);
                             pimcore.layout.refresh();
@@ -88,6 +93,14 @@ pimcore.plugin.esbackendsearch.searchConfig.fieldConditionPanel.href = Class.cre
                 }
             }
         );
+
+        if(this.data.filterEntryData) {
+            if(this.data.filterEntryData.id) {
+                this.typeField.setValue("object");
+            } else {
+                this.typeField.setValue("object_filter");
+            }
+        }
 
         return Ext.create('Ext.panel.Panel', {
             items: [
@@ -113,7 +126,9 @@ pimcore.plugin.esbackendsearch.searchConfig.fieldConditionPanel.href = Class.cre
         } else {
 
             subValue.type = this.typeField.getValue();
-            subValue.id = this.idsField.getValue().split(",");
+            if(this.idsField) {
+                subValue.id = this.idsField.getValue().split(",");
+            }
 
         }
 

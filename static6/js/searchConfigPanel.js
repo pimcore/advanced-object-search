@@ -2,13 +2,15 @@
 pimcore.registerNS("pimcore.plugin.esbackendsearch.searchConfigPanel");
 pimcore.plugin.esbackendsearch.searchConfigPanel = Class.create(pimcore.element.abstract, {
 
-    initialize: function(data, parent) {
-        this.parent = parent;
+    initialize: function(data) {
         this.data = data;
+        if(!this.data) {
+            this.data = {};
+        }
 
         var title = t("plugin_esbackendsearch");
-        if(this.data && this.data.name) {
-            title = title + ": " + this.data.name;
+        if(this.data.settings && this.data.settings.name) {
+            title = title + ": " + this.data.settings.name;
         }
 
         this.tab = new Ext.TabPanel({
@@ -99,9 +101,8 @@ pimcore.plugin.esbackendsearch.searchConfigPanel = Class.create(pimcore.element.
                 valueField: 'id',
                 displayField: 'translatedText',
                 triggerAction: 'all',
-                // value: data.condition,
+                value: this.data.classId,
                 queryMode: 'local',
-                //style: "margin: 10px",
                 width: 300,
                 forceSelection: true,
                 listeners: {
@@ -117,6 +118,11 @@ pimcore.plugin.esbackendsearch.searchConfigPanel = Class.create(pimcore.element.
                 }
             }
         );
+
+        if(this.data.classId) {
+            this.conditionPanel = new pimcore.plugin.esbackendsearch.searchConfig.conditionPanel(this.data.classId, this.data.conditions);
+            this.conditionPanelContainer.add(this.conditionPanel.getConditionPanel());
+        }
 
 
         return new Ext.Panel({
@@ -147,21 +153,21 @@ pimcore.plugin.esbackendsearch.searchConfigPanel = Class.create(pimcore.element.
                 xtype: "textfield",
                 fieldLabel: t("name"),
                 name: "name",
-                width: 500
-                //value: this.data.name,
+                width: 500,
+                value: this.data.settings ? this.data.settings.name : ""
             }, {
                 name: "description",
                 fieldLabel: t("description"),
                 xtype: "textarea",
                 width: 500,
-                height: 100
-                //value: this.data.description
+                height: 100,
+                value: this.data.settings ? this.data.settings.description : ""
             }, {
                 xtype: "textfield",
                 fieldLabel: t("plugin_esbackendsearch_category"),
                 name: "category",
-                width: 500
-                //value: this.data.name,
+                width: 500,
+                value: this.data.settings ? this.data.settings.category: ""
             }, {
                 xtype: "fieldset",
                 title: "plugin_esbackendsearch_share",
