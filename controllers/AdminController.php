@@ -176,6 +176,19 @@ class ESBackendSearch_AdminController extends \Pimcore\Controller\Action\Admin {
         $this->_helper->json(["success" => true, "id" => $savedSearch->getId()]);
     }
 
+
+    public function deleteAction() {
+
+        $id = intval($this->getParam("id"));
+        $savedSearch = \ESBackendSearch\SavedSearch::getById($id);
+
+        if($savedSearch) {
+            $savedSearch->delete();
+            $this->_helper->json(["success" => true, "id" => $savedSearch->getId()]);
+        }
+
+    }
+
     public function findAction() {
 
         $user = $this->getUser();

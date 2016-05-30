@@ -183,7 +183,7 @@ pimcore.plugin.esbackendsearch.searchConfigPanel = Class.create(pimcore.element.
             buttons.push({
                 text: t("delete"),
                 iconCls: "pimcore_icon_delete",
-                handler: this.save.bind(this)
+                handler: this.delete.bind(this)
             });
             buttons.push({
                 text: t("save"),
@@ -310,7 +310,70 @@ pimcore.plugin.esbackendsearch.searchConfigPanel = Class.create(pimcore.element.
         this.sharingField.setValue("");
         this.nameField.setValue(this.nameField.getValue() + " " + t("plugin_esbackendsearch_name_copy_suffix"));
 
-        this.save();
+        var saveData = this.getSaveData();
+
+        Ext.Ajax.request({
+            url: "/plugin/ESBackendSearch/admin/save",
+            params: {
+                id: this.data ? this.data.id : null,
+                data: saveData
+            },
+            method: "post",
+            success: function (response) {
+                var rdata = Ext.decode(response.responseText);
+                if (rdata && rdata.success) {
+                    pimcore.helpers.showNotification(t("success"), t("plugin_esbackendsearch_save_success"), "success");
+
+                    this.tab.close();
+
+                    Ext.Ajax.request({
+                        url: "/plugin/ESBackendSearch/admin/load-search",
+                        params: {
+                            id: rdata.id
+                        },
+                        method: "get",
+                        success: function (response) {
+                            var rdata = Ext.decode(response.responseText);
+                            var esSearch = new pimcore.plugin.esbackendsearch.searchConfigPanel(rdata);
+                            pimcore.globalmanager.add(esSearch.getTabId(), esSearch);
+                        }.bind(this)
+                    });
+                }
+                else {
+                    pimcore.helpers.showNotification(t("error"), t("plugin_esbackendsearch_save_error"), "error",t(rdata.message));
+                }
+            }.bind(this)
+        });
+    },
+
+    delete: function() {
+        if(!this.data && !this.data.id) {
+            pimcore.helpers.showNotification(t("error"), t("plugin_esbackendsearch_delete_error"), "error");
+        } else {
+            Ext.MessageBox.show({
+                title:t('delete'),
+                msg: t("plugin_esbackendsearch_delete_really"),
+                buttons: Ext.Msg.OKCANCEL ,
+                icon: Ext.MessageBox.INFO ,
+                fn: function(button) {
+                    if (button == "ok") {
+                        Ext.Ajax.request({
+                            url: "/plugin/ESBackendSearch/admin/delete",
+                            params: {
+                                id: this.data.id
+                            },
+                            method: "post",
+                            success: function (response) {
+                                pimcore.globalmanager.remove(this.getTabId());
+                                this.tab.close();
+                            }.bind(this)
+                        });
+                    }
+
+
+                }.bind(this)
+            });
+        }
     },
 
     setTitle: function(name) {
