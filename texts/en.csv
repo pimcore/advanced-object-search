@@ -21,3 +21,11 @@ plugin_esbackendsearch_save_success,Search saved successfully
 plugin_esbackendsearch_save_error,Error occurred during save search
 plugin_esbackendsearch_category, Category
 plugin_esbackendsearch_open_saved_searches, Open saved Searches
+plugin_es_search, ES Backend Search
+plugin_esbackendsearch_new, New
+plugin_esbackendsearch_search, Open existing Saved Search
+plugin_esbackendsearch_share, Sharing
+plugin_esbackendsearch_users, Users
+plugin_esbackendsearch_owner, Owner
+plugin_esbackendsearch_save_as_copy, Save as Copy
+plugin_esbackendsearch_name_copy_suffix, (copy)

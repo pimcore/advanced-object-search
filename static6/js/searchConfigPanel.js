@@ -8,20 +8,16 @@ pimcore.plugin.esbackendsearch.searchConfigPanel = Class.create(pimcore.element.
             this.data = {};
         }
 
-        var title = t("plugin_esbackendsearch");
-        if(this.data.settings && this.data.settings.name) {
-            title = title + ": " + this.data.settings.name;
-        }
-
         this.tab = new Ext.TabPanel({
             activeTab: 0,
             id: this.getTabId(),
-            title: title,
             iconCls: "pimcore_icon_esbackendsearch",
             closable: true,
             forceLayout: true,
             items: [this.getConditions(), this.getResults(), this.getSaveAndShare()]
         });
+
+        this.setTitle();
 
 /*
         if (this.data.fieldConfig) {
@@ -143,19 +139,73 @@ pimcore.plugin.esbackendsearch.searchConfigPanel = Class.create(pimcore.element.
 
     getSaveAndShare: function () {
 
+        this.store = new Ext.data.JsonStore({
+            autoDestroy: true,
+            autoLoad: true,
+            proxy: {
+                type: 'ajax',
+                url: '/plugin/ESBackendSearch/admin/get-users',
+                reader: {
+                    rootProperty: 'data',
+                    idProperty: 'id'
+                }
+            },
+            fields: ['id','label']
+        });
+
+        this.nameField = Ext.create('Ext.form.field.Text', {
+            fieldLabel: t("name"),
+            name: "name",
+            width: 500,
+            value: this.data.settings ? this.data.settings.name : ""
+        });
+
+        this.sharingField = Ext.create('Ext.form.field.Tag', {
+            name: "shared_users",
+            width: 500,
+            fieldLabel: t("plugin_esbackendsearch_users"),
+            queryDelay: 0,
+            resizable: true,
+            queryMode: 'local',
+            minChars: 1,
+            store: this.store,
+            displayField: 'label',
+            valueField: 'id',
+            forceSelection: true,
+            filterPickList: true,
+            value: this.data.settings ? this.data.settings.sharedUserIds : ""
+        });
+
+
+        var buttons = [];
+
+        if(!this.data.settings || this.data.settings.isOwner) {
+            buttons.push({
+                text: t("delete"),
+                iconCls: "pimcore_icon_delete",
+                handler: this.save.bind(this)
+            });
+            buttons.push({
+                text: t("save"),
+                iconCls: "pimcore_icon_apply",
+                handler: this.save.bind(this)
+            });
+        } else if(!this.data.settings.isOwner) {
+            buttons.push({
+                text: t("plugin_esbackendsearch_save_as_copy"),
+                iconCls: "pimcore_icon_apply",
+                handler: this.saveAsCopy.bind(this)
+            });
+        }
+
         this.settingsForm = Ext.create('Ext.form.FormPanel', {
             title: t("plugin_esbackendsearch_save_and_share"),
             iconCls: "pimcore_icon_esbackendsearch_saveAndShare",
             bodyStyle: "padding:10px;",
             autoScroll: true,
             border:false,
-            items: [{
-                xtype: "textfield",
-                fieldLabel: t("name"),
-                name: "name",
-                width: 500,
-                value: this.data.settings ? this.data.settings.name : ""
-            }, {
+            items: [
+                this.nameField, {
                 name: "description",
                 fieldLabel: t("description"),
                 xtype: "textarea",
@@ -170,28 +220,13 @@ pimcore.plugin.esbackendsearch.searchConfigPanel = Class.create(pimcore.element.
                 value: this.data.settings ? this.data.settings.category: ""
             }, {
                 xtype: "fieldset",
-                title: "plugin_esbackendsearch_share",
+                title: t("plugin_esbackendsearch_share"),
                 closeable: true,
                 items: [
-                    {
-                        name: "description1",
-                        fieldLabel: t("xsdf"),
-                        xtype: "textarea",
-                        width: 500,
-                        height: 100
-                        //value: this.data.description
-                    }
+                    this.sharingField
                 ]
             }],
-            buttons: [{
-                text: t("delete"),
-                iconCls: "pimcore_icon_delete",
-                handler: this.save.bind(this)
-            },{
-                text: t("save"),
-                iconCls: "pimcore_icon_apply",
-                handler: this.save.bind(this)
-            }]
+            buttons: buttons
         });
 
         return this.settingsForm;
@@ -234,6 +269,9 @@ pimcore.plugin.esbackendsearch.searchConfigPanel = Class.create(pimcore.element.
     save: function () {
         var saveData = this.getSaveData();
 
+        //remote to update id in global manager later on
+        pimcore.globalmanager.remove(this.getTabId());
+
         Ext.Ajax.request({
             url: "/plugin/ESBackendSearch/admin/save",
             params: {
@@ -251,6 +289,12 @@ pimcore.plugin.esbackendsearch.searchConfigPanel = Class.create(pimcore.element.
                     }
                     this.data.id = rdata.id;
 
+                    //to update id in global manager
+                    this.tabId = null;
+                    pimcore.globalmanager.add(this.getTabId(), this);
+
+                    this.setTitle(this.nameField.getValue());
+
                     this.resetChanges();
                 }
                 else {
@@ -259,5 +303,26 @@ pimcore.plugin.esbackendsearch.searchConfigPanel = Class.create(pimcore.element.
             }.bind(this)
         });
 
+    },
+
+    saveAsCopy: function () {
+        this.data.id = null;
+        this.sharingField.setValue("");
+        this.nameField.setValue(this.nameField.getValue() + " " + t("plugin_esbackendsearch_name_copy_suffix"));
+
+        this.save();
+    },
+
+    setTitle: function(name) {
+        var title = t("plugin_esbackendsearch");
+        if(name) {
+            title = title + ": " + name;
+        } else if(this.data.settings && this.data.settings.name) {
+            title = title + ": " + this.data.settings.name;
+        }
+        this.tab.setTitle(title);
+        this.tab.initialConfig = {
+            title: title
+        };
     }
 });

@@ -38,6 +38,12 @@ class Dao extends Model\Dao\AbstractDao
             $data = [];
             foreach ($dataAttributes as $key => $value) {
                 if (in_array($key, $this->getValidTableColumns(self::TABLE_NAME))) {
+                    if (in_array($key, ["sharedUserIds", "shortCutUserIds"])) {
+                        // sharedUserIds and shortCustUserIds are stored as csv
+                        if (is_array($value)) {
+                            $value = "," . implode(",", $value) . ",";
+                        }
+                    }
                     $data[$key] = $value;
                 }
             }

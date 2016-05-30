@@ -42,6 +42,15 @@ class SavedSearch extends Model\AbstractModel
      */
     public $config;
 
+    /**
+     * @var array
+     */
+    public $sharedUserIds;
+
+    /**
+     * @var array
+     */
+    public $shortCutUserIds;
 
     /**
      * @static
@@ -196,5 +205,58 @@ class SavedSearch extends Model\AbstractModel
         $this->owner = null;
         return $this;
     }
+
+    /**
+     * @return array
+     */
+    public function getSharedUserIds()
+    {
+        return $this->sharedUserIds;
+    }
+
+    /**
+     * @return Model\User[]
+     */
+    public function getSharedUsers() {
+        $users = [];
+        foreach($this->sharedUserIds as $id) {
+            $users[] = Model\User::getById($id);
+        }
+        return $users;
+    }
+
+    /**
+     * @param mixed $sharedUserIds
+     */
+    public function setSharedUserIds($sharedUserIds)
+    {
+        if(is_string($sharedUserIds) && !empty($sharedUserIds)) {
+            $sharedUserIds = array_values(array_filter(explode(",", $sharedUserIds)));
+        }
+
+        $this->sharedUserIds = $sharedUserIds;
+    }
+
+    /**
+     * @return array
+     */
+    public function getShortCutUserIds()
+    {
+        return $this->shortCutUserIds;
+    }
+
+    /**
+     * @param mixed $shortCutUserIds
+     */
+    public function setShortCutUserIds($shortCutUserIds)
+    {
+        if(is_string($shortCutUserIds) && !empty($shortCutUserIds)) {
+            $shortCutUserIds = explode(",", $shortCutUserIds);
+        }
+
+        $this->shortCutUserIds = $shortCutUserIds;
+    }
+
+
 
 }

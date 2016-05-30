@@ -166,6 +166,7 @@ class ESBackendSearch_AdminController extends \Pimcore\Controller\Action\Admin {
         $savedSearch->setName($data->settings->name);
         $savedSearch->setDescription($data->settings->description);
         $savedSearch->setCategory($data->settings->category);
+        $savedSearch->setSharedUserIds($data->settings->shared_users);
 
         $config = ['classId' => $data->classId, "gridConfig" => $data->gridConfig, "conditions" => $data->conditions];
         $savedSearch->setConfig(json_encode($config));
@@ -193,34 +194,21 @@ class ESBackendSearch_AdminController extends \Pimcore\Controller\Action\Admin {
         $limit = $limit ? $limit : 50;
 
         $searcherList = new \ESBackendSearch\SavedSearch\Listing();
-        $conditionParts = array();
-        $conditionParams = array();
-        $db = \Pimcore\Db::get();
+        $conditionParts = [];
+        $conditionParams = [];
 
+        //filter for current user
+        $conditionParts[] = "(ownerId = ? OR sharedUserIds LIKE ?)";
+        $conditionParams[] = $user->getId();
+        $conditionParams[] = "%," . $user->getId() . ",%";
+
+        //filter for query
         if (!empty($query)) {
             $conditionParts[] = "(name LIKE ? OR description LIKE ? OR category LIKE ?)";
             $conditionParams[] = "%" . $query . "%";
             $conditionParams[] = "%" . $query . "%";
             $conditionParams[] = "%" . $query . "%";
         }
-
-
-        // filtering for objects
-        if ($this->getParam("filter")) {
-
-            //TODO
-//            $conditionFilters = Object\Service::getFilterCondition($this->getParam("filter"), $class);
-//            $join = "";
-//            foreach ($bricks as $ob) {
-//                $join .= " LEFT JOIN object_brick_query_" . $ob . "_" . $class->getId();
-//
-//                $join .= " `" . $ob . "`";
-//                $join .= " ON `" . $ob . "`.o_id = `object_" . $class->getId() . "`.o_id";
-//            }
-//
-//            $conditionParts[] = "( id IN (SELECT `object_" . $class->getId() . "`.o_id FROM object_" . $class->getId() . $join . " WHERE " . $conditionFilters . ") )";
-        }
-
 
         if (count($conditionParts) > 0) {
             $condition = implode(" AND ", $conditionParts);
@@ -248,7 +236,7 @@ class ESBackendSearch_AdminController extends \Pimcore\Controller\Action\Admin {
                 'name' => $result->getName(),
                 'description' => $result->getDescription(),
                 'category' => $result->getCategory(),
-                'owner' => $result->getOwner() ? $result->getOwner()->getFirstname() . " " . $result->getOwner()->getLastName() . "(" . $result->getOwner()->getUsername() . ")": "",
+                'owner' => $result->getOwner() ? $result->getOwner()->getUsername() . " (" . $result->getOwner()->getFirstname() . " " . $result->getOwner()->getLastName() . ")": "",
                 'ownerId' => $result->getOwnerId()
             ];
         }
@@ -277,12 +265,48 @@ class ESBackendSearch_AdminController extends \Pimcore\Controller\Action\Admin {
                 'settings' => [
                     'name' => $savedSearch->getName(),
                     'description' => $savedSearch->getDescription(),
-                    'category' => $savedSearch->getCategory()
+                    'category' => $savedSearch->getCategory(),
+                    'sharedUserIds' => $savedSearch->getSharedUserIds(),
+                    'isOwner' => $savedSearch->getOwnerId() == $this->getUser()->getId()
                 ],
                 'conditions' => $config['conditions'],
                 'gridConfig' => $config['gridConfig']
             ]);
         }
+    }
+
+    public function getUsersAction() {
+
+        $users = [];
+
+        // condition for users with groups having DAM permission
+        $condition = [];
+        $rolesList = new \Pimcore\Model\User\Role\Listing();
+        $rolesList->addConditionParam("CONCAT(',', permissions, ',') LIKE ?", '%,plugin_es_search,%');
+        $rolesList->load();
+        $roles = $rolesList->getRoles();
+
+        foreach($roles as $role) {
+            $condition[] = "CONCAT(',', roles, ',') LIKE '%," . $role->getId() . ",%'";
+        }
+
+        // get available user
+        $list = new \Pimcore\Model\User\Listing();
+
+        $condition[] = "admin = 1";
+        $list->addConditionParam("((CONCAT(',', permissions, ',') LIKE ? ) OR " . implode(" OR ", $condition) . ")", '%,plugin_es_search,%');
+        $list->addConditionParam('id != ?', $this->getUser()->getId());
+        $list->load();
+        $userList = $list->getUsers();
+
+        foreach($userList as $user) {
+            $users[] = [
+                'id' => $user->getId(),
+                'label' => $user->getUsername()
+            ];
+        }
+
+        $this->_helper->json(['success' => true, 'total' => count($users), 'data' => $users]);
     }
 
     public function testAction() {
