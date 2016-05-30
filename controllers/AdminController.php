@@ -288,6 +288,23 @@ class ESBackendSearch_AdminController extends \Pimcore\Controller\Action\Admin {
         }
     }
 
+    public function loadShortCutsAction() {
+
+        $list = new \ESBackendSearch\SavedSearch\Listing();
+        $list->setCondition("(ownerId = ? OR sharedUserIds LIKE ?) AND shortCutUserIds LIKE ?", [$this->getUser()->getId(), '%,' . $this->getUser()->getId() . ',%', '%,' . $this->getUser()->getId() . ',%']);
+        $list->load();
+
+        $entries = [];
+        foreach($list->getSavedSearches() as $entry) {
+            $entries[] = [
+                "id" => $entry->getId(),
+                "name" => $entry->getName()
+            ];
+        }
+
+        $this->_helper->json(['entries' => $entries]);
+    }
+
     public function getUsersAction() {
 
         $users = [];

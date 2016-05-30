@@ -34,6 +34,7 @@
 			<pluginJsPaths-extjs6>
                 <path>/plugins/ESBackendSearch/static6/js/startup.js</path>
 				<path>/plugins/ESBackendSearch/static6/js/selector.js</path>
+				<path>/plugins/ESBackendSearch/static6/js/helper.js</path>
 				<path>/plugins/ESBackendSearch/static6/js/searchConfigPanel.js</path>
 				<path>/plugins/ESBackendSearch/static6/js/searchConfig/conditionPanelContainerBuilder.js</path>
 				<path>/plugins/ESBackendSearch/static6/js/searchConfig/conditionPanel.js</path>

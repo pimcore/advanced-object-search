@@ -54,28 +54,9 @@ pimcore.plugin.esbackendsearch.selector = Class.create({
 
     openSearch: function (data) {
 
-        Ext.Ajax.request({
-            url: "/plugin/ESBackendSearch/admin/load-search",
-            params: {
-                id: data.id
-            },
-            method: "get",
-            success: function (response) {
-                var rdata = Ext.decode(response.responseText);
-
-                var tabId = "pimcore_search_" + data.id;
-                try {
-                    pimcore.globalmanager.get(tabId).activate();
-                }
-                catch (e) {
-                    var esSearch = new pimcore.plugin.esbackendsearch.searchConfigPanel(rdata);
-                    pimcore.globalmanager.add(esSearch.getTabId(), esSearch);
-                }
-
-                this.window.close();
-
-            }.bind(this)
-        });
+        pimcore.plugin.esbackendsearch.helper.openEsSearch(data.id, function() {
+            this.window.close();
+        }.bind(this));
 
     },
 
