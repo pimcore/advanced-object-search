@@ -30,7 +30,7 @@ class Objects extends Href implements IFieldDefinitionAdapter {
         $allowedTypes[] = ["object_filter", "object_filter"];
 
         foreach($this->fieldDefinition->getClasses() as $class) {
-            $allowedClasses[] = $class;
+            $allowedClasses[] = $class['classes'];
         }
 
         return [new FieldSelectionInformation(

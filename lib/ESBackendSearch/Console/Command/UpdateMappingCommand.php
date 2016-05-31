@@ -57,7 +57,18 @@ class UpdateMappingCommand extends AbstractCommand
 
             try {
                 \Logger::info("Creating index $indexName for class " . $class->getName());
-                $response = $client->indices()->create(["index" => $indexName]);
+                $body = [
+                    'settings' => [
+                        'index' => [
+                            'mapping' => [
+                                'nested_fields' => [
+                                    'limit' => 200
+                                ]
+                            ]
+                        ]
+                    ]
+                ];
+                $response = $client->indices()->create(["index" => $indexName, "body" => $body]);
                 \Logger::debug(json_encode($response));
             } catch (\Exception $e) {
                 \Logger::err($e);

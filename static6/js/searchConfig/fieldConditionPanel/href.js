@@ -40,6 +40,8 @@ pimcore.plugin.esbackendsearch.searchConfig.fieldConditionPanel.href = Class.cre
                             var classStore = pimcore.globalmanager.get("object_types_store");
                             var filteredClassStore = null;
 
+                            console.log(this.fieldSelectionInformation);
+
                             if(this.fieldSelectionInformation.context.allowedClasses.length) {
                                 var filteredClassStore = Ext.create('Ext.data.Store', {});
 
@@ -60,7 +62,7 @@ pimcore.plugin.esbackendsearch.searchConfig.fieldConditionPanel.href = Class.cre
                                     valueField: 'id',
                                     displayField: 'translatedText',
                                     triggerAction: 'all',
-                                    value: this.data.filterEntryData.classId,
+                                    value: this.data.filterEntryData ? this.data.filterEntryData.classId : "",
                                     queryMode: 'local',
                                     width: 300,
                                     forceSelection: true,
@@ -80,7 +82,7 @@ pimcore.plugin.esbackendsearch.searchConfig.fieldConditionPanel.href = Class.cre
 
                             this.subConditionsPanel = Ext.create('Ext.panel.Panel', {});
 
-                            if(this.data.filterEntryData.classId) {
+                            if(this.data.filterEntryData && this.data.filterEntryData.classId) {
                                 this.subConditions = new pimcore.plugin.esbackendsearch.searchConfig.conditionPanel(this.data.filterEntryData.classId, this.data.filterEntryData, "auto");
                                 this.subConditionsPanel.add(this.subConditions.getConditionPanel());
                             }
@@ -119,9 +121,11 @@ pimcore.plugin.esbackendsearch.searchConfig.fieldConditionPanel.href = Class.cre
 
             subValue.type = "object";
             subValue.classId = this.classSelection.getValue();
-            var saveData = this.subConditions.getSaveData();
-            subValue.filters = saveData.filters;
-            subValue.fulltextSearchTerm = saveData.fulltextSearchTerm;
+            if(this.subConditions) {
+                var saveData = this.subConditions.getSaveData();
+                subValue.filters = saveData.filters;
+                subValue.fulltextSearchTerm = saveData.fulltextSearchTerm;
+            }
 
         } else {
 
