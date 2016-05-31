@@ -258,5 +258,40 @@ class SavedSearch extends Model\AbstractModel
     }
 
 
+    /**
+     * @param Model\User $user
+     * @return bool
+     */
+    public function isInShortCutsForUser(Model\User $user) {
+        $userId = $user->getId();
+        return $this->getShortCutUserIds() && in_array($userId, $this->getShortCutUserIds());
+    }
+
+    /**
+     * @param Model\User $user
+     */
+    public function addShortCutForUser(Model\User $user) {
+        $userId = $user->getId();
+
+        $shortCutUserIds = $this->getShortCutUserIds();
+        if(!$shortCutUserIds) {
+            $shortCutUserIds = [];
+        }
+        $shortCutUserIds[] = $userId;
+        $this->setShortCutUserIds(array_unique($shortCutUserIds));
+    }
+
+    /**
+     * @param Model\User $user
+     */
+    public function removeShortCutForUser(Model\User $user) {
+        $userId = $user->getId();
+        $shortCutUserIds = $this->getShortCutUserIds();
+        $shortCutUserIds = array_flip($shortCutUserIds);
+        unset($shortCutUserIds[$userId]);
+        $this->setShortCutUserIds(array_filter(array_keys($shortCutUserIds)));
+    }
+
+
 
 }

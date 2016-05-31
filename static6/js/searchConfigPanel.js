@@ -179,6 +179,21 @@ pimcore.plugin.esbackendsearch.searchConfigPanel = Class.create(pimcore.element.
 
         var buttons = [];
 
+        
+        var buttonText = t("plugin_esbackendsearch_add_to_shortcuts");
+        if(this.data.settings && this.data.settings.hasShortCut) {
+            buttonText = t("plugin_esbackendsearch_remove_from_shortcuts");
+        }
+
+        this.toggleShortCutButton = Ext.create('Ext.button.Button', {
+            text: buttonText,
+            // iconCls: "pimcore_icon_delete",
+            handler: this.toggleShortCut.bind(this)
+        });
+
+        buttons.push(this.toggleShortCutButton);
+
+
         if(!this.data.settings || this.data.settings.isOwner) {
             buttons.push({
                 text: t("delete"),
@@ -373,6 +388,36 @@ pimcore.plugin.esbackendsearch.searchConfigPanel = Class.create(pimcore.element.
 
                 }.bind(this)
             });
+        }
+    },
+
+    toggleShortCut: function() {
+        if(!this.data && !this.data.id) {
+            pimcore.helpers.showNotification(t("error"), t("plugin_esbackendsearch_short_cut_error"), "error");
+        } else {
+            Ext.Ajax.request({
+                url: "/plugin/ESBackendSearch/admin/toggle-short-cut",
+                params: {
+                    id: this.data.id
+                },
+                method: "post",
+                success: function (response) {
+                    var rdata = Ext.decode(response.responseText);
+                    if(rdata.success) {
+                        if(rdata.hasShortCut) {
+                            this.toggleShortCutButton.setText(t("plugin_esbackendsearch_remove_from_shortcuts"));
+                        } else {
+                            this.toggleShortCutButton.setText(t("plugin_esbackendsearch_add_to_shortcuts"));
+                        }
+                        pimcore.plugin.esbackendsearch.helper.rebuildEsSearchMenu();
+                    }
+
+
+
+
+                }.bind(this)
+            });
+
         }
     },
 

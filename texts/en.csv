@@ -31,3 +31,6 @@ plugin_esbackendsearch_save_as_copy, Save as Copy
 plugin_esbackendsearch_name_copy_suffix, (copy)
 plugin_esbackendsearch_delete_error, Error during deleting Saved Search
 plugin_esbackendsearch_delete_really, Do you really want to delete the Saved Search?
+plugin_esbackendsearch_add_to_shortcuts, Add To Short Cuts
+plugin_esbackendsearch_remove_from_shortcuts, Remove From Short Cuts
+plugin_esbackendsearch_short_cut_error, Cannot add short cut for not saved search

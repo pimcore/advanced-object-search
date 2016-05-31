@@ -23,9 +23,10 @@ pimcore.plugin.esbackendsearch.helper = {
             });
             searchMenu.add(esSearchMenu);
 
-            pimcore.globalmanager.add("plugin_essearch_menu", searchMenu);
+            pimcore.globalmanager.add("plugin_essearch_menu", esSearchMenu);
         }
-
+        esSearchMenu.getMenu().removeAll();
+        
         esSearchMenu.getMenu().add({
             text: t("plugin_esbackendsearch_new"),
             iconCls: "pimcore_icon_esbackendsearch",
@@ -48,7 +49,7 @@ pimcore.plugin.esbackendsearch.helper = {
             success: function (response) {
                 var rdata = Ext.decode(response.responseText);
 
-                if(rdata.entries) {
+                if(rdata.entries && rdata.entries.length) {
                     esSearchMenu.getMenu().add("-");
 
                     for(var i = 0; i < rdata.entries.length; i++) {

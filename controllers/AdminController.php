@@ -280,7 +280,8 @@ class ESBackendSearch_AdminController extends \Pimcore\Controller\Action\Admin {
                     'description' => $savedSearch->getDescription(),
                     'category' => $savedSearch->getCategory(),
                     'sharedUserIds' => $savedSearch->getSharedUserIds(),
-                    'isOwner' => $savedSearch->getOwnerId() == $this->getUser()->getId()
+                    'isOwner' => $savedSearch->getOwnerId() == $this->getUser()->getId(),
+                    'hasShortCut' => $savedSearch->isInShortCutsForUser($this->getUser())
                 ],
                 'conditions' => $config['conditions'],
                 'gridConfig' => $config['gridConfig']
@@ -303,6 +304,25 @@ class ESBackendSearch_AdminController extends \Pimcore\Controller\Action\Admin {
         }
 
         $this->_helper->json(['entries' => $entries]);
+    }
+
+    public function toggleShortCutAction() {
+        $id = intval($this->getParam("id"));
+        $savedSearch = \ESBackendSearch\SavedSearch::getById($id);
+        if($savedSearch) {
+
+            $user = $this->getUser();
+            if($savedSearch->isInShortCutsForUser($user)) {
+                $savedSearch->removeShortCutForUser($user);
+            } else {
+                $savedSearch->addShortCutForUser($user);
+            }
+            $savedSearch->save();
+            $this->_helper->json(['success' => 'true', 'hasShortCut' => $savedSearch->isInShortCutsForUser($user)]);
+
+        } else {
+            $this->_helper->json(['success' => 'false']);
+        }
     }
 
     public function getUsersAction() {
@@ -338,6 +358,8 @@ class ESBackendSearch_AdminController extends \Pimcore\Controller\Action\Admin {
 
         $this->_helper->json(['success' => true, 'total' => count($users), 'data' => $users]);
     }
+
+
 
     public function testAction() {
 
