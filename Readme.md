@@ -15,6 +15,8 @@ Following Plugin-Hooks are called automatically
 - object.postUpdate - object is updated in es index, all child objects are added to update queue.
 - object.preDelete  - object is deleted from es index.
 
+Currently, there is no automatic mapping and index updating after changes of classes.
+
 ### Pimcore Maintenance
 With every pimcore mainentance call, 500 entries of update queue are processed.
 
