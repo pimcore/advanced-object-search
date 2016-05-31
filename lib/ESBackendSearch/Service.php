@@ -223,7 +223,9 @@ class Service {
      */
     public function getFilter(ClassDefinition $objectClass, array $filters) {
         $search = new \ONGR\ElasticsearchDSL\Search();
-        $search->addFilter($this->doPopulateQuery(new BoolQuery(), $objectClass, $filters), BoolQuery::MUST);
+        if(!empty($filters)) {
+            $search->addFilter($this->doPopulateQuery(new BoolQuery(), $objectClass, $filters), BoolQuery::MUST);
+        }
         return $search;
     }
 

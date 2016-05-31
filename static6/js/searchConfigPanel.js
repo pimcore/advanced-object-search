@@ -8,6 +8,8 @@ pimcore.plugin.esbackendsearch.searchConfigPanel = Class.create(pimcore.element.
             this.data = {};
         }
 
+        console.log(data);
+
         this.tab = new Ext.TabPanel({
             activeTab: 0,
             id: this.getTabId(),
@@ -19,21 +21,6 @@ pimcore.plugin.esbackendsearch.searchConfigPanel = Class.create(pimcore.element.
 
         this.setTitle();
 
-/*
-        if (this.data.fieldConfig) {
-            this.setColumnConfig(this.data.fieldConfig.availableFields);
-            this.setLanguage(this.data.fieldConfig.language);
-        }
-
-         // fill data into conditions
-        if(this.data.conditions && this.data.conditions.length > 0) {
-            for(var i=0; i<this.data.conditions.length; i++) {
-                this.addCondition("item" + ucfirst(this.data.conditions[i].type), this.data.conditions[i]);
-            }
-        }
-
-        this.updateClassDefPanel();
- */
         this.tab.on("activate", this.tabactivated.bind(this));
 
         var tabPanel = Ext.getCmp("pimcore_panel_tabs");
@@ -65,24 +52,9 @@ pimcore.plugin.esbackendsearch.searchConfigPanel = Class.create(pimcore.element.
 
 
     tabactivated: function() {
-        this.checkForChanges();
-        this.setupChangeDetector();
-    },
-
-    setColumnConfig: function(columnConfig) {
-        this.columnConfig = columnConfig;
-    },
-
-    getColumnConfig: function() {
-        return this.columnConfig;
-    },
-
-    getLanguage: function() {
-      return this.language;
-    },
-
-    setLanguage: function(language) {
-        this.language = language;
+        setTimeout(function() {
+            this.checkForChanges();
+        }.bind(this), 8000);
     },
 
     getConditions: function() {
@@ -133,7 +105,7 @@ pimcore.plugin.esbackendsearch.searchConfigPanel = Class.create(pimcore.element.
     },
 
     getResults: function() {
-        this.resultPanel = new pimcore.plugin.esbackendsearch.searchConfig.resultPanel(this);
+        this.resultPanel = new pimcore.plugin.esbackendsearch.searchConfig.resultPanel(this, this.data.gridConfig);
         return this.resultPanel.getLayout();
     },
 
@@ -247,20 +219,8 @@ pimcore.plugin.esbackendsearch.searchConfigPanel = Class.create(pimcore.element.
         return this.settingsForm;
     },
 
-
-
     getSaveData: function(raw) {
         var saveData = {};
-        //saveData["settings"] = this.settingsForm.getForm().getFieldValues();
-        //saveData["source"] = this.sourceForm.getForm().getFieldValues();
-
-        /*if (this.columnConfig) {
-
-            saveData["fieldConfig"] = {
-                "availableFields" : this.columnConfig,
-                "language" : this.language
-            };
-        }*/
 
         saveData['classId'] = this.classSelection.getValue();
 
@@ -268,12 +228,13 @@ pimcore.plugin.esbackendsearch.searchConfigPanel = Class.create(pimcore.element.
             saveData["conditions"] = this.conditionPanel.getSaveData();
         }
         if(this.resultPanel) {
-            saveData["gridConfig"] = this.resultPanel.getGridConfig();
+            saveData["gridConfig"] = this.resultPanel.getSaveData();
         }
 
         if(this.settingsForm) {
             saveData["settings"] = this.settingsForm.getForm().getFieldValues();
         }
+
         if(raw) {
             return saveData;
         } else {

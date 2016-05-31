@@ -9,8 +9,6 @@ pimcore.plugin.esbackendsearch.searchConfig.conditionEntryPanel = Class.create(p
             data = {};
         }
 
-        console.log(data);
-
         var fieldStore = new Ext.data.JsonStore({
             autoDestroy: true,
             autoLoad: true,

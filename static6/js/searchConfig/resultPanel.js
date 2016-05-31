@@ -4,10 +4,14 @@ pimcore.plugin.esbackendsearch.searchConfig.resultPanel = Class.create(pimcore.o
     systemColumns: ["id", "fullpath", "type", "subtype", "filename", "classname", "creationDate", "modificationDate"],
 
     parent: null,
+    gridConfigData: {},
 
     fieldObject: {},
-    initialize: function(parent) {
+    initialize: function(parent, gridConfigData) {
         this.parent = parent;
+        if(gridConfigData) {
+            this.gridConfigData = gridConfigData;
+        }
     },
 
     getLayout: function () {
@@ -42,11 +46,9 @@ pimcore.plugin.esbackendsearch.searchConfig.resultPanel = Class.create(pimcore.o
         if(classRecord) {
             this.selectedClass = classRecord.data.text;
 
-            if (this.parent.getColumnConfig()) {
-                this.createGrid(true, {
-                    "availableFields": this.parent.getColumnConfig(),
-                    "language": this.parent.getLanguage()
-                });
+            if (this.gridConfigData.language) {
+                this.gridLanguage = this.gridConfigData.language;
+                this.createGrid(true, this.gridConfigData.columns);
             } else {
                 Ext.Ajax.request({
                     url: "/admin/object-helper/grid-get-column-config",
@@ -63,24 +65,18 @@ pimcore.plugin.esbackendsearch.searchConfig.resultPanel = Class.create(pimcore.o
 
         var itemsPerPage = 20;
 
-        if (response.pageSize) {
-            itemsPerPage = response.pageSize;
-        }
-
         if (response.responseText) {
-            response = Ext.decode(response.responseText);   // initial config
+            response = Ext.decode(response.responseText);
+
+            if (response.pageSize) {
+                itemsPerPage = response.pageSize;
+            }
+
             fields = response.availableFields;
             this.gridLanguage = response.language;
-            this.sortinfo = response.sortinfo;
-        } else if (response.availableFields) {
-            fields = response.availableFields;      // saved grid config
-            this.gridLanguage = response.language;
         } else {
-            fields = response;          // grid column editor
+            fields = response;
         }
-
-        this.parent.setColumnConfig(fields);
-        this.parent.setLanguage(this.gridLanguage);
 
         this.fieldObject = {};
         for(var i = 0; i < fields.length; i++) {
@@ -364,19 +360,24 @@ pimcore.plugin.esbackendsearch.searchConfig.resultPanel = Class.create(pimcore.o
         });
     },
 
-
-    getGridConfig: function($super) {
-
+    getSaveData: function() {
         if(this.grid) {
-            var config = $super();
-            config.pageSize = this.pagingtoolbar.pageSize;
+            var config = this.getGridConfig();
+            var columnsConfig = [];
+
+            var keys = Object.keys(config.columns);
+            for (var i = 0; i < keys.length; i++) {
+                var entry = config.columns[keys[i]].fieldConfig;
+                entry.position = config.columns[keys[i]].position;
+
+                columnsConfig.push(entry);
+            }
+
+            config.columns = columnsConfig;
             return config;
         } else {
-            return this.parent.getColumnConfig();
+            return this.gridConfigData;
         }
-
     }
-
-
 
 });
