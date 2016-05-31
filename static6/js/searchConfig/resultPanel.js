@@ -419,9 +419,6 @@ pimcore.plugin.esbackendsearch.searchConfig.resultPanel = Class.create(pimcore.o
                 if(entry) {
                     entry.position = config.columns[keys[i]].position;
                     columnsConfig.push(entry);
-                } else {
-                    console.log("ERROR");
-                    console.log(config.columns[keys[i]]);
                 }
 
             }
