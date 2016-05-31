@@ -71,7 +71,7 @@ class Plugin extends PluginLib\AbstractPlugin implements PluginLib\PluginInterfa
 
         //create tables
         \Pimcore\Db::get()->query(
-            "CREATE TABLE `plugin_esbackendsearch_update_queue` (
+            "CREATE TABLE IF NOT EXISTS `plugin_esbackendsearch_update_queue` (
               `o_id` bigint(10) NOT NULL DEFAULT '0',
               `classId` int(11) DEFAULT NULL,
               `in_queue` tinyint(1) DEFAULT NULL,
@@ -82,7 +82,7 @@ class Plugin extends PluginLib\AbstractPlugin implements PluginLib\PluginInterfa
         );
 
         \Pimcore\Db::get()->query(
-            "CREATE TABLE `plugin_esbackendsearch_savedsearch` (
+            "CREATE TABLE IF NOT EXISTS `plugin_esbackendsearch_savedsearch` (
               `id` bigint(20) NOT NULL AUTO_INCREMENT,
               `name` varchar(255) DEFAULT NULL,
               `description` varchar(255) DEFAULT NULL,
