@@ -68,6 +68,44 @@ class Plugin extends PluginLib\AbstractPlugin implements PluginLib\PluginInterfa
             copy(PIMCORE_PLUGINS_PATH . "/ESBackendSearch/install/config.php", PIMCORE_WEBSITE_PATH . "/config/esbackendsearch/config.php");
         }
 
+
+        //create tables
+        \Pimcore\Db::get()->query(
+            "CREATE TABLE `plugin_esbackendsearch_update_queue` (
+              `o_id` bigint(10) NOT NULL DEFAULT '0',
+              `classId` int(11) DEFAULT NULL,
+              `in_queue` tinyint(1) DEFAULT NULL,
+              `worker_timestamp` int(20) DEFAULT NULL,
+              `worker_id` varchar(20) DEFAULT NULL,
+              PRIMARY KEY (`o_id`)
+            ) ENGINE=InnoDB DEFAULT CHARSET=utf8;"
+        );
+
+        \Pimcore\Db::get()->query(
+            "CREATE TABLE `plugin_esbackendsearch_savedsearch` (
+              `id` bigint(20) NOT NULL AUTO_INCREMENT,
+              `name` varchar(255) DEFAULT NULL,
+              `description` varchar(255) DEFAULT NULL,
+              `category` varchar(255) DEFAULT NULL,
+              `ownerId` int(20) DEFAULT NULL,
+              `config` text CHARACTER SET latin1,
+              `sharedUserIds` varchar(1000) DEFAULT NULL,
+              `shortCutUserIds` text CHARACTER SET latin1,
+              PRIMARY KEY (`id`)
+            ) ENGINE=InnoDB DEFAULT CHARSET=utf8;"
+        );
+
+        //insert permission
+        $key = 'plugin_es_search';
+        $permission = new \Pimcore\Model\User\Permission\Definition();
+        $permission->setKey( $key );
+
+        $res = new \Pimcore\Model\User\Permission\Definition\Dao();
+        $res->configure( \Pimcore\Db::get() );
+        $res->setModel( $permission );
+        $res->save();
+
+
         \Pimcore\File::mkdir(PIMCORE_WEBSITE_VAR . "/plugins/ESBackendSearch");
         file_put_contents(PIMCORE_WEBSITE_VAR . "/plugins/ESBackendSearch/installed.dummy", "true");
 
