@@ -1,6 +1,32 @@
 # Plugin for BackedSearch via Elasticsearch
 
-## Create Mapping for object classes
+## Integration into pimcore
+
+### Pimcore Console
+Functions in pimcore console.
+- es-backend-search:process-update-queue --> processes whole update queue of es search index.
+- es-backend-search:re-index --> Reindex all objects of given class. Does not delete index first or resets update queue.
+- es-backend-search:update-mapping --> Deletes and recreates mapping of given classes. Resets update queue for given class.
+
+For details see documentation directly in pimcore console.
+
+### Plugin Hooks
+Following Plugin-Hooks are called automatically
+- object.postUpdate - object is updated in es index, all child objects are added to update queue.
+- object.preDelete  - object is deleted from es index.
+
+### Pimcore Maintenance
+With every pimcore mainentance call, 500 entries of update queue are processed.
+
+### GUI
+GUI for creating searches against es index with
+- saving functionality
+- sharing functionality
+
+
+## API Methods
+
+### Create Mapping for object classes
 
 Per object class one index with one document type.
 Sample script to delete index, create index, set mapping for object type.
@@ -38,7 +64,7 @@ foreach($classes as $class) {
 ```
 
 
-## Update index data
+### Update index data
 
 on object save or via script:
 ```php
@@ -53,7 +79,7 @@ foreach($objects as $object) {
 ```
 
 
-## Search/Filter for data
+### Search/Filter for data
 
 ```php
 <?php

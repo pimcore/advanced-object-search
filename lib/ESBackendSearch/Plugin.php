@@ -9,36 +9,57 @@ use Pimcore\Model\Object\Concrete;
 class Plugin extends PluginLib\AbstractPlugin implements PluginLib\PluginInterface
 {
 
+    const QUEUE_TABLE_NAME = "plugin_esbackendsearch_update_queue";
+
     public function init()
     {
         parent::init();
 
         // register your events here
+        \Pimcore::getEventManager()->attach("object.postUpdate", array($this, "updateObject"));
+        \Pimcore::getEventManager()->attach("object.preDelete", array($this, "deleteObject"));
 
-        // using anonymous function
-        \Pimcore::getEventManager()->attach("document.postAdd", function ($event) {
-            // do something
-            $document = $event->getTarget();
+        \Pimcore::getEventManager()->attach('system.console.init', function (\Zend_EventManager_Event $e) {
+            /** @var \Pimcore\Console\Application $application */
+            $application = $e->getTarget();
+
+            // add a namespace to autoload commands from
+            $application->addAutoloadNamespace(
+                'ESBackendSearch\\Console\\Command', __DIR__ . '/Console/Command'
+            );
         });
 
-        // using methods
-        \Pimcore::getEventManager()->attach("object.postUpdate", array($this, "handleObject"));
 
-        // for more information regarding events, please visit:
-        // http://www.pimcore.org/wiki/display/PIMCORE/Event+API+%28EventManager%29+since+2.1.1
-        // http://framework.zend.com/manual/1.12/de/zend.event-manager.event-manager.html
-        // http://www.pimcore.org/wiki/pages/viewpage.action?pageId=12124202
+        $pluginInstance = $this;
+        \Pimcore::getEventManager()->attach("system.maintenance", function ($e) use ($pluginInstance) {
+            $e->getTarget()->registerJob(new \Pimcore\Model\Schedule\Maintenance\Job(get_class($pluginInstance), $pluginInstance, "maintenance"));
+        });
+
     }
 
-    public function handleObject($event)
+    public function updateObject($event)
     {
-        // do something
         $object = $event->getTarget();
         if($object instanceof Concrete) {
             $service = new \ESBackendSearch\Service();
             $service->doUpdateIndexData($object);
         }
     }
+
+    public function deleteObject($event)
+    {
+        $object = $event->getTarget();
+        if($object instanceof Concrete) {
+            $service = new \ESBackendSearch\Service();
+            $service->doDeleteFromIndex($object);
+        }
+    }
+
+    public function maintenance() {
+        $service = new Service();
+        $service->processUpdateQueue(500);
+    }
+
 
     public static function install()
     {

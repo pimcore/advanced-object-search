@@ -159,8 +159,9 @@ class Service {
      * Updates index for given object
      *
      * @param Concrete $object
+     * @param bool $ignoreUpdateQueue - if true doesn't fillup update queue for children objects
      */
-    public function doUpdateIndexData(Concrete $object) {
+    public function doUpdateIndexData(Concrete $object, $ignoreUpdateQueue = false) {
 
         $client = Plugin::getESClient();
 
@@ -189,6 +190,100 @@ class Service {
             \Logger::info("Not updating index for object " . $object->getId() . " - nothing has changed.");
         }
 
+
+
+        //updates update queue for object
+        $this->updateUpdateQueueForObject($object);
+
+        if(!$ignoreUpdateQueue) {
+            //sets all children as dirty
+            $this->fillupUpdateQueue($object);
+        }
+    }
+
+    /**
+     * Updates object queue - either inserts entry (if not exists) or updates in_queue flag to false
+     *
+     * @param Concrete $object
+     */
+    protected function updateUpdateQueueForObject(Concrete $object) {
+        $db = \Pimcore\Db::get();
+
+        //add object to update queue (if not exists) or set in_queue to false
+        $currentEntry = $db->fetchRow("SELECT in_queue FROM " . Plugin::QUEUE_TABLE_NAME . " WHERE o_id = ?", $object->getId());
+        if(!$currentEntry) {
+            $db->insert(Plugin::QUEUE_TABLE_NAME, ['o_id' => $object->getId(), 'classId' => $object->getClassId()]);
+        } else if($currentEntry['in_queue']) {
+            $db->query("UPDATE " . Plugin::QUEUE_TABLE_NAME . " SET in_queue = 0, worker_timestamp = 0, worker_id = null WHERE o_id = ?", $object->getId());
+        }
+    }
+
+
+    /**
+     * Delete given object from index
+     *
+     * @param Concrete $object
+     */
+    public function doDeleteFromIndex(Concrete $object) {
+        $client = Plugin::getESClient();
+
+        $params = [
+            'index' => strtolower($object->getClassName()),
+            'type' =>  $object->getClassName(),
+            'id' => $object->getId()
+        ];
+
+        $response = $client->delete($params);
+        \Logger::info("Deleting object " . $object->getId() . " from es index.");
+        \Logger::debug(json_encode($response));
+    }
+
+
+    /**
+     * fills update queue based on path of given object -> for all sub objects
+     *
+     * @param Concrete $object
+     */
+    public function fillupUpdateQueue(Concrete $object) {
+        $db = \Pimcore\Db::get();
+        //need check, if there are sub objects because update on empty result set is too slow
+        $objects = $db->fetchCol("SELECT o_id FROM objects WHERE o_path LIKE ?", array($object->getFullPath() . "/%"));
+        if($objects) {
+            $updateStatement = "UPDATE " . Plugin::QUEUE_TABLE_NAME . " SET in_queue = 1 WHERE o_id IN (".implode(',',$objects).")";
+            $db->query($updateStatement);
+        }
+    }
+
+    /**
+     * processes elements in the queue for updating index data
+     * can be run in parallel since each thread marks the entries it is working on and only processes these entries
+     *
+     * @param int $limit
+     * @return int number of entries
+     */
+    public function processUpdateQueue($limit = 200) {
+
+        $workerId = uniqid();
+        $workerTimestamp = \Zend_Date::now()->getTimestamp();
+        $db = \Pimcore\Db::get();
+
+        $db->query("UPDATE " . Plugin::QUEUE_TABLE_NAME . " SET worker_id = ?, worker_timestamp = ? WHERE in_queue = 1 AND (ISNULL(worker_timestamp) OR worker_timestamp < ?) LIMIT " . intval($limit),
+            array($workerId, $workerTimestamp, $workerTimestamp - 3000));
+
+        $entries = $db->fetchCol("SELECT o_id FROM " . Plugin::QUEUE_TABLE_NAME . " WHERE worker_id = ?", array($workerId));
+
+        if($entries) {
+            foreach($entries as $objectId) {
+                \Logger::info("Worker $workerId updating index for element " . $objectId);
+                $object = Concrete::getById($objectId);
+                if($object) {
+                    $this->doUpdateIndexData($object);
+                }
+            }
+            return count($entries);
+        } else {
+            return 0;
+        }
     }
 
 
