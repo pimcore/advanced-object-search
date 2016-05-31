@@ -40,8 +40,6 @@ pimcore.plugin.esbackendsearch.searchConfig.fieldConditionPanel.href = Class.cre
                             var classStore = pimcore.globalmanager.get("object_types_store");
                             var filteredClassStore = null;
 
-                            console.log(this.fieldSelectionInformation);
-
                             if(this.fieldSelectionInformation.context.allowedClasses.length) {
                                 var filteredClassStore = Ext.create('Ext.data.Store', {});
 
