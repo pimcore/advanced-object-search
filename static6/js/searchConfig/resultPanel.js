@@ -367,13 +367,22 @@ pimcore.plugin.esbackendsearch.searchConfig.resultPanel = Class.create(pimcore.o
 
             var keys = Object.keys(config.columns);
             for (var i = 0; i < keys.length; i++) {
-                var entry = config.columns[keys[i]].fieldConfig;
-                entry.position = config.columns[keys[i]].position;
 
-                columnsConfig.push(entry);
+                var entry = config.columns[keys[i]].fieldConfig;
+                if(entry) {
+                    entry.position = config.columns[keys[i]].position;
+                    columnsConfig.push(entry);
+                } else {
+                    console.log("ERROR");
+                    console.log(config.columns[keys[i]]);
+                }
+
             }
 
             config.columns = columnsConfig;
+
+            this.gridConfigData.columns = columnsConfig;
+
             return config;
         } else {
             return this.gridConfigData;
