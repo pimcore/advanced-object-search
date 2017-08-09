@@ -4,6 +4,7 @@ namespace ESBackendSearch;
 
 use Elasticsearch\Client;
 use Pimcore\API\Plugin as PluginLib;
+use Pimcore\Model\Object\AbstractObject;
 use Pimcore\Model\Object\Concrete;
 
 class Plugin extends PluginLib\AbstractPlugin implements PluginLib\PluginInterface
@@ -39,11 +40,16 @@ class Plugin extends PluginLib\AbstractPlugin implements PluginLib\PluginInterfa
 
     public function updateObject($event)
     {
+        $inheritanceBackup = AbstractObject::getGetInheritedValues();
+        AbstractObject::setGetInheritedValues(true);
+
         $object = $event->getTarget();
         if($object instanceof Concrete) {
             $service = new \ESBackendSearch\Service();
             $service->doUpdateIndexData($object);
         }
+
+        AbstractObject::setGetInheritedValues($inheritanceBackup);
     }
 
     public function deleteObject($event)

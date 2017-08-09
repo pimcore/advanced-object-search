@@ -42,10 +42,11 @@ class Numeric extends DefaultAdapter implements IFieldDefinitionAdapter {
      *   - array with gt, gte, lt, lte like
      *      ["gte" => 40, "lte" => 45] --> creates RangeQuery
      *
+     * @param bool $ignoreInheritance
      * @param string $path
      * @return BuilderInterface
      */
-    public function getQueryPart($fieldFilter, $path = "") {
+    public function getQueryPart($fieldFilter, $ignoreInheritance = false, $path = "") {
         if(is_array($fieldFilter)) {
             return new RangeQuery($path . $this->fieldDefinition->getName(), $fieldFilter);
         } else {

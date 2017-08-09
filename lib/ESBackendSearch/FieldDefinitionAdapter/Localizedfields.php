@@ -27,7 +27,7 @@ class Localizedfields extends DefaultAdapter implements IFieldDefinitionAdapter 
         $children = $this->fieldDefinition->getFieldDefinitions();
         $childMappingProperties = [];
         foreach($children as $child) {
-            $fieldDefinitionAdapter = $this->service->getFieldDefinitionAdapter($child);
+            $fieldDefinitionAdapter = $this->service->getFieldDefinitionAdapter($child, $this->classDefinition);
             list($key, $mappingEntry) = $fieldDefinitionAdapter->getESMapping();
             $childMappingProperties[$key] = $mappingEntry;
         }
@@ -80,10 +80,11 @@ class Localizedfields extends DefaultAdapter implements IFieldDefinitionAdapter 
      *          ["fieldnme" => "locname", "filterEntryData" => "englname"]
      *       ]
      *
+     * @param bool $ignoreInheritance
      * @param string $path
      * @return BoolQuery
      */
-    public function getQueryPart($fieldFilter, $path = "") {
+    public function getQueryPart($fieldFilter, $ignoreInheritance = false, $path = "") {
 
         $languageQueries = [];
 
@@ -101,7 +102,7 @@ class Localizedfields extends DefaultAdapter implements IFieldDefinitionAdapter 
 
                 } else {
                     $fieldDefinition = $this->fieldDefinition->getFielddefinition($filterEntryObject->getFieldname());
-                    $fieldDefinitionAdapter = $this->service->getFieldDefinitionAdapter($fieldDefinition);
+                    $fieldDefinitionAdapter = $this->service->getFieldDefinitionAdapter($fieldDefinition, $this->classDefinition);
 
                     if($filterEntryObject->getOperator() == FilterEntry::EXISTS || $filterEntryObject->getOperator() == FilterEntry::NOT_EXISTS) {
 
@@ -150,7 +151,7 @@ class Localizedfields extends DefaultAdapter implements IFieldDefinitionAdapter 
 
         $children = $this->fieldDefinition->getFieldDefinitions();
         foreach($children as $child) {
-            $fieldDefinitionAdapter = $this->service->getFieldDefinitionAdapter($child);
+            $fieldDefinitionAdapter = $this->service->getFieldDefinitionAdapter($child, $this->classDefinition);
 
             $subEntries = $fieldDefinitionAdapter->getFieldSelectionInformation();
             foreach($subEntries as $subEntry) {

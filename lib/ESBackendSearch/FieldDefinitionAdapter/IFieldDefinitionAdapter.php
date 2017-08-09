@@ -5,6 +5,8 @@ namespace ESBackendSearch\FieldDefinitionAdapter;
 use ESBackendSearch\FieldSelectionInformation;
 use ESBackendSearch\Service;
 use ONGR\ElasticsearchDSL\BuilderInterface;
+use ONGR\ElasticsearchDSL\Query\ExistsQuery;
+use Pimcore\Model\Object\ClassDefinition;
 use Pimcore\Model\Object\ClassDefinition\Data;
 use Pimcore\Model\Object\Concrete;
 
@@ -14,8 +16,9 @@ interface IFieldDefinitionAdapter {
      * IFieldDefinitionAdapter constructor.
      * @param Data $fieldDefinition
      * @param Service $service
+     * @param ClassDefinition $classDefinition
      */
-    public function __construct(Data $fieldDefinition, Service $service);
+    public function __construct(Data $fieldDefinition, Service $service, ClassDefinition $classDefinition);
 
     /**
      * @return array
@@ -31,12 +34,18 @@ interface IFieldDefinitionAdapter {
     /**
      * @param $fieldFilter - see concrete implementations for format
      * @param string $path - sub path for nested objects (only needed internally)
+     * @param bool $ignoreInheritance - if true inheritance is not considered during query
      * @return BuilderInterface
      */
-    public function getQueryPart($fieldFilter, $path = "");
+    public function getQueryPart($fieldFilter, $ignoreInheritance = false, $path = "");
 
-    
-    public function getExistsFilter($fieldFilter, $path = "");
+    /**
+     * @param $fieldFilter - see concrete implementations for format
+     * @param bool $ignoreInheritance - if true inheritance is not considered during query
+     * @param string $path - sub path for nested objects (only needed internally)
+     * @return ExistsQuery
+     */
+    public function getExistsFilter($fieldFilter, $ignoreInheritance = false, $path = "");
 
     /**
      * returns selectable fields with their type information for search frontend

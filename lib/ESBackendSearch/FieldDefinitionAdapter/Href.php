@@ -59,10 +59,11 @@ class Href extends DefaultAdapter implements IFieldDefinitionAdapter {
      *      ]
      *       --> creates a sub query with given information, receives ids and then creates TermsQuery
      *
+     * @param bool $ignoreInheritance
      * @param string $path
      * @return BuilderInterface
      */
-    public function getQueryPart($fieldFilter, $path = "")
+    public function getQueryPart($fieldFilter, $ignoreInheritance = false, $path = "")
     {
         if(is_array($fieldFilter)) {
 

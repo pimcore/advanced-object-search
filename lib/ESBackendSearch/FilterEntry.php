@@ -35,18 +35,27 @@ class FilterEntry {
     protected $filterEntryData;
 
     /**
+     * defines if inheritance should be considered or not during filtering
+     *
+     * @var bool
+     */
+    protected $ignoreInheritance;
+
+    /**
      * FilterEntry constructor.
      * @param string $fieldname
      * @param BuilderInterface|string|\stdClass|array $filterEntryData
      * @param string $operator
+     * @param bool $ignoreInheritance
      */
-    public function __construct($fieldname, $filterEntryData, $operator = BoolQuery::MUST)
+    public function __construct($fieldname, $filterEntryData, $operator = BoolQuery::MUST, $ignoreInheritance = false)
     {
         if($operator) {
             $this->operator = $operator;
         }
         $this->fieldname = $fieldname;
         $this->filterEntryData = $filterEntryData;
+        $this->ignoreInheritance = $ignoreInheritance;
     }
 
     /**
@@ -107,8 +116,19 @@ class FilterEntry {
         $this->filterEntryData = $filterEntryData;
     }
 
+    /**
+     * @return bool
+     */
     public function isGroup() {
         return $this->fieldname == self::FIELDNAME_GROUP;
+    }
+
+    /**
+     * @return bool
+     */
+    public function getIgnoreInheritance()
+    {
+        return $this->ignoreInheritance;
     }
 
 }

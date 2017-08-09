@@ -34,3 +34,4 @@ plugin_esbackendsearch_delete_really, Do you really want to delete the Saved Sea
 plugin_esbackendsearch_add_to_shortcuts, Add To Short Cuts
 plugin_esbackendsearch_remove_from_shortcuts, Remove From Short Cuts
 plugin_esbackendsearch_short_cut_error, Cannot add short cut for not saved search
+plugin_esbackendsearch_ignoreInheritance, No Inheritance

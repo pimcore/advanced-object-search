@@ -6,6 +6,7 @@ pimcore.plugin.esbackendsearch.searchConfig.fieldConditionPanel.default = Class.
     data: {},
     termField: null,
     operatorField: null,
+    inheritanceField: null,
 
     initialize: function(fieldSelectionInformation, data) {
         this.fieldSelectionInformation = fieldSelectionInformation;
@@ -25,11 +26,21 @@ pimcore.plugin.esbackendsearch.searchConfig.fieldConditionPanel.default = Class.
             }
         );
 
+        this.inheritanceField = Ext.create('Ext.form.field.Checkbox',
+            {
+                fieldLabel:  t("plugin_esbackendsearch_ignoreInheritance"),
+                style: "padding-left: 20px",
+                value: this.data.disableInheritance,
+                hidden: !this.fieldSelectionInformation.context.classInheritanceEnabled
+            }
+        );
+
         return Ext.create('Ext.panel.Panel', {
             layout: 'hbox',
             items: [
                 this.getOperatorCombobox(this.data.operator),
-                this.termField
+                this.termField,
+                this.inheritanceField
             ]
         });
     },
@@ -65,7 +76,8 @@ pimcore.plugin.esbackendsearch.searchConfig.fieldConditionPanel.default = Class.
        return {
             fieldname: this.fieldSelectionInformation.fieldName,
             filterEntryData: this.termField.getValue(),
-            operator: this.operatorField.getValue()
+            operator: this.operatorField.getValue(),
+            ignoreInheritance: this.inheritanceField.getValue()
         };
 
     }
