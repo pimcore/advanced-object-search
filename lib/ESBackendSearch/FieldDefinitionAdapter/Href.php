@@ -6,6 +6,7 @@ use ESBackendSearch\FieldSelectionInformation;
 use ESBackendSearch\FilterEntry;
 use ONGR\ElasticsearchDSL\BuilderInterface;
 use ONGR\ElasticsearchDSL\Query\BoolQuery;
+use ONGR\ElasticsearchDSL\Query\ExistsQuery;
 use ONGR\ElasticsearchDSL\Query\NestedQuery;
 use ONGR\ElasticsearchDSL\Query\TermQuery;
 use ONGR\ElasticsearchDSL\Query\TermsQuery;
@@ -97,35 +98,40 @@ class Href extends DefaultAdapter implements IFieldDefinitionAdapter {
 
             $path = $path . $this->fieldDefinition->getName() . $this->buildQueryFieldPostfix($ignoreInheritance);
 
-            if($fieldFilter['type'] == "object") {
+            $boolQuery = new BoolQuery();
 
-                $boolQuery = new BoolQuery();
-                $boolQuery->add(new TermQuery($path . ".type", $fieldFilter['type']));
+            if($fieldFilter['id']) {
 
-                if($fieldFilter['id']) {
-
-                    if(is_array($fieldFilter['id'])) {
-                        $boolQuery->add(new TermsQuery($path . ".id", $fieldFilter['id']));
-                    } else {
-                        $boolQuery->add(new TermQuery($path . ".id", $fieldFilter['id']));
-                    }
-
-                } else if($fieldFilter['classId'] && ($fieldFilter['filters'] || $fieldFilter['fulltextSearchTerm'])) {
-
-                    $results = $this->service->doFilter($fieldFilter['classId'], $fieldFilter['filters'], $fieldFilter['fulltextSearchTerm']);
-                    
-                    $ids = $this->service->extractIdsFromResult($results);
-
-                    $boolQuery->add(new TermsQuery($path . ".id", $ids));
-
+                $idArray = $fieldFilter['id'];
+                if(!is_array($idArray)) {
+                    $idArray = [$idArray];
                 } else {
-                    throw new \Exception("invalid filter entry definition " . print_r($fieldFilter, true));
+                    $idArray = array_filter($idArray);
                 }
 
-                return new NestedQuery($path, $boolQuery);
+            } else if($fieldFilter['type'] == "object" && $fieldFilter['classId'] && ($fieldFilter['filters'] || $fieldFilter['fulltextSearchTerm'])) {
+
+                $results = $this->service->doFilter($fieldFilter['classId'], $fieldFilter['filters'], $fieldFilter['fulltextSearchTerm']);
+                $idArray = $this->service->extractIdsFromResult($results);
+
+
             } else {
-                throw new \Exception("filter type " . $fieldFilter['type'] . " not implemented yet!");
+                throw new \Exception("invalid filter entry definition " . print_r($fieldFilter, true));
             }
+
+            if($idArray) {
+                foreach($idArray as $id) {
+                    $innerBoolQuery = new BoolQuery();
+                    $innerBoolQuery->add(new TermQuery($path . ".type", $fieldFilter['type']));
+                    $innerBoolQuery->add(new TermQuery($path . ".id", $id));
+
+                    $boolQuery->add(new NestedQuery($path, $innerBoolQuery));
+                }
+            } else {
+                $boolQuery->add(new ExistsQuery($path . ".notavailablefield"));
+            }
+
+            return $boolQuery;
         } else {
             throw new \Exception("invalid filter entry for relations filter: " . print_r($fieldFilter, true));
         }
