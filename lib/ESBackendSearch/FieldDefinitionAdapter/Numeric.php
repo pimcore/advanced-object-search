@@ -8,7 +8,9 @@ use ESBackendSearch\FilterEntry;
 use ONGR\ElasticsearchDSL\BuilderInterface;
 use ONGR\ElasticsearchDSL\Query\RangeQuery;
 use ONGR\ElasticsearchDSL\Query\TermQuery;
+use Pimcore\Model\Object\AbstractObject;
 use Pimcore\Model\Object\ClassDefinition\Data;
+use Pimcore\Model\Object\Concrete;
 
 class Numeric extends DefaultAdapter implements IFieldDefinitionAdapter {
 
@@ -23,13 +25,31 @@ class Numeric extends DefaultAdapter implements IFieldDefinitionAdapter {
      * @return array
      */
     public function getESMapping() {
-        return [
-            $this->fieldDefinition->getName(),
-            [
-                'type' => 'float',
-                'index' => 'not_analyzed'
-            ]
-        ];
+        if($this->considerInheritance) {
+            return [
+                $this->fieldDefinition->getName(),
+                [
+                    'properties' => [
+                        self::ES_MAPPING_PROPERTY_STANDARD => [
+                            'type' => 'float',
+                            'index' => 'not_analyzed'
+                        ],
+                        self::ES_MAPPING_PROPERTY_NOT_INHERITED => [
+                            'type' => 'float',
+                            'index' => 'not_analyzed'
+                        ]
+                    ]
+                ]
+            ];
+        } else {
+            return [
+                $this->fieldDefinition->getName(),
+                [
+                    'type' => 'float',
+                    'index' => 'not_analyzed'
+                ]
+            ];
+        }
     }
 
 
@@ -48,9 +68,9 @@ class Numeric extends DefaultAdapter implements IFieldDefinitionAdapter {
      */
     public function getQueryPart($fieldFilter, $ignoreInheritance = false, $path = "") {
         if(is_array($fieldFilter)) {
-            return new RangeQuery($path . $this->fieldDefinition->getName(), $fieldFilter);
+            return new RangeQuery($path . $this->fieldDefinition->getName() . $this->buildQueryFieldPostfix($ignoreInheritance), $fieldFilter);
         } else {
-            return new TermQuery($path . $this->fieldDefinition->getName(), $fieldFilter);
+            return new TermQuery($path . $this->fieldDefinition->getName() . $this->buildQueryFieldPostfix($ignoreInheritance), $fieldFilter);
         }
     }
 
@@ -66,21 +86,32 @@ class Numeric extends DefaultAdapter implements IFieldDefinitionAdapter {
         return [new FieldSelectionInformation(
             $this->fieldDefinition->getName(),
             $this->fieldDefinition->getTitle(),
-            $this->fieldType, ['operators' => ['lt', 'lte', 'eq', 'gte', 'gt', FilterEntry::EXISTS, FilterEntry::NOT_EXISTS ]
-        ])];
+            $this->fieldType,
+            [
+                'operators' => ['lt', 'lte', 'eq', 'gte', 'gt', FilterEntry::EXISTS, FilterEntry::NOT_EXISTS ],
+                'classInheritanceEnabled' => $this->considerInheritance
+            ]
+        )];
     }
 
     /**
      * @param Concrete $object
-     * @return mixed
+     * @param bool $ignoreInheritance
      */
-    public function getIndexData($object) {
-        $value = $this->fieldDefinition->getForWebserviceExport($object);
-        if($value) {
-            return $value;
-        } else {
-            return null;
+    protected function doGetIndexDataValue($object, $ignoreInheritance = false) {
+        $inheritanceBackup = null;
+        if($ignoreInheritance) {
+            $inheritanceBackup = AbstractObject::getGetInheritedValues();
+            AbstractObject::setGetInheritedValues(false);
         }
+
+        $value = $this->fieldDefinition->getForWebserviceExport($object);
+
+        if($ignoreInheritance) {
+            AbstractObject::setGetInheritedValues($inheritanceBackup);
+        }
+
+        return $value;
     }
 
 

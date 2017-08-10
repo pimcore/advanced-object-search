@@ -29,9 +29,9 @@ class DefaultAdapter implements IFieldDefinitionAdapter {
     protected $fieldDefinition;
 
     /**
-     * @var ClassDefinition
+     * @var bool
      */
-    protected $classDefinition;
+    protected $considerInheritance;
 
     /**
      * @var Service
@@ -42,12 +42,12 @@ class DefaultAdapter implements IFieldDefinitionAdapter {
      * DefaultAdapter constructor.
      * @param Data $fieldDefinition
      * @param Service $service
-     * @param ClassDefinition $classDefinition
+     * @param bool $considerInheritance
      */
-    public function __construct(Data $fieldDefinition, Service $service, ClassDefinition $classDefinition) {
+    public function __construct(Data $fieldDefinition, Service $service, bool $considerInheritance) {
         $this->fieldDefinition = $fieldDefinition;
         $this->service = $service;
-        $this->classDefinition = $classDefinition;
+        $this->considerInheritance = $considerInheritance;
     }
 
     /**
@@ -55,18 +55,18 @@ class DefaultAdapter implements IFieldDefinitionAdapter {
      */
     public function getESMapping() {
 
-        if($this->classDefinition->getAllowInherit()) {
+        if($this->considerInheritance) {
             return [
                 $this->fieldDefinition->getName(),
                 [
                     'properties' => [
-                        'standard' => [
+                        self::ES_MAPPING_PROPERTY_STANDARD => [
                             'type' => 'string',
                             'fields' => [
                                 "raw" =>  [ "type" => "string", "index" => "not_analyzed" ]
                             ]
                         ],
-                        'notInherited' => [
+                        self::ES_MAPPING_PROPERTY_NOT_INHERITED => [
                             'type' => 'string',
                             'fields' => [
                                 "raw" =>  [ "type" => "string", "index" => "not_analyzed" ]
@@ -90,26 +90,42 @@ class DefaultAdapter implements IFieldDefinitionAdapter {
 
     /**
      * @param Concrete $object
+     * @param bool $ignoreInheritance
+     */
+    protected function doGetIndexDataValue($object, $ignoreInheritance = false) {
+        $inheritanceBackup = null;
+        if($ignoreInheritance) {
+            $inheritanceBackup = AbstractObject::getGetInheritedValues();
+            AbstractObject::setGetInheritedValues(false);
+        }
+
+        $value = $this->fieldDefinition->getForWebserviceExport($object);
+
+        if($ignoreInheritance) {
+            AbstractObject::setGetInheritedValues($inheritanceBackup);
+        }
+
+        return (string) $value;
+    }
+
+    /**
+     * @param Concrete $object
      * @return mixed
      */
     public function getIndexData($object) {
 
-        $value = $this->fieldDefinition->getForWebserviceExport($object);
+        $value = $this->doGetIndexDataValue($object, false);
 
-        if($this->classDefinition->getAllowInherit()) {
-
-            $inheritanceBackup = AbstractObject::getGetInheritedValues();
-            AbstractObject::setGetInheritedValues(false);
-            $notInheritedValue = $this->fieldDefinition->getForWebserviceExport($object);
-            AbstractObject::setGetInheritedValues($inheritanceBackup);
+        if($this->considerInheritance) {
+            $notInheritedValue = $this->doGetIndexDataValue($object, true);
 
             $returnValue = null;
             if($value) {
-                $returnValue['standard'] = (string) $value;
+                $returnValue[self::ES_MAPPING_PROPERTY_STANDARD] = $value;
             }
 
             if($notInheritedValue) {
-                $returnValue['notInherited'] = (string) $value;
+                $returnValue[self::ES_MAPPING_PROPERTY_NOT_INHERITED] = $notInheritedValue;
             }
 
             return $returnValue;
@@ -117,7 +133,7 @@ class DefaultAdapter implements IFieldDefinitionAdapter {
         } else {
 
             if($value) {
-                return (string) $value;
+                return $value;
             } else {
                 return null;
             }
@@ -128,11 +144,11 @@ class DefaultAdapter implements IFieldDefinitionAdapter {
     protected function buildQueryFieldPostfix($ignoreInheritance = false) {
         $postfix = "";
 
-        if($this->classDefinition->getAllowInherit()) {
+        if($this->considerInheritance) {
             if($ignoreInheritance) {
-                $postfix = ".notInherited";
+                $postfix = "." . self::ES_MAPPING_PROPERTY_NOT_INHERITED;
             } else {
-                $postfix = ".standard";
+                $postfix = "." . self::ES_MAPPING_PROPERTY_STANDARD;
             }
         }
 
@@ -174,7 +190,7 @@ class DefaultAdapter implements IFieldDefinitionAdapter {
             $this->fieldType,
             [
                 'operators' => [BoolQuery::MUST, BoolQuery::SHOULD, BoolQuery::MUST_NOT, FilterEntry::EXISTS, FilterEntry::NOT_EXISTS],
-                'classInheritanceEnabled' => $this->classDefinition->getAllowInherit()
+                'classInheritanceEnabled' => $this->considerInheritance
             ]
         )];
     }

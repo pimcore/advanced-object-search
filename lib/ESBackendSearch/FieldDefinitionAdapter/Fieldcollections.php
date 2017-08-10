@@ -43,7 +43,7 @@ class Fieldcollections extends DefaultAdapter implements IFieldDefinitionAdapter
 
             $childMappingProperties = [];
             foreach($fieldCollectionDefinition->getFieldDefinitions() as $field) {
-                $fieldDefinitionAdapter = $this->service->getFieldDefinitionAdapter($field, $this->classDefinition);
+                $fieldDefinitionAdapter = $this->service->getFieldDefinitionAdapter($field, false);
                 list($key, $mappingEntry) = $fieldDefinitionAdapter->getESMapping();
                 $childMappingProperties[$key] = $mappingEntry;
             }
@@ -86,7 +86,7 @@ class Fieldcollections extends DefaultAdapter implements IFieldDefinitionAdapter
                 $fieldCollectionData = [];
 
                 foreach($definition->getFieldDefinitions() as $key => $field) {
-                    $fieldDefinitionAdapter = $this->service->getFieldDefinitionAdapter($field, $this->classDefinition);
+                    $fieldDefinitionAdapter = $this->service->getFieldDefinitionAdapter($field, false);
                     $fieldCollectionData[$key] = $fieldDefinitionAdapter->getIndexData($item);
                 }
 

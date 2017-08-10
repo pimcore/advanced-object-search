@@ -2,6 +2,8 @@
 pimcore.registerNS("pimcore.plugin.esbackendsearch.searchConfig.fieldConditionPanel.href");
 pimcore.plugin.esbackendsearch.searchConfig.fieldConditionPanel.href = Class.create(pimcore.plugin.esbackendsearch.searchConfig.fieldConditionPanel.default, {
 
+    inheritanceField: null,
+
     getConditionPanel: function() {
 
         this.subPanel = Ext.create('Ext.panel.Panel', {});
@@ -102,12 +104,28 @@ pimcore.plugin.esbackendsearch.searchConfig.fieldConditionPanel.href = Class.cre
             }
         }
 
+        this.inheritanceField = Ext.create('Ext.form.field.Checkbox',
+            {
+                fieldLabel:  t("plugin_esbackendsearch_ignoreInheritance"),
+                style: "padding-left: 20px",
+                value: this.data.ignoreInheritance,
+                hidden: !this.fieldSelectionInformation.context.classInheritanceEnabled
+            }
+        );
+
         return Ext.create('Ext.panel.Panel', {
             items: [
-                this.typeField,
+                {
+                    xtype: 'panel',
+                    layout: 'hbox',
+                    style: "padding-bottom: 10px",
+                    items: [
+                        this.typeField,
+                        this.inheritanceField
+                    ]
+                },
                 this.subPanel
             ]
-
         });
     },
 
@@ -135,8 +153,9 @@ pimcore.plugin.esbackendsearch.searchConfig.fieldConditionPanel.href = Class.cre
         }
 
         return {
-            "fieldname": this.fieldSelectionInformation.fieldName,
-            "filterEntryData": subValue
+            fieldname: this.fieldSelectionInformation.fieldName,
+            filterEntryData: subValue,
+            ignoreInheritance: this.inheritanceField.getValue()
         };
     }
 

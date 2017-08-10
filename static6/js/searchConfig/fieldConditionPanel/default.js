@@ -30,7 +30,7 @@ pimcore.plugin.esbackendsearch.searchConfig.fieldConditionPanel.default = Class.
             {
                 fieldLabel:  t("plugin_esbackendsearch_ignoreInheritance"),
                 style: "padding-left: 20px",
-                value: this.data.disableInheritance,
+                value: this.data.ignoreInheritance,
                 hidden: !this.fieldSelectionInformation.context.classInheritanceEnabled
             }
         );

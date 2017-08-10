@@ -9,6 +9,7 @@ use ONGR\ElasticsearchDSL\Query\BoolQuery;
 use ONGR\ElasticsearchDSL\Query\NestedQuery;
 use ONGR\ElasticsearchDSL\Query\TermQuery;
 use ONGR\ElasticsearchDSL\Query\TermsQuery;
+use Pimcore\Model\Object\AbstractObject;
 use Pimcore\Model\Object\ClassDefinition\Data;
 use Pimcore\Model\Object\Concrete;
 
@@ -25,17 +26,44 @@ class Href extends DefaultAdapter implements IFieldDefinitionAdapter {
      * @return array
      */
     public function getESMapping() {
-        return [
-            $this->fieldDefinition->getName(),
-            [
-                'type' => 'nested',
-                'properties' => [
-                    'type' =>  ["type" => "string", "index" => "not_analyzed"],
-                    'subtype' =>  ["type" => "string", "index" => "not_analyzed"],
-                    'id' => ["type" => "long"]
+        if($this->considerInheritance) {
+            return [
+                $this->fieldDefinition->getName(),
+                [
+                    'properties' => [
+                        self::ES_MAPPING_PROPERTY_STANDARD => [
+                            'type' => 'nested',
+                            'properties' => [
+                                'type' =>  ["type" => "string", "index" => "not_analyzed"],
+                                'subtype' =>  ["type" => "string", "index" => "not_analyzed"],
+                                'id' => ["type" => "long"]
+                            ]
+                        ],
+                        self::ES_MAPPING_PROPERTY_NOT_INHERITED => [
+                            'type' => 'nested',
+                            'properties' => [
+                                'type' =>  ["type" => "string", "index" => "not_analyzed"],
+                                'subtype' =>  ["type" => "string", "index" => "not_analyzed"],
+                                'id' => ["type" => "long"]
+                            ]
+                        ]
+                    ]
+                ],
+            ];
+        } else {
+            return [
+                $this->fieldDefinition->getName(),
+                [
+                    'type' => 'nested',
+                    'properties' => [
+                        'type' =>  ["type" => "string", "index" => "not_analyzed"],
+                        'subtype' =>  ["type" => "string", "index" => "not_analyzed"],
+                        'id' => ["type" => "long"]
+                    ]
                 ]
-            ]
-        ];
+            ];
+        }
+
     }
 
 
@@ -67,7 +95,7 @@ class Href extends DefaultAdapter implements IFieldDefinitionAdapter {
     {
         if(is_array($fieldFilter)) {
 
-            $path = $path . $this->fieldDefinition->getName();
+            $path = $path . $this->fieldDefinition->getName() . $this->buildQueryFieldPostfix($ignoreInheritance);
 
             if($fieldFilter['type'] == "object") {
 
@@ -135,22 +163,29 @@ class Href extends DefaultAdapter implements IFieldDefinitionAdapter {
             [
                 'operators' => [BoolQuery::MUST, BoolQuery::SHOULD, BoolQuery::MUST_NOT, FilterEntry::EXISTS, FilterEntry::NOT_EXISTS],
                 'allowedTypes' => $allowedTypes,
-                'allowedClasses' => $allowedClasses
+                'allowedClasses' => $allowedClasses,
+                'classInheritanceEnabled' => $this->considerInheritance
             ]
         )];
     }
 
     /**
      * @param Concrete $object
-     * @return mixed
+     * @param bool $ignoreInheritance
      */
-    public function getIndexData($object) {
-        $value = $this->fieldDefinition->getForWebserviceExport($object);
-        if($value) {
-            return $value;
-        } else {
-            return null;
+    protected function doGetIndexDataValue($object, $ignoreInheritance = false) {
+        $inheritanceBackup = null;
+        if($ignoreInheritance) {
+            $inheritanceBackup = AbstractObject::getGetInheritedValues();
+            AbstractObject::setGetInheritedValues(false);
         }
-    }
 
+        $value = $this->fieldDefinition->getForWebserviceExport($object);
+
+        if($ignoreInheritance) {
+            AbstractObject::setGetInheritedValues($inheritanceBackup);
+        }
+
+        return $value;
+    }
 }

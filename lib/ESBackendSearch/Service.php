@@ -33,16 +33,16 @@ class Service {
      * returns field definition adapter for given field definition
      *
      * @param ClassDefinition\Data $fieldDefinition
-     * @param ClassDefinition $classDefinition
+     * @param bool $considerInheritance
      * @return IFieldDefinitionAdapter
      */
-    public function getFieldDefinitionAdapter(ClassDefinition\Data $fieldDefinition, ClassDefinition $classDefinition) {
+    public function getFieldDefinitionAdapter(ClassDefinition\Data $fieldDefinition, bool $considerInheritance) {
         $adapter = null;
         $adapterClassName = '\\ESBackendSearch\\FieldDefinitionAdapter\\' . ucfirst($fieldDefinition->fieldtype);
         if(@class_exists($adapterClassName)) {
-            $adapter = new $adapterClassName($fieldDefinition, $this, $classDefinition);
+            $adapter = new $adapterClassName($fieldDefinition, $this, $considerInheritance);
         } else {
-            $adapter = new DefaultAdapter($fieldDefinition, $this, $classDefinition);
+            $adapter = new DefaultAdapter($fieldDefinition, $this, $considerInheritance);
         }
 
         return $adapter;
@@ -61,7 +61,7 @@ class Service {
 
         $fieldDefinitions = $objectClass->getFieldDefinitions();
         foreach($fieldDefinitions as $fieldDefinition) {
-            $fieldDefinitionAdapter = $this->getFieldDefinitionAdapter($fieldDefinition ,$objectClass);
+            $fieldDefinitionAdapter = $this->getFieldDefinitionAdapter($fieldDefinition, $objectClass->getAllowInherit());
             $fieldSelectionInformationEntries = array_merge($fieldSelectionInformationEntries, $fieldDefinitionAdapter->getFieldSelectionInformation());
         }
 
@@ -98,7 +98,7 @@ class Service {
         ];
 
         foreach($fieldDefinitions as $fieldDefinition) {
-            $fieldDefinitionAdapter = $this->getFieldDefinitionAdapter($fieldDefinition, $objectClass);
+            $fieldDefinitionAdapter = $this->getFieldDefinitionAdapter($fieldDefinition, $objectClass->getAllowInherit());
             list($key, $mappingEntry) = $fieldDefinitionAdapter->getESMapping();
             $mappingProperties[$key] = $mappingEntry;
         }
@@ -138,7 +138,7 @@ class Service {
         ];
 
         foreach ($object->getClass()->getFieldDefinitions() as $key => $fieldDefinition) {
-            $fieldDefinitionAdapter = $this->getFieldDefinitionAdapter($fieldDefinition, $object->getClass());
+            $fieldDefinitionAdapter = $this->getFieldDefinitionAdapter($fieldDefinition, $object->getClass()->getAllowInherit());
             $data[$key] = $fieldDefinitionAdapter->getIndexData($object);
         }
 
@@ -351,7 +351,7 @@ class Service {
 
             } else {
                 $fieldDefinition = $objectClass->getFieldDefinition($filterEntryObject->getFieldname());
-                $fieldDefinitionAdapter = $this->getFieldDefinitionAdapter($fieldDefinition, $objectClass);
+                $fieldDefinitionAdapter = $this->getFieldDefinitionAdapter($fieldDefinition, $objectClass->getAllowInherit());
 
                 if($filterEntryObject->getOperator() == FilterEntry::EXISTS || $filterEntryObject->getOperator() == FilterEntry::NOT_EXISTS) {
 

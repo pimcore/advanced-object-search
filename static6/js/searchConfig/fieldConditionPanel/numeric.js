@@ -28,11 +28,21 @@ pimcore.plugin.esbackendsearch.searchConfig.fieldConditionPanel.numeric = Class.
             }
         );
 
+        this.inheritanceField = Ext.create('Ext.form.field.Checkbox',
+            {
+                fieldLabel:  t("plugin_esbackendsearch_ignoreInheritance"),
+                style: "padding-left: 20px",
+                value: this.data.ignoreInheritance,
+                hidden: !this.fieldSelectionInformation.context.classInheritanceEnabled
+            }
+        );
+
         return Ext.create('Ext.panel.Panel', {
             layout: 'hbox',
             items: [
                 this.getOperatorCombobox(operatorValue),
-                this.termField
+                this.termField,
+                this.inheritanceField
             ]
         });
     },
@@ -55,9 +65,10 @@ pimcore.plugin.esbackendsearch.searchConfig.fieldConditionPanel.numeric = Class.
         }
 
         return {
-            "fieldname": this.fieldSelectionInformation.fieldName,
-            "filterEntryData": filterEntryData,
-            "operator": operator
+            fieldname: this.fieldSelectionInformation.fieldName,
+            filterEntryData: filterEntryData,
+            operator: operator,
+            ignoreInheritance: this.inheritanceField.getValue()
         };
 
     }

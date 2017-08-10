@@ -12,13 +12,16 @@ use Pimcore\Model\Object\Concrete;
 
 interface IFieldDefinitionAdapter {
 
+    const ES_MAPPING_PROPERTY_STANDARD = "standard";
+    const ES_MAPPING_PROPERTY_NOT_INHERITED = "notInherited";
+
     /**
      * IFieldDefinitionAdapter constructor.
      * @param Data $fieldDefinition
      * @param Service $service
-     * @param ClassDefinition $classDefinition
+     * @param bool $considerInheritance
      */
-    public function __construct(Data $fieldDefinition, Service $service, ClassDefinition $classDefinition);
+    public function __construct(Data $fieldDefinition, Service $service, bool $considerInheritance);
 
     /**
      * @return array
