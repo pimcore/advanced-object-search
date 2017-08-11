@@ -54,6 +54,15 @@
                 <path>/plugins/ESBackendSearch/static6/js/searchConfig/fieldConditionPanel/multihrefMetadata.js</path>
                 <path>/plugins/ESBackendSearch/static6/js/searchConfig/fieldConditionPanel/checkbox.js</path>
                 <path>/plugins/ESBackendSearch/static6/js/searchConfig/fieldConditionPanel/select.js</path>
+                <path>/plugins/ESBackendSearch/static6/js/searchConfig/fieldConditionPanel/language.js</path>
+                <path>/plugins/ESBackendSearch/static6/js/searchConfig/fieldConditionPanel/country.js</path>
+                <path>/plugins/ESBackendSearch/static6/js/searchConfig/fieldConditionPanel/user.js</path>
+                <path>/plugins/ESBackendSearch/static6/js/searchConfig/fieldConditionPanel/multiselect.js</path>
+                <path>/plugins/ESBackendSearch/static6/js/searchConfig/fieldConditionPanel/countrymultiselect.js</path>
+                <path>/plugins/ESBackendSearch/static6/js/searchConfig/fieldConditionPanel/languagemultiselect.js</path>
+                <path>/plugins/ESBackendSearch/static6/js/searchConfig/fieldConditionPanel/datetime.js</path>
+                <path>/plugins/ESBackendSearch/static6/js/searchConfig/fieldConditionPanel/date.js</path>
+                <path>/plugins/ESBackendSearch/static6/js/searchConfig/fieldConditionPanel/time.js</path>
 			</pluginJsPaths-extjs6>
 
 			<!-- css files with path relative to plugin-directory -->
