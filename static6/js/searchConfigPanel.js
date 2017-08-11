@@ -8,8 +8,6 @@ pimcore.plugin.esbackendsearch.searchConfigPanel = Class.create(pimcore.element.
             this.data = {};
         }
 
-        console.log(data);
-
         this.tab = new Ext.TabPanel({
             activeTab: 0,
             id: this.getTabId(),
