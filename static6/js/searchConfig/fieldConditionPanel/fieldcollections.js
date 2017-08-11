@@ -2,7 +2,7 @@
 pimcore.registerNS("pimcore.plugin.esbackendsearch.searchConfig.fieldConditionPanel.fieldcollections");
 pimcore.plugin.esbackendsearch.searchConfig.fieldConditionPanel.fieldcollections = Class.create(pimcore.plugin.esbackendsearch.searchConfig.fieldConditionPanel.default, {
 
-    inheritanceField: null,
+    collectionType: 'fieldcollection',
 
     getConditionPanel: function() {
 
@@ -64,7 +64,7 @@ pimcore.plugin.esbackendsearch.searchConfig.fieldConditionPanel.fieldcollections
     },
 
 
-    buildFieldSelection: function(fieldCollectionType) {
+    buildFieldSelection: function(collectionTypeKey) {
 
         var data = this.data ? (this.data.filterEntryData ? this.data.filterEntryData.filterCondition : null) : null;
 
@@ -78,7 +78,7 @@ pimcore.plugin.esbackendsearch.searchConfig.fieldConditionPanel.fieldcollections
                     rootProperty: 'data',
                     idProperty: 'fieldName'
                 },
-                extraParams: { key: fieldCollectionType, type: 'fieldcollection' }
+                extraParams: { key: collectionTypeKey, type: this.collectionType, class_id: this.classId }
             },
             fields: ['fieldName','fieldLabel', 'fieldType', 'context'],
             listeners: {

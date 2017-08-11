@@ -11,16 +11,33 @@ class ESBackendSearch_AdminController extends \Pimcore\Controller\Action\Admin {
 
         $allowInheritance = false;
 
-        if($type == "class") {
-            $classId = intval($this->getParam("class_id"));
-            $definition = \Pimcore\Model\Object\ClassDefinition::getById($classId);
-            $allowInheritance = $definition->getAllowInherit();
-        } else if($type == "fieldcollection") {
-            $key = strip_tags($this->getParam("key"));
-            $definition = Object\Fieldcollection\Definition::getByKey($key);
-            $allowInheritance = false;
-        } else {
-            throw new Exception("Invalid type '$type''");
+        switch ($type) {
+            case "class":
+                $classId = intval($this->getParam("class_id"));
+                $definition = \Pimcore\Model\Object\ClassDefinition::getById($classId);
+                $allowInheritance = $definition->getAllowInherit();
+                break;
+
+            case "fieldcollection":
+                $key = strip_tags($this->getParam("key"));
+                $definition = Object\Fieldcollection\Definition::getByKey($key);
+                $allowInheritance = false;
+                break;
+
+            case "objectbrick":
+                $key = strip_tags($this->getParam("key"));
+                $definition = Object\Objectbrick\Definition::getByKey($key);
+
+                $classId = intval($this->getParam("class_id"));
+                $classDefinition = \Pimcore\Model\Object\ClassDefinition::getById($classId);
+                $allowInheritance = $classDefinition->getAllowInherit();
+
+                break;
+
+            default:
+                throw new Exception("Invalid type '$type''");
+
+
         }
 
         $service = new \ESBackendSearch\Service();

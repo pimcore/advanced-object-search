@@ -63,7 +63,7 @@ pimcore.plugin.esbackendsearch.searchConfig.conditionEntryPanel = Class.create(p
 
                             this.fieldConditionPanel.removeAll();
                             if(pimcore.plugin.esbackendsearch.searchConfig.fieldConditionPanel[fieldSelectionInformation.fieldType]) {
-                                this.fieldCondition = new pimcore.plugin.esbackendsearch.searchConfig.fieldConditionPanel[fieldSelectionInformation.fieldType](fieldSelectionInformation, data);
+                                this.fieldCondition = new pimcore.plugin.esbackendsearch.searchConfig.fieldConditionPanel[fieldSelectionInformation.fieldType](fieldSelectionInformation, data, this.classId);
                                 this.fieldConditionPanel.add(this.fieldCondition.getConditionPanel());
                             } else {
                                 console.log("ERROR - no implementation for field condition panel for " + fieldSelectionInformation.fieldType);

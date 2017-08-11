@@ -7,9 +7,11 @@ pimcore.plugin.esbackendsearch.searchConfig.fieldConditionPanel.default = Class.
     termField: null,
     operatorField: null,
     inheritanceField: null,
+    classId: null,
 
-    initialize: function(fieldSelectionInformation, data) {
+    initialize: function(fieldSelectionInformation, data, classId) {
         this.fieldSelectionInformation = fieldSelectionInformation;
+        this.classId = classId;
         if(data) {
             this.data = data;
         }
