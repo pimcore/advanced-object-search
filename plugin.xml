@@ -63,6 +63,7 @@
                 <path>/plugins/ESBackendSearch/static6/js/searchConfig/fieldConditionPanel/datetime.js</path>
                 <path>/plugins/ESBackendSearch/static6/js/searchConfig/fieldConditionPanel/date.js</path>
                 <path>/plugins/ESBackendSearch/static6/js/searchConfig/fieldConditionPanel/time.js</path>
+                <path>/plugins/ESBackendSearch/static6/js/searchConfig/fieldConditionPanel/quantityValue.js</path>
 			</pluginJsPaths-extjs6>
 
 			<!-- css files with path relative to plugin-directory -->
