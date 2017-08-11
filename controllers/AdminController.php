@@ -7,10 +7,24 @@ class ESBackendSearch_AdminController extends \Pimcore\Controller\Action\Admin {
 
     public function getFieldsAction() {
 
-        $classId = intval($this->getParam("class_id"));
+        $type = strip_tags($this->getParam("type"));
+
+        $allowInheritance = false;
+
+        if($type == "class") {
+            $classId = intval($this->getParam("class_id"));
+            $definition = \Pimcore\Model\Object\ClassDefinition::getById($classId);
+            $allowInheritance = $definition->getAllowInherit();
+        } else if($type == "fieldcollection") {
+            $key = strip_tags($this->getParam("key"));
+            $definition = Object\Fieldcollection\Definition::getByKey($key);
+            $allowInheritance = false;
+        } else {
+            throw new Exception("Invalid type '$type''");
+        }
 
         $service = new \ESBackendSearch\Service();
-        $fieldSelectionInformationEntries = $service->getFieldSelectionInformationForClassDefinition(\Pimcore\Model\Object\ClassDefinition::getById($classId));
+        $fieldSelectionInformationEntries = $service->getFieldSelectionInformationForClassDefinition($definition, $allowInheritance);
 
         $fields = [];
         foreach($fieldSelectionInformationEntries as $entry) {

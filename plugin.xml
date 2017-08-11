@@ -48,6 +48,7 @@
 				<path>/plugins/ESBackendSearch/static6/js/searchConfig/fieldConditionPanel/href.js</path>
 				<path>/plugins/ESBackendSearch/static6/js/searchConfig/fieldConditionPanel/objects.js</path>
                 <path>/plugins/ESBackendSearch/static6/js/searchConfig/fieldConditionPanel/multihref.js</path>
+                <path>/plugins/ESBackendSearch/static6/js/searchConfig/fieldConditionPanel/fieldcollections.js</path>
 			</pluginJsPaths-extjs6>
 
 			<!-- css files with path relative to plugin-directory -->

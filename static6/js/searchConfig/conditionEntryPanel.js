@@ -19,7 +19,7 @@ pimcore.plugin.esbackendsearch.searchConfig.conditionEntryPanel = Class.create(p
                     rootProperty: 'data',
                     idProperty: 'fieldName'
                 },
-                extraParams: {class_id: this.classId }
+                extraParams: {class_id: this.classId, type: 'class' }
             },
             fields: ['fieldName','fieldLabel', 'fieldType', 'context'],
             listeners: {

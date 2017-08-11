@@ -111,7 +111,7 @@ class Localizedfields extends DefaultAdapter implements IFieldDefinitionAdapter 
         $languageQueries = [];
 
         foreach($fieldFilter as $language => $languageFilters) {
-            $path = $this->fieldDefinition->getName() . "." . $language;
+            $path = $path . $this->fieldDefinition->getName() . "." . $language;
             $languageBoolQuery = new BoolQuery();
 
             foreach($languageFilters as $localizedFieldFilter) {

@@ -11,6 +11,7 @@ use ONGR\ElasticsearchDSL\Query\WildcardQuery;
 use ONGR\ElasticsearchDSL\Search;
 use Pimcore\Model\Object\ClassDefinition;
 use Pimcore\Model\Object\Concrete;
+use Pimcore\Model\Object\Fieldcollection\Definition;
 use Pimcore\Model\User;
 
 class Service {
@@ -51,17 +52,17 @@ class Service {
     /**
      * returns selectable fields with their type information for search frontend
      *
-     * @param ClassDefinition $objectClass
+     * @param ClassDefinition|Definition $definition
      *
      * @return FieldSelectionInformation[]
      */
-    public function getFieldSelectionInformationForClassDefinition(ClassDefinition $objectClass) {
+    public function getFieldSelectionInformationForClassDefinition($definition, $allowInheritance = false) {
 
         $fieldSelectionInformationEntries = [];
 
-        $fieldDefinitions = $objectClass->getFieldDefinitions();
+        $fieldDefinitions = $definition->getFieldDefinitions();
         foreach($fieldDefinitions as $fieldDefinition) {
-            $fieldDefinitionAdapter = $this->getFieldDefinitionAdapter($fieldDefinition, $objectClass->getAllowInherit());
+            $fieldDefinitionAdapter = $this->getFieldDefinitionAdapter($fieldDefinition, $allowInheritance);
             $fieldSelectionInformationEntries = array_merge($fieldSelectionInformationEntries, $fieldDefinitionAdapter->getFieldSelectionInformation());
         }
 
