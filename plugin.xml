@@ -53,6 +53,7 @@
                 <path>/plugins/ESBackendSearch/static6/js/searchConfig/fieldConditionPanel/objectsMetadata.js</path>
                 <path>/plugins/ESBackendSearch/static6/js/searchConfig/fieldConditionPanel/multihrefMetadata.js</path>
                 <path>/plugins/ESBackendSearch/static6/js/searchConfig/fieldConditionPanel/checkbox.js</path>
+                <path>/plugins/ESBackendSearch/static6/js/searchConfig/fieldConditionPanel/select.js</path>
 			</pluginJsPaths-extjs6>
 
 			<!-- css files with path relative to plugin-directory -->
