@@ -7,6 +7,9 @@ pimcore.plugin.esbackendsearch.searchConfig.fieldConditionPanel.fieldcollections
     getConditionPanel: function() {
 
         this.subPanel = Ext.create('Ext.panel.Panel', {});
+        this.fieldConditionPanel = Ext.create('Ext.panel.Panel', {
+            flex: 1
+        });
 
         var typeStore =  Ext.create('Ext.data.ArrayStore', {
             fields: ['key'],
@@ -26,25 +29,23 @@ pimcore.plugin.esbackendsearch.searchConfig.fieldConditionPanel.fieldcollections
                     change: function( item, newValue, oldValue, eOpts ) {
 
                         this.subPanel.removeAll();
-                        this.subPanel.add(this.buildFieldSelection(newValue));
+                        this.fieldConditionPanel.removeAll();
+                        if(newValue) {
+                            this.subPanel.add(this.buildFieldSelection(newValue));
+                        }
                         pimcore.layout.refresh();
+
+                        //reset data after first load
+                        this.data.filterEntryData = {};
 
                     }.bind(this)
                 }
             }
         );
 
-        if(this.data.filterEntryData) {
-            if(this.data.filterEntryData.id) {
-                this.typeField.setValue("object");
-            } else {
-                this.typeField.setValue("object_filter");
-            }
+        if (this.data.filterEntryData && this.data.filterEntryData.type) {
+            this.typeField.setValue(this.data.filterEntryData.type);
         }
-
-        this.fieldConditionPanel = Ext.create('Ext.panel.Panel', {
-            flex: 1
-        });
 
         return Ext.create('Ext.panel.Panel', {
             items: [
@@ -65,7 +66,7 @@ pimcore.plugin.esbackendsearch.searchConfig.fieldConditionPanel.fieldcollections
 
     buildFieldSelection: function(fieldCollectionType) {
 
-        var data = {};
+        var data = this.data ? (this.data.filterEntryData ? this.data.filterEntryData.filterCondition : null) : null;
 
         var fieldStore = new Ext.data.JsonStore({
             autoDestroy: true,
@@ -82,24 +83,23 @@ pimcore.plugin.esbackendsearch.searchConfig.fieldConditionPanel.fieldcollections
             fields: ['fieldName','fieldLabel', 'fieldType', 'context'],
             listeners: {
                 load: function (store) {
-                    //TODO set values on load
-                    // if(data.fieldname) {
-                    //
-                    //     if(data.fieldname == "localizedfields") {
-                    //         //need to get real fieldname of localized fields
-                    //         var language = Object.keys(data.filterEntryData)[0];
-                    //         if(language) {
-                    //             var fieldname = data.filterEntryData[language][0].fieldname;
-                    //             if(fieldname) {
-                    //                 this.fieldSelection.setValue(fieldname);
-                    //             }
-                    //         }
-                    //
-                    //     } else {
-                    //         this.fieldSelection.setValue(data.fieldname);
-                    //     }
-                    //
-                    // }
+                    if(data.fieldname) {
+
+                        if(data.fieldname == "localizedfields") {
+                            //need to get real fieldname of localized fields
+                            var language = Object.keys(data.filterEntryData)[0];
+                            if(language) {
+                                var fieldname = data.filterEntryData[language][0].fieldname;
+                                if(fieldname) {
+                                    this.fieldSelection.setValue(fieldname);
+                                }
+                            }
+
+                        } else {
+                            this.fieldSelection.setValue(data.fieldname);
+                        }
+
+                    }
                 }.bind(this)
             }
         });

@@ -17,7 +17,6 @@ class Listing extends Model\Listing\AbstractListing
     /**
      * Tests if the given key is an valid order key to sort the results
      *
-     * @todo remove the dummy-always-true rule
      * @return boolean
      */
     public function isValidOrderKey($key)
