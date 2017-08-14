@@ -99,7 +99,7 @@ pimcore.bundle.advancedObjectSearch.searchConfig.resultPanel = Class.create(pimc
         var gridHelper = new pimcore.object.helpers.grid(
             this.selectedClass,
             fields,
-            "/admin/bundle/advanced-object-search/admin/grid-proxy/classId/" + this.classId,
+            "/admin/bundle/advanced-object-search/admin/grid-proxy?classId=" + this.classId,
             {
                 language: this.gridLanguage,
                 limit: itemsPerPage
