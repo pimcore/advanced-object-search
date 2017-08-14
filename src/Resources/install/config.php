@@ -15,5 +15,5 @@
 
 return [
     "hosts" => ["dev-elasticsearch"],
-    "index-prefix" => "es_backendsearch_"
+    "index-prefix" => "objectsearch_"
 ];
