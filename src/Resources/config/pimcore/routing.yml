@@ -1,0 +1,4 @@
+_pimcore_advancedobjectsearch_backend:
+    resource: "@AdvancedObjectSearchBundle/Controller/"
+    type:     annotation
+    prefix:   /admin/advanced-object-search

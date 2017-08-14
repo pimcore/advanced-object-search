@@ -2,8 +2,10 @@
 
 namespace AdvancedObjectSearchBundle;
 
-use ESBackendSearch\FieldDefinitionAdapter\DefaultAdapter;
-use ESBackendSearch\FieldDefinitionAdapter\IFieldDefinitionAdapter;
+use AdvancedObjectSearchBundle\Filter\FieldDefinitionAdapter\DefaultAdapter;
+use AdvancedObjectSearchBundle\Filter\FieldDefinitionAdapter\IFieldDefinitionAdapter;
+use AdvancedObjectSearchBundle\Filter\FieldSelectionInformation;
+use AdvancedObjectSearchBundle\Filter\FilterEntry;
 use ONGR\ElasticsearchDSL\BuilderInterface;
 use ONGR\ElasticsearchDSL\Query\BoolQuery;
 use ONGR\ElasticsearchDSL\Query\QueryStringQuery;
@@ -39,7 +41,9 @@ class Service {
      */
     public function getFieldDefinitionAdapter(ClassDefinition\Data $fieldDefinition, bool $considerInheritance) {
         $adapter = null;
-        $adapterClassName = '\\ESBackendSearch\\FieldDefinitionAdapter\\' . ucfirst($fieldDefinition->fieldtype);
+
+        //TODO get this via service container?
+        $adapterClassName = '\\AdvancedObjectSearchBundle\\Filter\\FieldDefinitionAdapter\\' . ucfirst($fieldDefinition->fieldtype);
         if(@class_exists($adapterClassName)) {
             $adapter = new $adapterClassName($fieldDefinition, $this, $considerInheritance);
         } else {

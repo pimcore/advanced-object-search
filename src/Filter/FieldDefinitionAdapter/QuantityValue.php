@@ -2,17 +2,13 @@
 
 namespace AdvancedObjectSearchBundle\Filter\FieldDefinitionAdapter;
 
-use DeepCopy\Filter\Filter;
-use ESBackendSearch\FieldSelectionInformation;
-use ESBackendSearch\FilterEntry;
+use AdvancedObjectSearchBundle\Filter\FieldSelectionInformation;
 use ONGR\ElasticsearchDSL\BuilderInterface;
 use ONGR\ElasticsearchDSL\Query\BoolQuery;
 use ONGR\ElasticsearchDSL\Query\RangeQuery;
 use ONGR\ElasticsearchDSL\Query\TermQuery;
 use Pimcore\Model\Object\AbstractObject;
-use Pimcore\Model\Object\ClassDefinition\Data;
 use Pimcore\Model\Object\Concrete;
-use function Sodium\add;
 
 class QuantityValue extends Numeric implements IFieldDefinitionAdapter {
 

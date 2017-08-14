@@ -2,11 +2,10 @@
 
 namespace AdvancedObjectSearchBundle\Filter\FieldDefinitionAdapter;
 
-use ESBackendSearch\FieldSelectionInformation;
-use ESBackendSearch\Service;
+use AdvancedObjectSearchBundle\Filter\FieldSelectionInformation;
+use AdvancedObjectSearchBundle\Service;
 use ONGR\ElasticsearchDSL\BuilderInterface;
 use ONGR\ElasticsearchDSL\Query\ExistsQuery;
-use Pimcore\Model\Object\ClassDefinition;
 use Pimcore\Model\Object\ClassDefinition\Data;
 use Pimcore\Model\Object\Concrete;
 

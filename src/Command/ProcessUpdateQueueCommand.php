@@ -1,8 +1,8 @@
 <?php
 
-namespace ESBackendSearch\Console\Command;
+namespace AdvancedObjectSearchBundle\Command;
 
-use ESBackendSearch\Service;
+use AdvancedObjectSearchBundle\Service;
 use Pimcore\Console\AbstractCommand;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
@@ -26,5 +26,5 @@ class ProcessUpdateQueueCommand extends AbstractCommand
             $count = $service->processUpdateQueue();
         }
 
-    } 
+    }
 }

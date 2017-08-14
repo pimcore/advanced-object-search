@@ -2,8 +2,7 @@
 
 namespace AdvancedObjectSearchBundle\Filter\FieldDefinitionAdapter;
 
-use ESBackendSearch\FieldSelectionInformation;
-use ESBackendSearch\FilterEntry;
+use AdvancedObjectSearchBundle\Filter\FieldSelectionInformation;
 use ONGR\ElasticsearchDSL\BuilderInterface;
 use ONGR\ElasticsearchDSL\Query\BoolQuery;
 use ONGR\ElasticsearchDSL\Query\NestedQuery;

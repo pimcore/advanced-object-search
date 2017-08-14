@@ -2,7 +2,7 @@
 
 namespace AdvancedObjectSearchBundle\Model\SavedSearch\Listing;
 
-use ESBackendSearch\SavedSearch;
+use AdvancedObjectSearchBundle\Model\SavedSearch;
 use Pimcore\Model;
 
 class Dao extends Model\Listing\Dao\AbstractDao
@@ -15,7 +15,7 @@ class Dao extends Model\Listing\Dao\AbstractDao
      */
     public function load()
     {
-        $searchIds = $this->db->fetchCol("SELECT id FROM " . $this->db->quoteIdentifier(\ESBackendSearch\SavedSearch\Dao::TABLE_NAME) . " " . $this->getCondition() . $this->getOrder() . $this->getOffsetLimit(), $this->model->getConditionVariables());
+        $searchIds = $this->db->fetchCol("SELECT id FROM " . $this->db->quoteIdentifier(SavedSearch\Dao::TABLE_NAME) . " " . $this->getCondition() . $this->getOrder() . $this->getOffsetLimit(), $this->model->getConditionVariables());
 
         $searches = array();
         foreach ($searchIds as $id) {
@@ -31,14 +31,14 @@ class Dao extends Model\Listing\Dao\AbstractDao
 
     public function loadIdList()
     {
-        $searchIds = $this->db->fetchCol("SELECT id FROM " . $this->db->quoteIdentifier(\ESBackendSearch\SavedSearch\Dao::TABLE_NAME) . " " . $this->getCondition() . $this->getGroupBy() . $this->getOrder() . $this->getOffsetLimit(), $this->model->getConditionVariables());
+        $searchIds = $this->db->fetchCol("SELECT id FROM " . $this->db->quoteIdentifier(SavedSearch\Dao::TABLE_NAME) . " " . $this->getCondition() . $this->getGroupBy() . $this->getOrder() . $this->getOffsetLimit(), $this->model->getConditionVariables());
         return $searchIds;
     }
 
     public function getTotalCount()
     {
         try {
-            $amount = (int) $this->db->fetchOne("SELECT COUNT(*) as amount FROM " . $this->db->quoteIdentifier(\ESBackendSearch\SavedSearch\Dao::TABLE_NAME) . " " . $this->getCondition(), $this->model->getConditionVariables());
+            $amount = (int) $this->db->fetchOne("SELECT COUNT(*) as amount FROM " . $this->db->quoteIdentifier(SavedSearch\Dao::TABLE_NAME) . " " . $this->getCondition(), $this->model->getConditionVariables());
         } catch (\Exception $e) {
         }
 

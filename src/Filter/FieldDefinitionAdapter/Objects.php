@@ -2,10 +2,8 @@
 
 namespace AdvancedObjectSearchBundle\Filter\FieldDefinitionAdapter;
 
-use ESBackendSearch\FieldSelectionInformation;
-use ESBackendSearch\FilterEntry;
+use AdvancedObjectSearchBundle\Filter\FieldSelectionInformation;
 use ONGR\ElasticsearchDSL\Query\BoolQuery;
-use Pimcore\Model\Object\ClassDefinition\Data;
 
 class Objects extends Href implements IFieldDefinitionAdapter {
 

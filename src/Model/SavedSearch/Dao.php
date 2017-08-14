@@ -3,13 +3,10 @@
 namespace AdvancedObjectSearchBundle\Model\SavedSearch;
 
 use Pimcore\Model;
-use Pimcore\Model\Document;
-use Pimcore\Model\Asset;
-use Pimcore\Model\Object;
 
 class Dao extends Model\Dao\AbstractDao
 {
-    const TABLE_NAME = "plugin_esbackendsearch_savedsearch";
+    const TABLE_NAME = "bundle_advancedobjectsearch_savedsearch";
 
     /**
      * @param $id
@@ -72,10 +69,7 @@ class Dao extends Model\Dao\AbstractDao
     {
         $this->db->beginTransaction();
         try {
-//            $this->db->delete("tags_assignment", $this->db->quoteInto("tagid = ?", $this->model->getId()));
-//            $this->db->delete("tags_assignment", $this->db->quoteInto("tagid IN (SELECT id FROM tags WHERE idPath LIKE ?)", $this->model->getIdPath() . $this->model->getId() . "/%"));
-
-            $this->db->delete(self::TABLE_NAME, $this->db->quoteInto("id = ?", $this->model->getId()));
+            $this->db->delete(self::TABLE_NAME, ['id' => $this->model->getId()]);
 
             $this->db->commit();
         } catch (\Exception $e) {

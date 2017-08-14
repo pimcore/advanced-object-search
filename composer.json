@@ -7,6 +7,9 @@
       "AdvancedObjectSearchBundle\\": "src/"
     }
   },
+  "require": {
+    "ongr/elasticsearch-dsl": "~5"
+  },
   "extra": {
     "pimcore": {
       "bundles": [

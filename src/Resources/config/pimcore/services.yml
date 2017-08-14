@@ -1,0 +1,9 @@
+
+services:
+    app.event_listener.test:
+        class: AdvancedObjectSearchBundle\EventListener\IndexUpdateListener
+        tags:
+            - { name: kernel.event_listener, event: pimcore.object.postUpdate, method: updateObject }
+            - { name: kernel.event_listener, event: pimcore.object.preDelete, method: deleteObject }
+            - { name: kernel.event_listener, event: pimcore.class.postUpdate, method: updateMapping }
+            - { name: kernel.event_listener, event: pimcore.system.maintenance, method: registerMaintenanceJob }

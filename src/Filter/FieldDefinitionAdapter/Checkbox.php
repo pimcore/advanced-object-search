@@ -2,17 +2,13 @@
 
 namespace AdvancedObjectSearchBundle\Filter\FieldDefinitionAdapter;
 
-use ESBackendSearch\FieldSelectionInformation;
-use ESBackendSearch\FilterEntry;
-use ESBackendSearch\Service;
+use AdvancedObjectSearchBundle\Filter\FieldSelectionInformation;
 use ONGR\ElasticsearchDSL\BuilderInterface;
 use ONGR\ElasticsearchDSL\Query\BoolQuery;
 use ONGR\ElasticsearchDSL\Query\ExistsQuery;
 use ONGR\ElasticsearchDSL\Query\QueryStringQuery;
 use ONGR\ElasticsearchDSL\Query\TermQuery;
 use Pimcore\Model\Object\AbstractObject;
-use Pimcore\Model\Object\ClassDefinition;
-use Pimcore\Model\Object\ClassDefinition\Data;
 use Pimcore\Model\Object\Concrete;
 
 class Checkbox extends DefaultAdapter implements IFieldDefinitionAdapter {

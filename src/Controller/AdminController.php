@@ -2,35 +2,47 @@
 
 namespace AdvancedObjectSearchBundle\Controller;
 
+use AdvancedObjectSearchBundle\Model\SavedSearch;
+use AdvancedObjectSearchBundle\Service;
+use Pimcore\Bundle\AdminBundle\Controller\Admin\External\AdminerController;
 use Pimcore\Model\Object;
+use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\Routing\Annotation\Route;
 
-class AdminController extends \Pimcore\Controller\Action\Admin {
+/**
+ * Class AdminController
+ * @Route("/admin")
+ */
+class AdminController extends AdminerController {
 
+    /**
+     * @param Request $request
+     * @Route("/get-fields")
+     */
+    public function getFieldsAction(Request $request) {
 
-    public function getFieldsAction() {
-
-        $type = strip_tags($this->getParam("type"));
+        $type = strip_tags($request->get("type"));
 
         $allowInheritance = false;
 
         switch ($type) {
             case "class":
-                $classId = intval($this->getParam("class_id"));
+                $classId = intval($request->get("class_id"));
                 $definition = \Pimcore\Model\Object\ClassDefinition::getById($classId);
                 $allowInheritance = $definition->getAllowInherit();
                 break;
 
             case "fieldcollection":
-                $key = strip_tags($this->getParam("key"));
+                $key = strip_tags($request->get("key"));
                 $definition = Object\Fieldcollection\Definition::getByKey($key);
                 $allowInheritance = false;
                 break;
 
             case "objectbrick":
-                $key = strip_tags($this->getParam("key"));
+                $key = strip_tags($request->get("key"));
                 $definition = Object\Objectbrick\Definition::getByKey($key);
 
-                $classId = intval($this->getParam("class_id"));
+                $classId = intval($request->get("class_id"));
                 $classDefinition = \Pimcore\Model\Object\ClassDefinition::getById($classId);
                 $allowInheritance = $classDefinition->getAllowInherit();
 
@@ -42,7 +54,7 @@ class AdminController extends \Pimcore\Controller\Action\Admin {
 
         }
 
-        $service = new \ESBackendSearch\Service();
+        $service = new Service();
         $fieldSelectionInformationEntries = $service->getFieldSelectionInformationForClassDefinition($definition, $allowInheritance);
 
         $fields = [];
@@ -50,47 +62,51 @@ class AdminController extends \Pimcore\Controller\Action\Admin {
             $fields[] = $entry->toArray();
         }
 
-        $this->_helper->json(['data' => $fields]);
+        $this->json(['data' => $fields]);
     }
 
-    public function gridProxyAction() {
-        $requestedLanguage = $this->getParam("language");
+    /**
+     * @param Request $request
+     * @Route("/grid-proxy")
+     */
+    public function gridProxyAction(Request $request) {
+        $requestedLanguage = $request->get("language");
         if ($requestedLanguage) {
             if ($requestedLanguage != "default") {
-                $this->setLanguage($requestedLanguage, true);
+                $request->setLocale($requestedLanguage);
             }
         } else {
-            $requestedLanguage = $this->getLanguage();
+            $requestedLanguage = $request->getLocale();
         }
 
-        if ($this->getParam("data")) {
+        if ($request->get("data")) {
             $this->forward("grid-proxy", "object", "admin");
         } else {
 
             // get list of objects
-            $class = Object\ClassDefinition::getById($this->getParam("classId"));
+            $class = Object\ClassDefinition::getById($request->get("classId"));
             $className = $class->getName();
 
             $fields = array();
-            if ($this->getParam("fields")) {
-                $fields = $this->getParam("fields");
+            if ($request->get("fields")) {
+                $fields = $request->get("fields");
             }
 
             $start = 0;
             $limit = 20;
-            if ($this->getParam("limit")) {
-                $limit = $this->getParam("limit");
+            if ($request->get("limit")) {
+                $limit = $request->get("limit");
             }
-            if ($this->getParam("start")) {
-                $start = $this->getParam("start");
+            if ($request->get("start")) {
+                $start = $request->get("start");
             }
 
             $listClass = "\\Pimcore\\Model\\Object\\" . ucfirst($className) . "\\Listing";
 
 
             //get ID list from ES Service
-            $service = new ESBackendSearch\Service($this->getUser());
-            $data = json_decode($this->getParam("filter"), true);
+            $service = new Service($this->getUser());
+            $data = json_decode($request->get("filter"), true);
             $results = $service->doFilter($data['classId'], $data['conditions']['filters'], $data['conditions']['fulltextSearchTerm'], $start, $limit);
 
             $total = $service->extractTotalCountFromResult($results);
@@ -116,22 +132,26 @@ class AdminController extends \Pimcore\Controller\Action\Admin {
                 $o = Object\Service::gridObjectData($object, $fields, $requestedLanguage);
                 $objects[] = $o;
             }
-            $this->_helper->json(array("data" => $objects, "success" => true, "total" => $total));
+            $this->json(array("data" => $objects, "success" => true, "total" => $total));
 
         }
     }
 
-    public function getBatchJobsAction()
+    /**
+     * @param Request $request
+     * @Route("/get-batch-jobs")
+     */
+    public function getBatchJobsAction(Request $request)
     {
-        if ($this->getParam("language")) {
-            $this->setLanguage($this->getParam("language"), true);
+        if ($request->get("language")) {
+            $request->setLocale($request->get("language"));
         }
 
-        $class = Object\ClassDefinition::getById($this->getParam("classId"));
+        $class = Object\ClassDefinition::getById($request->get("classId"));
 
         //get ID list from ES Service
-        $service = new ESBackendSearch\Service($this->getUser());
-        $data = json_decode($this->getParam("filter"), true);
+        $service = new Service($this->getUser());
+        $data = json_decode($request->get("filter"), true);
         $results = $service->doFilter($data['classId'], $data['conditions']['filters'], $data['conditions']['fulltextSearchTerm']);
 
         $ids = $service->extractIdsFromResult($results);
@@ -143,13 +163,13 @@ class AdminController extends \Pimcore\Controller\Action\Admin {
         $list->setCondition("o_id IN (" . implode(",", $ids) . ")");
         $list->setOrderKey(" FIELD(o_id, " . implode(",", $ids) . ")", false);
 
-        if ($this->getParam("objecttype")) {
-            $list->setObjectTypes(array($this->getParam("objecttype")));
+        if ($request->get("objecttype")) {
+            $list->setObjectTypes(array($request->get("objecttype")));
         }
 
         $jobs = $list->loadIdList();
 
-        $this->_helper->json(array("success"=>true, "jobs"=>$jobs));
+        $this->json(array("success"=>true, "jobs"=>$jobs));
     }
 
 
@@ -157,14 +177,18 @@ class AdminController extends \Pimcore\Controller\Action\Admin {
         return PIMCORE_SYSTEM_TEMP_DIRECTORY . "/" . $fileHandle . ".csv";
     }
 
-    public function getExportJobsAction() {
-        if ($this->getParam("language")) {
-            $this->setLanguage($this->getParam("language"), true);
+    /**
+     * @param Request $request
+     * @Route("/get-export-jobs")
+     */
+    public function getExportJobsAction(Request $request) {
+        if ($request->get("language")) {
+            $request->setLocale($request->get("language"));
         }
 
         //get ID list from ES Service
-        $service = new ESBackendSearch\Service($this->getUser());
-        $data = json_decode($this->getParam("filter"), true);
+        $service = new Service($this->getUser());
+        $data = json_decode($request->get("filter"), true);
 
         $results = $service->doFilter(
             $data['classId'],
@@ -179,20 +203,23 @@ class AdminController extends \Pimcore\Controller\Action\Admin {
 
         $fileHandle = uniqid("export-");
         file_put_contents($this->getCsvFile($fileHandle), "");
-        $this->_helper->json(array("success"=>true, "jobs"=> $jobs, "fileHandle" => $fileHandle));
+        $this->json(array("success"=>true, "jobs"=> $jobs, "fileHandle" => $fileHandle));
     }
 
+    /**
+     * @param Request $request
+     * @Route("/save")
+     */
+    public function saveAction(Request $request) {
 
-    public function saveAction() {
-
-        $data = $this->getParam("data");
+        $data = $request->get("data");
         $data = json_decode($data);
 
-        $id = (intval($this->getParam("id")));
+        $id = (intval($request->get("id")));
         if($id) {
-            $savedSearch = \ESBackendSearch\SavedSearch::getById($id);
+            $savedSearch = SavedSearch::getById($id);
         } else {
-            $savedSearch = new \ESBackendSearch\SavedSearch();
+            $savedSearch = new SavedSearch();
             $savedSearch->setOwner($this->getUser());
         }
 
@@ -206,40 +233,47 @@ class AdminController extends \Pimcore\Controller\Action\Admin {
 
         $savedSearch->save();
 
-        $this->_helper->json(["success" => true, "id" => $savedSearch->getId()]);
+        $this->json(["success" => true, "id" => $savedSearch->getId()]);
     }
 
+    /**
+     * @param Request $request
+     * @Route("/delete")
+     */
+    public function deleteAction(Request $request) {
 
-    public function deleteAction() {
-
-        $id = intval($this->getParam("id"));
-        $savedSearch = \ESBackendSearch\SavedSearch::getById($id);
+        $id = intval($request->get("id"));
+        $savedSearch = SavedSearch::getById($id);
 
         if($savedSearch) {
             $savedSearch->delete();
-            $this->_helper->json(["success" => true, "id" => $savedSearch->getId()]);
+            $this->json(["success" => true, "id" => $savedSearch->getId()]);
         }
 
     }
 
-    public function findAction() {
+    /**
+     * @param Request $request
+     * @Route("/find")
+     */
+    public function findAction(Request $request) {
 
         $user = $this->getUser();
 
-        $query = $this->getParam("query");
+        $query = $request->get("query");
         if ($query == "*") {
             $query = "";
         }
 
         $query = str_replace("%", "*", $query);
 
-        $offset = intval($this->getParam("start"));
-        $limit = intval($this->getParam("limit"));
+        $offset = intval($request->get("start"));
+        $limit = intval($request->get("limit"));
 
         $offset = $offset ? $offset : 0;
         $limit = $limit ? $limit : 50;
 
-        $searcherList = new \ESBackendSearch\SavedSearch\Listing();
+        $searcherList = new SavedSearch\Listing();
         $conditionParts = [];
         $conditionParams = [];
 
@@ -258,8 +292,6 @@ class AdminController extends \Pimcore\Controller\Action\Admin {
 
         if (count($conditionParts) > 0) {
             $condition = implode(" AND ", $conditionParts);
-
-            //echo $condition; die();
             $searcherList->setCondition($condition, $conditionParams);
         }
 
@@ -267,7 +299,7 @@ class AdminController extends \Pimcore\Controller\Action\Admin {
         $searcherList->setOffset($offset);
         $searcherList->setLimit($limit);
 
-        $sortingSettings = \Pimcore\Admin\Helper\QueryParams::extractSortingSettings($this->getAllParams());
+        $sortingSettings = \Pimcore\Admin\Helper\QueryParams::extractSortingSettings(array_merge($request->request->all(), $request->query->all()));
         if ($sortingSettings['orderKey']) {
             $searcherList->setOrderKey($sortingSettings['orderKey']);
         }
@@ -288,24 +320,27 @@ class AdminController extends \Pimcore\Controller\Action\Admin {
         }
 
         // only get the real total-count when the limit parameter is given otherwise use the default limit
-        if ($this->getParam("limit")) {
+        if ($request->get("limit")) {
             $totalMatches = $searcherList->getTotalCount();
         } else {
             $totalMatches = count($results);
         }
 
-        $this->_helper->json(array("data" => $results, "success" => true, "total" => $totalMatches));
+        $this->json(array("data" => $results, "success" => true, "total" => $totalMatches));
 
-        $this->removeViewRenderer();
     }
 
-    public function loadSearchAction() {
+    /**
+     * @param Request $request
+     * @Route("/load-search")
+     */
+    public function loadSearchAction(Request $request) {
 
-        $id = intval($this->getParam("id"));
-        $savedSearch = \ESBackendSearch\SavedSearch::getById($id);
+        $id = intval($request->get("id"));
+        $savedSearch = SavedSearch::getById($id);
         if($savedSearch) {
             $config = json_decode($savedSearch->getConfig(), true);
-            $this->_helper->json([
+            $this->json([
                 'id' => $savedSearch->getId(),
                 'classId' => $config['classId'],
                 'settings' => [
@@ -322,9 +357,13 @@ class AdminController extends \Pimcore\Controller\Action\Admin {
         }
     }
 
-    public function loadShortCutsAction() {
+    /**
+     * @param Request $request
+     * @Route("/load-short-cuts")
+     */
+    public function loadShortCutsAction(Request $request) {
 
-        $list = new \ESBackendSearch\SavedSearch\Listing();
+        $list = new SavedSearch\Listing();
         $list->setCondition("(ownerId = ? OR sharedUserIds LIKE ?) AND shortCutUserIds LIKE ?", [$this->getUser()->getId(), '%,' . $this->getUser()->getId() . ',%', '%,' . $this->getUser()->getId() . ',%']);
         $list->load();
 
@@ -336,12 +375,16 @@ class AdminController extends \Pimcore\Controller\Action\Admin {
             ];
         }
 
-        $this->_helper->json(['entries' => $entries]);
+        $this->json(['entries' => $entries]);
     }
 
-    public function toggleShortCutAction() {
-        $id = intval($this->getParam("id"));
-        $savedSearch = \ESBackendSearch\SavedSearch::getById($id);
+    /**
+     * @param Request $request
+     * @Route("/toggle-short-cut")
+     */
+    public function toggleShortCutAction(Request $request) {
+        $id = intval($request->get("id"));
+        $savedSearch = SavedSearch::getById($id);
         if($savedSearch) {
 
             $user = $this->getUser();
@@ -351,14 +394,18 @@ class AdminController extends \Pimcore\Controller\Action\Admin {
                 $savedSearch->addShortCutForUser($user);
             }
             $savedSearch->save();
-            $this->_helper->json(['success' => 'true', 'hasShortCut' => $savedSearch->isInShortCutsForUser($user)]);
+            $this->json(['success' => 'true', 'hasShortCut' => $savedSearch->isInShortCutsForUser($user)]);
 
         } else {
-            $this->_helper->json(['success' => 'false']);
+            $this->json(['success' => 'false']);
         }
     }
 
-    public function getUsersAction() {
+    /**
+     * @param Request $request
+     * @Route("/get-users")
+     */
+    public function getUsersAction(Request $request) {
 
         $users = [];
 
@@ -389,33 +436,20 @@ class AdminController extends \Pimcore\Controller\Action\Admin {
             ];
         }
 
-        $this->_helper->json(['success' => true, 'total' => count($users), 'data' => $users]);
+        $this->json(['success' => true, 'total' => count($users), 'data' => $users]);
     }
 
 
-    public function checkIndexStatusAction() {
+    /**
+     * @param Request $request
+     * @Route("/check-index-status")
+     */
+    public function checkIndexStatusAction(Request $request)
+    {
 
-        $service = new \ESBackendSearch\Service();
-        $this->_helper->json(['indexUptodate' => $service->updateQueueEmpty()]);
+        $service = new Service();
+        $this->json(['indexUptodate' => $service->updateQueueEmpty()]);
 
-    }
-
-
-    public function testAction() {
-
-        $x = new \ESBackendSearch\SavedSearch();
-        $x->setName("Meins");
-        $x->setOwner($this->user);
-        $x->setCategory("mycategory");
-
-        $x->save();
-
-
-        $y = \ESBackendSearch\SavedSearch::getById(1);
-        p_r($y);
-
-
-        die("meins");
     }
 
 }

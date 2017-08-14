@@ -2,14 +2,12 @@
 
 namespace AdvancedObjectSearchBundle\Filter\FieldDefinitionAdapter;
 
-use ESBackendSearch\FieldSelectionInformation;
-use ESBackendSearch\FilterEntry;
+use AdvancedObjectSearchBundle\Filter\FieldSelectionInformation;
 use ONGR\ElasticsearchDSL\BuilderInterface;
 use ONGR\ElasticsearchDSL\Query\BoolQuery;
 use ONGR\ElasticsearchDSL\Query\NestedQuery;
 use Pimcore\Model\Object\ClassDefinition\Data;
 use Pimcore\Model\Object\Concrete;
-use Pimcore\Model\Object\Service;
 use Pimcore\Tool;
 
 class Localizedfields extends DefaultAdapter implements IFieldDefinitionAdapter {
@@ -59,6 +57,7 @@ class Localizedfields extends DefaultAdapter implements IFieldDefinitionAdapter 
     public function getIndexData($object)
     {
 
+        //TODO get correct locale from request
         if (\Zend_Registry::isRegistered("Zend_Locale")) {
             $localeBak = \Zend_Registry::get("Zend_Locale");
         } else {

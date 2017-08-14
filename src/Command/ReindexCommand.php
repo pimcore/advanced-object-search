@@ -1,8 +1,8 @@
 <?php
 
-namespace ESBackendSearch\Console\Command;
+namespace AdvancedObjectSearchBundle\Command;
 
-use ESBackendSearch\Service;
+use AdvancedObjectSearchBundle\Service;
 use Pimcore\Console\AbstractCommand;
 use Pimcore\Model\Object\ClassDefinition;
 use Symfony\Component\Console\Input\InputInterface;
