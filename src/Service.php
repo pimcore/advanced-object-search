@@ -165,7 +165,7 @@ class Service {
 
         //only reset update queue when index was recreated
         $db = \Pimcore\Db::get();
-        $db->query("UPDATE " . Installer::QUEUE_TABLE_NAME . " SET in_queue = 1 WHERE classId = ?", $classDefinition->getId());
+        $db->query("UPDATE " . Installer::QUEUE_TABLE_NAME . " SET in_queue = 1 WHERE classId = ?", [$classDefinition->getId()]);
         return true;
     }
 
@@ -193,9 +193,7 @@ class Service {
         $client = AdvancedObjectSearchBundle::getESClient();
 
         try {
-            Logger::info("Deleting index $indexName for class " . $classDefinition->getName());
-            $response = $client->indices()->delete(["index" => $indexName]);
-            Logger::debug(json_encode($response));
+            $this->deleteIndex($classDefinition);
         } catch (\Exception $e) {
             Logger::debug($e);
         }
@@ -221,6 +219,18 @@ class Service {
     }
 
 
+    /**
+     * deletes index
+     *
+     * @param ClassDefinition $classDefinition
+     */
+    public function deleteIndex(ClassDefinition $classDefinition) {
+        $indexName = $this->getIndexName($classDefinition->getName());
+        $client = AdvancedObjectSearchBundle::getESClient();
+        Logger::info("Deleting index $indexName for class " . $classDefinition->getName());
+        $response = $client->indices()->delete(["index" => $indexName]);
+        Logger::debug(json_encode($response));
+    }
 
 
     /**

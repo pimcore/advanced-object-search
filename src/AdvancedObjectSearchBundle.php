@@ -46,7 +46,7 @@ class AdvancedObjectSearchBundle extends AbstractPimcoreBundle
     protected static $config;
     public static function getConfig() {
         if(empty(self::$config)) {
-            $file = \Pimcore\Config::locateConfigFile(PIMCORE_CUSTOM_CONFIGURATION_DIRECTORY . "/advancedobjectsearch/config.php");
+            $file = PIMCORE_CUSTOM_CONFIGURATION_DIRECTORY . "/advancedobjectsearch/config.php";
             if(file_exists($file)) {
                 $config = include($file);
             } else {

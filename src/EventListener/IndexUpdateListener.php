@@ -20,6 +20,7 @@ use AdvancedObjectSearchBundle\Service;
 use Pimcore\Event\Model\Object\ClassDefinitionEvent;
 use Pimcore\Event\Model\ObjectEvent;
 use Pimcore\Event\System\MaintenanceEvent;
+use Pimcore\Logger;
 use Pimcore\Model\Object\AbstractObject;
 use Pimcore\Model\Object\Concrete;
 use Pimcore\Model\Schedule\Maintenance\Job;
@@ -55,6 +56,15 @@ class IndexUpdateListener
         $service->updateMapping($classDefinition);
     }
 
+    public function deleteIndex(ClassDefinitionEvent $event) {
+        $classDefinition = $event->getClassDefinition();
+        $service = new Service();
+        try {
+            $service->deleteIndex($classDefinition);
+        } catch (\Exception $e) {
+            Logger::err($e);
+        }
+    }
 
     public function registerMaintenanceJob(MaintenanceEvent $maintenanceEvent) {
         $maintenanceEvent->getManager()->registerJob(new Job(get_class($this), $this, "maintenance"));
