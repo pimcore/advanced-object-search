@@ -21,25 +21,6 @@ use Pimcore\Extension\Bundle\AbstractPimcoreBundle;
 
 class AdvancedObjectSearchBundle extends AbstractPimcoreBundle
 {
-
-    /**
-     * @var Client
-     */
-    protected static $esClient = null;
-
-    /**
-     * @return Client
-     */
-    public static function getESClient() {
-
-        if(empty(self::$esClient)) {
-            $config = self::getConfig();
-            self::$esClient = \Elasticsearch\ClientBuilder::create()->setHosts($config['hosts'])->build();
-        }
-
-        return self::$esClient;
-    }
-
     /**
      * @var array
      */

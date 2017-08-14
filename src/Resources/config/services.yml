@@ -1,10 +1,17 @@
 
 services:
+
+    bundle.advanced_object_search.es_client:
+        class: Elasticsearch\Client
+        factory: ['AdvancedObjectSearchBundle\Tools\EsClientFactory', getESClient]
+
     bundle.advanced_object_search.service:
         class: AdvancedObjectSearchBundle\Service
         arguments:
             - '@logger'
             - '@pimcore_admin.security.token_storage_user_resolver'
+            - '@bundle.advanced_object_search.es_client'
+
         tags:
             - { name: monolog.logger, channel: pimcore_advanced_object_search }
 

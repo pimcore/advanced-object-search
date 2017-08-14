@@ -20,6 +20,7 @@ use AdvancedObjectSearchBundle\Filter\FieldDefinitionAdapter\IFieldDefinitionAda
 use AdvancedObjectSearchBundle\Filter\FieldSelectionInformation;
 use AdvancedObjectSearchBundle\Filter\FilterEntry;
 use AdvancedObjectSearchBundle\Tools\Installer;
+use Elasticsearch\Client;
 use ONGR\ElasticsearchDSL\BuilderInterface;
 use ONGR\ElasticsearchDSL\Query\Compound\BoolQuery;
 use ONGR\ElasticsearchDSL\Query\FullText\QueryStringQuery;
@@ -45,13 +46,21 @@ class Service {
     protected $logger;
 
     /**
-     * Service constructor.
-     * @param User|null $user  - if user is set, filtering considers user permissions
+     * @var Client
      */
-    public function __construct(LoggerInterface $logger, TokenStorageUserResolver $userResolver)
+    protected $esClient;
+
+    /**
+     * Service constructor.
+     * @param LoggerInterface $logger
+     * @param TokenStorageUserResolver $userResolver
+     * @param Client $esClient
+     */
+    public function __construct(LoggerInterface $logger, TokenStorageUserResolver $userResolver, Client $esClient)
     {
         $this->user = $userResolver->getUser();
         $this->logger = $logger;
+        $this->esClient = $esClient;
     }
 
     /**
@@ -182,12 +191,9 @@ class Service {
      * @param ClassDefinition $classDefinition
      */
     protected function doUpdateMapping(ClassDefinition $classDefinition) {
-        $client = AdvancedObjectSearchBundle::getESClient();
-
         $mapping = $this->generateMapping($classDefinition);
-        $response = $client->indices()->putMapping($mapping);
+        $response = $this->esClient->indices()->putMapping($mapping);
         $this->logger->debug(json_encode($response));
-
     }
 
     /**
@@ -197,7 +203,6 @@ class Service {
      */
     protected function createIndex(ClassDefinition $classDefinition) {
         $indexName = $this->getIndexName($classDefinition->getName());
-        $client = AdvancedObjectSearchBundle::getESClient();
 
         try {
             $this->deleteIndex($classDefinition);
@@ -218,7 +223,7 @@ class Service {
                     ]
                 ]
             ];
-            $response = $client->indices()->create(["index" => $indexName, "body" => $body]);
+            $response = $this->esClient->indices()->create(["index" => $indexName, "body" => $body]);
             $this->logger->debug(json_encode($response));
         } catch (\Exception $e) {
             $this->logger->error($e);
@@ -233,9 +238,8 @@ class Service {
      */
     public function deleteIndex(ClassDefinition $classDefinition) {
         $indexName = $this->getIndexName($classDefinition->getName());
-        $client = AdvancedObjectSearchBundle::getESClient();
         $this->logger->info("Deleting index $indexName for class " . $classDefinition->getName());
-        $response = $client->indices()->delete(["index" => $indexName]);
+        $response = $this->esClient->indices()->delete(["index" => $indexName]);
         $this->logger->debug(json_encode($response));
     }
 
@@ -282,8 +286,6 @@ class Service {
      */
     public function doUpdateIndexData(Concrete $object, $ignoreUpdateQueue = false) {
 
-        $client = AdvancedObjectSearchBundle::getESClient();
-
         $params = [
             'index' => strtolower($object->getClassName()),
             'type' =>  $object->getClassName(),
@@ -291,7 +293,7 @@ class Service {
         ];
 
         try {
-            $indexDocument = $client->get($params);
+            $indexDocument = $this->esClient->get($params);
             $originalChecksum = $indexDocument["_source"]["o_checksum"];
         } catch(\Exception $e) {
             $this->logger->debug($e->getMessage());
@@ -301,7 +303,7 @@ class Service {
         $indexUpdateParams = $this->getIndexData($object);
 
         if($indexUpdateParams['body']['o_checksum'] != $originalChecksum) {
-            $response = $client->index($indexUpdateParams);
+            $response = $this->esClient->index($indexUpdateParams);
             $this->logger->info("Updates es index for object " . $object->getId());
             $this->logger->debug(json_encode($response));
 
@@ -344,7 +346,6 @@ class Service {
      * @param Concrete $object
      */
     public function doDeleteFromIndex(Concrete $object) {
-        $client = AdvancedObjectSearchBundle::getESClient();
 
         $params = [
             'index' => strtolower($object->getClassName()),
@@ -352,7 +353,7 @@ class Service {
             'id' => $object->getId()
         ];
 
-        $response = $client->delete($params);
+        $response = $this->esClient->delete($params);
         $this->logger->info("Deleting object " . $object->getId() . " from es index.");
         $this->logger->debug(json_encode($response));
     }
@@ -526,8 +527,6 @@ class Service {
      * @return array
      */
     public function doFilter($classId, array $filters, $fullTextQuery, $from = null, $size = null) {
-        $client = AdvancedObjectSearchBundle::getESClient();
-
         $classDefinition = \Pimcore\Model\Object\ClassDefinition::getById($classId);
 
         $search = $this->getFilter($classDefinition, $filters);
@@ -557,7 +556,7 @@ class Service {
 
         $this->logger->info("Filter-Params: " . json_encode($params));
 
-        return $client->search($params);
+        return $this->esClient->search($params);
     }
 
     /**
