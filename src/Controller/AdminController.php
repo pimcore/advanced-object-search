@@ -75,7 +75,7 @@ class AdminController extends AdminerController {
             $fields[] = $entry->toArray();
         }
 
-        $this->json(['data' => $fields]);
+        return $this->json(['data' => $fields]);
     }
 
     /**
@@ -145,7 +145,7 @@ class AdminController extends AdminerController {
                 $o = Object\Service::gridObjectData($object, $fields, $requestedLanguage);
                 $objects[] = $o;
             }
-            $this->json(array("data" => $objects, "success" => true, "total" => $total));
+            return $this->json(array("data" => $objects, "success" => true, "total" => $total));
 
         }
     }
@@ -182,7 +182,7 @@ class AdminController extends AdminerController {
 
         $jobs = $list->loadIdList();
 
-        $this->json(array("success"=>true, "jobs"=>$jobs));
+        return $this->json(array("success"=>true, "jobs"=>$jobs));
     }
 
 
@@ -216,7 +216,7 @@ class AdminController extends AdminerController {
 
         $fileHandle = uniqid("export-");
         file_put_contents($this->getCsvFile($fileHandle), "");
-        $this->json(array("success"=>true, "jobs"=> $jobs, "fileHandle" => $fileHandle));
+        return $this->json(array("success"=>true, "jobs"=> $jobs, "fileHandle" => $fileHandle));
     }
 
     /**
@@ -246,7 +246,7 @@ class AdminController extends AdminerController {
 
         $savedSearch->save();
 
-        $this->json(["success" => true, "id" => $savedSearch->getId()]);
+        return $this->json(["success" => true, "id" => $savedSearch->getId()]);
     }
 
     /**
@@ -260,7 +260,9 @@ class AdminController extends AdminerController {
 
         if($savedSearch) {
             $savedSearch->delete();
-            $this->json(["success" => true, "id" => $savedSearch->getId()]);
+            return $this->json(["success" => true, "id" => $savedSearch->getId()]);
+        } else {
+            return $this->json(["success" => false, "message" => "Saved Search with $id not found."]);
         }
 
     }
@@ -339,7 +341,7 @@ class AdminController extends AdminerController {
             $totalMatches = count($results);
         }
 
-        $this->json(array("data" => $results, "success" => true, "total" => $totalMatches));
+        return $this->json(array("data" => $results, "success" => true, "total" => $totalMatches));
 
     }
 
@@ -353,7 +355,7 @@ class AdminController extends AdminerController {
         $savedSearch = SavedSearch::getById($id);
         if($savedSearch) {
             $config = json_decode($savedSearch->getConfig(), true);
-            $this->json([
+            return $this->json([
                 'id' => $savedSearch->getId(),
                 'classId' => $config['classId'],
                 'settings' => [
@@ -367,6 +369,8 @@ class AdminController extends AdminerController {
                 'conditions' => $config['conditions'],
                 'gridConfig' => $config['gridConfig']
             ]);
+        } else {
+            return $this->json(["success" => false, "message" => "Saved Search with $id not found."]);
         }
     }
 
@@ -388,7 +392,7 @@ class AdminController extends AdminerController {
             ];
         }
 
-        $this->json(['entries' => $entries]);
+        return $this->json(['entries' => $entries]);
     }
 
     /**
@@ -407,10 +411,10 @@ class AdminController extends AdminerController {
                 $savedSearch->addShortCutForUser($user);
             }
             $savedSearch->save();
-            $this->json(['success' => 'true', 'hasShortCut' => $savedSearch->isInShortCutsForUser($user)]);
+            return $this->json(['success' => 'true', 'hasShortCut' => $savedSearch->isInShortCutsForUser($user)]);
 
         } else {
-            $this->json(['success' => 'false']);
+            return $this->json(['success' => 'false']);
         }
     }
 
@@ -449,7 +453,7 @@ class AdminController extends AdminerController {
             ];
         }
 
-        $this->json(['success' => true, 'total' => count($users), 'data' => $users]);
+        return $this->json(['success' => true, 'total' => count($users), 'data' => $users]);
     }
 
 
@@ -461,7 +465,7 @@ class AdminController extends AdminerController {
     {
 
         $service = new Service();
-        $this->json(['indexUptodate' => $service->updateQueueEmpty()]);
+        return $this->json(['indexUptodate' => $service->updateQueueEmpty()]);
 
     }
 
