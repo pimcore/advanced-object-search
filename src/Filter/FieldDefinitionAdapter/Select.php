@@ -16,10 +16,8 @@
 namespace AdvancedObjectSearchBundle\Filter\FieldDefinitionAdapter;
 
 use AdvancedObjectSearchBundle\Filter\FieldSelectionInformation;
-use ONGR\ElasticsearchDSL\BuilderInterface;
-use ONGR\ElasticsearchDSL\Query\BoolQuery;
-use ONGR\ElasticsearchDSL\Query\RangeQuery;
-use ONGR\ElasticsearchDSL\Query\TermQuery;
+use AdvancedObjectSearchBundle\Filter\FilterEntry;
+use ONGR\ElasticsearchDSL\Query\Compound\BoolQuery;
 use Pimcore\Model\Object\AbstractObject;
 use Pimcore\Model\Object\Concrete;
 

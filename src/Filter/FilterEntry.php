@@ -16,7 +16,7 @@
 namespace AdvancedObjectSearchBundle\Filter;
 
 use ONGR\ElasticsearchDSL\BuilderInterface;
-use ONGR\ElasticsearchDSL\Query\BoolQuery;
+use ONGR\ElasticsearchDSL\Query\Compound\BoolQuery;
 
 class FilterEntry {
 

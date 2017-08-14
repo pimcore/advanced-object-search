@@ -16,7 +16,8 @@
 namespace AdvancedObjectSearchBundle\Filter\FieldDefinitionAdapter;
 
 use AdvancedObjectSearchBundle\Filter\FieldSelectionInformation;
-use ONGR\ElasticsearchDSL\Query\BoolQuery;
+use AdvancedObjectSearchBundle\Filter\FilterEntry;
+use ONGR\ElasticsearchDSL\Query\Compound\BoolQuery;
 
 class Objects extends Href implements IFieldDefinitionAdapter {
 

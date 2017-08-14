@@ -21,10 +21,11 @@ use AdvancedObjectSearchBundle\Filter\FieldSelectionInformation;
 use AdvancedObjectSearchBundle\Filter\FilterEntry;
 use AdvancedObjectSearchBundle\Tools\Installer;
 use ONGR\ElasticsearchDSL\BuilderInterface;
-use ONGR\ElasticsearchDSL\Query\BoolQuery;
-use ONGR\ElasticsearchDSL\Query\QueryStringQuery;
-use ONGR\ElasticsearchDSL\Query\WildcardQuery;
+use ONGR\ElasticsearchDSL\Query\Compound\BoolQuery;
+use ONGR\ElasticsearchDSL\Query\FullText\QueryStringQuery;
+use ONGR\ElasticsearchDSL\Query\TermLevel\WildcardQuery;
 use ONGR\ElasticsearchDSL\Search;
+use Pimcore\Logger;
 use Pimcore\Model\Object\ClassDefinition;
 use Pimcore\Model\Object\Concrete;
 use Pimcore\Model\Object\Fieldcollection\Definition;
@@ -155,7 +156,7 @@ class Service {
             $this->doUpdateMapping($classDefinition);
             return true;
         } catch (\Exception $e) {
-            \Logger::info($e);
+            Logger::info($e);
             //try recreating index
             $this->createIndex($classDefinition);
         }
@@ -178,7 +179,7 @@ class Service {
 
         $mapping = $this->generateMapping($classDefinition);
         $response = $client->indices()->putMapping($mapping);
-        \Logger::debug(json_encode($response));
+        Logger::debug(json_encode($response));
 
     }
 
@@ -192,15 +193,15 @@ class Service {
         $client = AdvancedObjectSearchBundle::getESClient();
 
         try {
-            \Logger::info("Deleting index $indexName for class " . $classDefinition->getName());
+            Logger::info("Deleting index $indexName for class " . $classDefinition->getName());
             $response = $client->indices()->delete(["index" => $indexName]);
-            \Logger::debug(json_encode($response));
+            Logger::debug(json_encode($response));
         } catch (\Exception $e) {
-            \Logger::debug($e);
+            Logger::debug($e);
         }
 
         try {
-            \Logger::info("Creating index $indexName for class " . $classDefinition->getName());
+            Logger::info("Creating index $indexName for class " . $classDefinition->getName());
             $body = [
                 'settings' => [
                     'index' => [
@@ -213,9 +214,9 @@ class Service {
                 ]
             ];
             $response = $client->indices()->create(["index" => $indexName, "body" => $body]);
-            \Logger::debug(json_encode($response));
+            Logger::debug(json_encode($response));
         } catch (\Exception $e) {
-            \Logger::err($e);
+            Logger::err($e);
         }
     }
 
@@ -276,7 +277,7 @@ class Service {
             $indexDocument = $client->get($params);
             $originalChecksum = $indexDocument["_source"]["o_checksum"];
         } catch(\Exception $e) {
-            \Logger::debug($e->getMessage());
+            Logger::debug($e->getMessage());
             $originalChecksum = -1;
         }
 
@@ -284,11 +285,11 @@ class Service {
 
         if($indexUpdateParams['body']['o_checksum'] != $originalChecksum) {
             $response = $client->index($indexUpdateParams);
-            \Logger::info("Updates es index for object " . $object->getId());
-            \Logger::debug(json_encode($response));
+            Logger::info("Updates es index for object " . $object->getId());
+            Logger::debug(json_encode($response));
 
         } else {
-            \Logger::info("Not updating index for object " . $object->getId() . " - nothing has changed.");
+            Logger::info("Not updating index for object " . $object->getId() . " - nothing has changed.");
         }
 
 
@@ -335,8 +336,8 @@ class Service {
         ];
 
         $response = $client->delete($params);
-        \Logger::info("Deleting object " . $object->getId() . " from es index.");
-        \Logger::debug(json_encode($response));
+        Logger::info("Deleting object " . $object->getId() . " from es index.");
+        Logger::debug(json_encode($response));
     }
 
 
@@ -365,7 +366,7 @@ class Service {
     public function processUpdateQueue($limit = 200) {
 
         $workerId = uniqid();
-        $workerTimestamp = \Zend_Date::now()->getTimestamp();
+        $workerTimestamp = time();
         $db = \Pimcore\Db::get();
 
         $db->query("UPDATE " . Installer::QUEUE_TABLE_NAME . " SET worker_id = ?, worker_timestamp = ? WHERE in_queue = 1 AND (ISNULL(worker_timestamp) OR worker_timestamp < ?) LIMIT " . intval($limit),
@@ -375,7 +376,7 @@ class Service {
 
         if($entries) {
             foreach($entries as $objectId) {
-                \Logger::info("Worker $workerId updating index for element " . $objectId);
+                Logger::info("Worker $workerId updating index for element " . $objectId);
                 $object = Concrete::getById($objectId);
                 if($object) {
                     $this->doUpdateIndexData($object);
@@ -537,7 +538,7 @@ class Service {
             'body' => $search->toArray()
         ];
 
-        \Logger::info("Filter-Params: " . json_encode($params));
+        Logger::info("Filter-Params: " . json_encode($params));
 
         return $client->search($params);
     }

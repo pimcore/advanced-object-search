@@ -16,8 +16,8 @@
 namespace AdvancedObjectSearchBundle\Filter\FieldDefinitionAdapter;
 
 use ONGR\ElasticsearchDSL\BuilderInterface;
-use ONGR\ElasticsearchDSL\Query\RangeQuery;
-use ONGR\ElasticsearchDSL\Query\TermQuery;
+use ONGR\ElasticsearchDSL\Query\TermLevel\RangeQuery;
+use ONGR\ElasticsearchDSL\Query\TermLevel\TermQuery;
 use Pimcore\Model\Object\AbstractObject;
 use Pimcore\Model\Object\Concrete;
 

@@ -16,11 +16,12 @@
 namespace AdvancedObjectSearchBundle\Filter\FieldDefinitionAdapter;
 
 use AdvancedObjectSearchBundle\Filter\FieldSelectionInformation;
+use AdvancedObjectSearchBundle\Filter\FilterEntry;
 use AdvancedObjectSearchBundle\Service;
 use ONGR\ElasticsearchDSL\BuilderInterface;
-use ONGR\ElasticsearchDSL\Query\BoolQuery;
-use ONGR\ElasticsearchDSL\Query\ExistsQuery;
-use ONGR\ElasticsearchDSL\Query\QueryStringQuery;
+use ONGR\ElasticsearchDSL\Query\Compound\BoolQuery;
+use ONGR\ElasticsearchDSL\Query\FullText\QueryStringQuery;
+use ONGR\ElasticsearchDSL\Query\TermLevel\ExistsQuery;
 use Pimcore\Model\Object\AbstractObject;
 use Pimcore\Model\Object\ClassDefinition\Data;
 use Pimcore\Model\Object\Concrete;
