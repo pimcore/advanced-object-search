@@ -16,17 +16,20 @@ GUI for creating searches against ES index with
 - saving functionality
 - sharing functionality
 
+![Screen](./doc/img/screen.jpg)
+
+
 ### Plugin Hooks
 Following event listeners are called automatically
-- pimcore.object.postUpdate - object is updated in ES index, all child objects are added to update queue.
-- pimcore.object.preDelete  - object is deleted from ES index.
-- pimcore.class.postUpdate  - ES index mapping is updated or index recreated if necessary.
+- `pimcore.object.postUpdate` - object is updated in ES index, all child objects are added to update queue.
+- `pimcore.object.preDelete`  - object is deleted from ES index.
+- `pimcore.class.postUpdate`  - ES index mapping is updated or index recreated if necessary.
 
 ### Pimcore Console
 Functions in Pimcore console.
-- advanced-object-search:process-update-queue --> processes whole update queue of es search index.
-- advanced-object-search:re-index --> Reindex all objects of given class. Does not delete index first or resets update queue.
-- advanced-object-search:update-mapping --> Deletes and recreates mapping of given classes. Resets update queue for given class.
+- `advanced-object-search:process-update-queue` --> processes whole update queue of es search index.
+- `advanced-object-search:re-index` --> Reindex all objects of given class. Does not delete index first or resets update queue.
+- `advanced-object-search:update-mapping` --> Deletes and recreates mapping of given classes. Resets update queue for given class.
 
 For details see documentation directly in Pimcore console.
 
@@ -35,67 +38,46 @@ For details see documentation directly in Pimcore console.
 With every Pimcore maintenance call, 500 entries of update queue are processed.
 
 
-
 ## API Methods
 
 ### Create Mapping for object classes
 
-Per object class one index with one document type.
-Sample script to delete index, create index, set mapping for object type.
-Deleting index might be necessary since update mapping is not always possible.
-
+Per object class one index with one document type is created.
 ```php
 <?php
-$client = AdvancedObjectSearchBundle::getESClient();
-$service = new Service();
-
-$classes = ["Product", "Customer"];
-
-foreach($classes as $class) {
-
-    $response = $client->indices()->delete(["index" => $service->getIndexName($class)]);
-    p_r($response);
-
-
-    $response = $client->indices()->create(["index" => $service->getIndexName($class)]);
-    p_r($response);
-
-
-    $mapping = $service->generateMapping(\Pimcore\Model\Object\ClassDefinition::getByName($class));
-    $response = $client->indices()->putMapping($mapping);
-    p_r($response);
-
-    $params = [
-        'index' => $service->getIndexName($class),
-        'type' => $class
-    ];
-    $response = $client->indices()->getMapping($params);
-    p_r($response);
-
-}
+/**
+* @var \AdvancedObjectSearchBundle\Service $service
+ */
+$service = $this->get("bundle.advanced_object_search.service");
+$service->updateMapping(ClassDefinition::getByName("Product"));
 ```
 
 
 ### Update index data
 
-on object save or via script:
+On object save or via script:
 ```php
 <?php
-$service = new Service();
+/**
+* @var \AdvancedObjectSearchBundle\Service $service
+ */
+$service = $this->get("bundle.advanced_object_search.service");
 
-$objects = \Pimcore\Model\Object\Product::getList();
+$objects = Product::getList();
 foreach($objects as $object) {
     $service->doUpdateIndexData($object);
 }
 
 ```
 
-
 ### Search/Filter for data
 
 ```php
 <?php
-$service = new Service();
+/**
+* @var \AdvancedObjectSearchBundle\Service $service
+ */
+$service = $this->get("bundle.advanced_object_search.service");
 
 //filter for relations via ID
 $results = $service->doFilter(3,
@@ -106,7 +88,7 @@ $results = $service->doFilter(3,
                 "type" => "object",
                 "id" => 75
             ],
-            \ONGR\ElasticsearchDSL\Query\BoolQuery::SHOULD
+            BoolQuery::SHOULD
         )
     ],
     ""
@@ -159,7 +141,7 @@ $results = $service->doFilter(3,
         [
             "fieldname" => "keywords",
             "filterEntryData" => "test2",
-            "operator" => \ONGR\ElasticsearchDSL\Query\BoolQuery::SHOULD
+            "operator" => BoolQuery::SHOULD
         ],
         [
             "fieldname" => "localizedfields",
@@ -176,9 +158,22 @@ $results = $service->doFilter(3,
                 "locname" => "deutname"
             ]
         ],
-        new FilterEntry("keywords", "testx", \ONGR\ElasticsearchDSL\Query\BoolQuery::SHOULD)
+        new FilterEntry("keywords", "testx", BoolQuery::SHOULD)
     ],
     ""
 );
 
 ```
+
+
+## Not Supported Data Types
+Currently following data types are not supported - but can be added if needed in future versions: 
+- ClassificationStore
+- Slider
+- Password
+- Block
+- Table
+- StructuredTable
+- Geographic data types
+- Image data types
+- CalculatedValue
