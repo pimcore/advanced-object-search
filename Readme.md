@@ -1,29 +1,36 @@
-# Plugin for BackedSearch via Elasticsearch
+# Advanced Object Search via Elasticsearch
 
-## Integration into pimcore
+Advanced Object Search bundle provides advanced object search in 
+Pimcore backend powered by Elasticsearch. 
 
-### Pimcore Console
-Functions in pimcore console.
-- es-backend-search:process-update-queue --> processes whole update queue of es search index.
-- es-backend-search:re-index --> Reindex all objects of given class. Does not delete index first or resets update queue.
-- es-backend-search:update-mapping --> Deletes and recreates mapping of given classes. Resets update queue for given class.
+## Integration into Pimcore
 
-For details see documentation directly in pimcore console.
-
-### Plugin Hooks
-Following Plugin-Hooks are called automatically
-- object.postUpdate - object is updated in es index, all child objects are added to update queue.
-- object.preDelete  - object is deleted from es index.
-
-Currently, there is no automatic mapping and index updating after changes of classes.
-
-### Pimcore Maintenance
-With every pimcore mainentance call, 500 entries of update queue are processed.
+### Installation
+TBD
 
 ### GUI
-GUI for creating searches against es index with
+GUI for creating searches against ES index with
 - saving functionality
 - sharing functionality
+
+### Plugin Hooks
+Following event listeners are called automatically
+- pimcore.object.postUpdate - object is updated in ES index, all child objects are added to update queue.
+- pimcore.object.preDelete  - object is deleted from ES index.
+- pimcore.class.postUpdate  - ES index mapping is updated or index recreated if necessary.
+
+### Pimcore Console
+Functions in Pimcore console.
+- advanced-object-search:process-update-queue --> processes whole update queue of es search index.
+- advanced-object-search:re-index --> Reindex all objects of given class. Does not delete index first or resets update queue.
+- advanced-object-search:update-mapping --> Deletes and recreates mapping of given classes. Resets update queue for given class.
+
+For details see documentation directly in Pimcore console.
+
+
+### Pimcore Maintenance
+With every Pimcore maintenance call, 500 entries of update queue are processed.
+
 
 
 ## API Methods
@@ -36,8 +43,8 @@ Deleting index might be necessary since update mapping is not always possible.
 
 ```php
 <?php
-$client = \ESBackendSearch\Plugin::getESClient();
-$service = new ESBackendSearch\Service();
+$client = AdvancedObjectSearchBundle::getESClient();
+$service = new Service();
 
 $classes = ["Product", "Customer"];
 
@@ -71,7 +78,7 @@ foreach($classes as $class) {
 on object save or via script:
 ```php
 <?php
-$service = new ESBackendSearch\Service();
+$service = new Service();
 
 $objects = \Pimcore\Model\Object\Product::getList();
 foreach($objects as $object) {
@@ -85,12 +92,12 @@ foreach($objects as $object) {
 
 ```php
 <?php
-$service = new ESBackendSearch\Service();
+$service = new Service();
 
 //filter for relations via ID
 $results = $service->doFilter(3,
     [
-        new \ESBackendSearch\FilterEntry(
+        new FilterEntry(
             "objects",
             [
                 "type" => "object",
@@ -166,7 +173,7 @@ $results = $service->doFilter(3,
                 "locname" => "deutname"
             ]
         ],
-        new \ESBackendSearch\FilterEntry("keywords", "testx", \ONGR\ElasticsearchDSL\Query\BoolQuery::SHOULD)
+        new FilterEntry("keywords", "testx", \ONGR\ElasticsearchDSL\Query\BoolQuery::SHOULD)
     ],
     ""
 );
