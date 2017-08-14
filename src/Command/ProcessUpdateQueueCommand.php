@@ -25,7 +25,7 @@ class ProcessUpdateQueueCommand extends AbstractCommand
     protected function configure()
     {
         $this
-            ->setName('es-backend-search:process-update-queue')
+            ->setName('advanced-object-search:process-update-queue')
             ->setDescription("processes whole update queue of es search index")
         ;
     }

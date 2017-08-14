@@ -27,7 +27,7 @@ class UpdateMappingCommand extends AbstractCommand
     protected function configure()
     {
         $this
-            ->setName('es-backend-search:update-mapping')
+            ->setName('advanced-object-search:update-mapping')
             ->setDescription("Deletes and recreates mapping of given classes. Resets update queue for given class.")
             ->addOption('classes', 'c', InputOption::VALUE_OPTIONAL, 'just update specific classes, use "," (comma) to execute more than one class')
         ;

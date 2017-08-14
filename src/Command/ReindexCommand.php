@@ -27,7 +27,7 @@ class ReindexCommand extends AbstractCommand
     protected function configure()
     {
         $this
-            ->setName('es-backend-search:re-index')
+            ->setName('advanced-object-search:re-index')
             ->setDescription("Reindex all objects of given class. Does not delete index first or resets update queue.")
             ->addOption('classes', 'c', InputOption::VALUE_OPTIONAL, 'just update specific classes, use "," (comma) to execute more than one class')
         ;
