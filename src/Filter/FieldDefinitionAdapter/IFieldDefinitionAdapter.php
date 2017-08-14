@@ -29,11 +29,19 @@ interface IFieldDefinitionAdapter {
 
     /**
      * IFieldDefinitionAdapter constructor.
-     * @param Data $fieldDefinition
      * @param Service $service
+     */
+    public function __construct(Service $service);
+
+    /**
+     * @param Data $fieldDefinition
+     */
+    public function setFieldDefinition(Data $fieldDefinition);
+
+    /**
      * @param bool $considerInheritance
      */
-    public function __construct(Data $fieldDefinition, Service $service, bool $considerInheritance);
+    public function setConsiderInheritance(bool $considerInheritance);
 
     /**
      * @return array

@@ -17,12 +17,15 @@ namespace AdvancedObjectSearchBundle\Filter\FieldDefinitionAdapter;
 
 use AdvancedObjectSearchBundle\Filter\FieldSelectionInformation;
 use AdvancedObjectSearchBundle\Filter\FilterEntry;
+use AdvancedObjectSearchBundle\Service;
 use ONGR\ElasticsearchDSL\BuilderInterface;
 use ONGR\ElasticsearchDSL\Query\Compound\BoolQuery;
 use ONGR\ElasticsearchDSL\Query\Joining\NestedQuery;
 use Pimcore\Model\Object\ClassDefinition\Data;
 use Pimcore\Model\Object\Concrete;
+use Pimcore\Service\Locale;
 use Pimcore\Tool;
+use Symfony\Component\HttpFoundation\RequestStack;
 
 class Localizedfields extends DefaultAdapter implements IFieldDefinitionAdapter {
 
@@ -31,6 +34,20 @@ class Localizedfields extends DefaultAdapter implements IFieldDefinitionAdapter 
      */
     protected $fieldDefinition;
 
+    /**
+     * @var Locale
+     */
+    protected $localeService;
+
+    public function __construct(Service $service, Locale $locale = null)
+    {
+        parent::__construct($service);
+
+        $this->localeService = $locale;
+        if(!$locale) {
+            throw new \Exception("Locale not set");
+        }
+    }
 
     /**
      * @return array
@@ -71,12 +88,7 @@ class Localizedfields extends DefaultAdapter implements IFieldDefinitionAdapter 
     public function getIndexData($object)
     {
 
-        //TODO get correct locale from request
-        if (\Zend_Registry::isRegistered("Zend_Locale")) {
-            $localeBak = \Zend_Registry::get("Zend_Locale");
-        } else {
-            $localeBak = null;
-        }
+        $localeBackup = $this->localeService->getLocale();
 
         $validLanguages = Tool::getValidLanguages();
 
@@ -85,7 +97,7 @@ class Localizedfields extends DefaultAdapter implements IFieldDefinitionAdapter 
         if ($validLanguages) {
             foreach ($validLanguages as $language) {
                 foreach ($this->fieldDefinition->getFieldDefinitions() as $key => $fieldDefinition) {
-                    \Zend_Registry::set("Zend_Locale", new \Zend_Locale($language));
+                    $this->localeService->setLocale($language);
 
                     $fieldDefinitionAdapter = $this->service->getFieldDefinitionAdapter($fieldDefinition, $this->considerInheritance);
                     $localizedFieldData[$language][$key] = $fieldDefinitionAdapter->getIndexData($object);
@@ -93,12 +105,10 @@ class Localizedfields extends DefaultAdapter implements IFieldDefinitionAdapter 
                 }
             }
         }
-        if ($localeBak) {
-            \Zend_Registry::set("Zend_Locale", $localeBak);
-        }
+
+        $this->localeService->setLocale($localeBackup);
 
         return $localizedFieldData;
-
     }
 
 

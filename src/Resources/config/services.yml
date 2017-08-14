@@ -11,6 +11,7 @@ services:
             - '@logger'
             - '@pimcore_admin.security.token_storage_user_resolver'
             - '@bundle.advanced_object_search.es_client'
+            - '@service_container'
 
         tags:
             - { name: monolog.logger, channel: pimcore_advanced_object_search }
@@ -25,5 +26,129 @@ services:
             - { name: kernel.event_listener, event: pimcore.class.postUpdate, method: updateMapping }
             - { name: kernel.event_listener, event: pimcore.class.postDelete, method: deleteIndex }
             - { name: kernel.event_listener, event: pimcore.system.maintenance, method: registerMaintenanceJob }
+
+
+
+    bundle.advanced_object_search.filter.default:
+        class: AdvancedObjectSearchBundle\Filter\FieldDefinitionAdapter\DefaultAdapter
+        arguments:
+            - '@bundle.advanced_object_search.service'
+
+    bundle.advanced_object_search.filter.chechbox:
+        class: AdvancedObjectSearchBundle\Filter\FieldDefinitionAdapter\Checkbox
+        arguments:
+            - '@bundle.advanced_object_search.service'
+
+    bundle.advanced_object_search.filter.country:
+        class: AdvancedObjectSearchBundle\Filter\FieldDefinitionAdapter\Country
+        arguments:
+            - '@bundle.advanced_object_search.service'
+
+    bundle.advanced_object_search.filter.countrymultiselect:
+        class: AdvancedObjectSearchBundle\Filter\FieldDefinitionAdapter\Countrymultiselect
+        arguments:
+            - '@bundle.advanced_object_search.service'
+
+    bundle.advanced_object_search.filter.date:
+        class: AdvancedObjectSearchBundle\Filter\FieldDefinitionAdapter\Date
+        arguments:
+            - '@bundle.advanced_object_search.service'
+
+    bundle.advanced_object_search.filter.datetime:
+        class: AdvancedObjectSearchBundle\Filter\FieldDefinitionAdapter\Datetime
+        arguments:
+            - '@bundle.advanced_object_search.service'
+
+    bundle.advanced_object_search.filter.fieldcollections:
+        class: AdvancedObjectSearchBundle\Filter\FieldDefinitionAdapter\Fieldcollections
+        arguments:
+            - '@bundle.advanced_object_search.service'
+
+    bundle.advanced_object_search.filter.href:
+        class: AdvancedObjectSearchBundle\Filter\FieldDefinitionAdapter\Href
+        arguments:
+            - '@bundle.advanced_object_search.service'
+
+    bundle.advanced_object_search.filter.language:
+        class: AdvancedObjectSearchBundle\Filter\FieldDefinitionAdapter\Language
+        arguments:
+            - '@bundle.advanced_object_search.service'
+
+    bundle.advanced_object_search.filter.languagemultiselect:
+        class: AdvancedObjectSearchBundle\Filter\FieldDefinitionAdapter\Languagemultiselect
+        arguments:
+            - '@bundle.advanced_object_search.service'
+
+    bundle.advanced_object_search.filter.localizedfields:
+        class: AdvancedObjectSearchBundle\Filter\FieldDefinitionAdapter\Localizedfields
+        arguments:
+            - '@bundle.advanced_object_search.service'
+            - '@pimcore.locale'
+
+    bundle.advanced_object_search.filter.multihref:
+        class: AdvancedObjectSearchBundle\Filter\FieldDefinitionAdapter\Multihref
+        arguments:
+            - '@bundle.advanced_object_search.service'
+
+    bundle.advanced_object_search.filter.multihrefMetadata:
+        class: AdvancedObjectSearchBundle\Filter\FieldDefinitionAdapter\MultihrefMetadata
+        arguments:
+            - '@bundle.advanced_object_search.service'
+
+    bundle.advanced_object_search.filter.multiselect:
+        class: AdvancedObjectSearchBundle\Filter\FieldDefinitionAdapter\Multiselect
+        arguments:
+            - '@bundle.advanced_object_search.service'
+
+    bundle.advanced_object_search.filter.numeric:
+        class: AdvancedObjectSearchBundle\Filter\FieldDefinitionAdapter\Numeric
+        arguments:
+            - '@bundle.advanced_object_search.service'
+
+    bundle.advanced_object_search.filter.objectbricks:
+        class: AdvancedObjectSearchBundle\Filter\FieldDefinitionAdapter\Objectbricks
+        arguments:
+            - '@bundle.advanced_object_search.service'
+
+    bundle.advanced_object_search.filter.objects:
+        class: AdvancedObjectSearchBundle\Filter\FieldDefinitionAdapter\Objects
+        arguments:
+            - '@bundle.advanced_object_search.service'
+
+    bundle.advanced_object_search.filter.objectsMetadata:
+        class: AdvancedObjectSearchBundle\Filter\FieldDefinitionAdapter\ObjectsMetadata
+        arguments:
+            - '@bundle.advanced_object_search.service'
+
+    bundle.advanced_object_search.filter.quantityValue:
+        class: AdvancedObjectSearchBundle\Filter\FieldDefinitionAdapter\QuantityValue
+        arguments:
+            - '@bundle.advanced_object_search.service'
+
+    bundle.advanced_object_search.filter.select:
+        class: AdvancedObjectSearchBundle\Filter\FieldDefinitionAdapter\Select
+        arguments:
+            - '@bundle.advanced_object_search.service'
+
+    bundle.advanced_object_search.filter.Time:
+        class: AdvancedObjectSearchBundle\Filter\FieldDefinitionAdapter\Time
+        arguments:
+            - '@bundle.advanced_object_search.service'
+
+    bundle.advanced_object_search.filter.user:
+        class: AdvancedObjectSearchBundle\Filter\FieldDefinitionAdapter\User
+        arguments:
+            - '@bundle.advanced_object_search.service'
+
+
+
+
+
+
+
+
+
+
+
 
 

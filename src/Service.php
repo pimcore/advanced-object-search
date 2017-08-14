@@ -31,6 +31,7 @@ use Pimcore\Model\Object\ClassDefinition;
 use Pimcore\Model\Object\Concrete;
 use Pimcore\Model\Object\Fieldcollection\Definition;
 use Pimcore\Model\User;
+use Psr\Container\ContainerInterface;
 use Psr\Log\LoggerInterface;
 
 class Service {
@@ -51,16 +52,23 @@ class Service {
     protected $esClient;
 
     /**
+     * @var ContainerInterface
+     */
+    protected $container;
+
+    /**
      * Service constructor.
      * @param LoggerInterface $logger
      * @param TokenStorageUserResolver $userResolver
      * @param Client $esClient
+     * @param ContainerInterface $container
      */
-    public function __construct(LoggerInterface $logger, TokenStorageUserResolver $userResolver, Client $esClient)
+    public function __construct(LoggerInterface $logger, TokenStorageUserResolver $userResolver, Client $esClient, ContainerInterface $container)
     {
         $this->user = $userResolver->getUser();
         $this->logger = $logger;
         $this->esClient = $esClient;
+        $this->container = $container;
     }
 
     /**
@@ -73,13 +81,12 @@ class Service {
     public function getFieldDefinitionAdapter(ClassDefinition\Data $fieldDefinition, bool $considerInheritance) {
         $adapter = null;
 
-        //TODO get this via service container?
-        $adapterClassName = '\\AdvancedObjectSearchBundle\\Filter\\FieldDefinitionAdapter\\' . ucfirst($fieldDefinition->fieldtype);
-        if(@class_exists($adapterClassName)) {
-            $adapter = new $adapterClassName($fieldDefinition, $this, $considerInheritance);
-        } else {
-            $adapter = new DefaultAdapter($fieldDefinition, $this, $considerInheritance);
+        $adapter = $this->container->get("bundle.advanced_object_search.filter." . $fieldDefinition->fieldtype);
+        if(empty($adapter)) {
+            $adapter = $this->container->get("bundle.advanced_object_search.filter.default");
         }
+        $adapter->setConsiderInheritance($considerInheritance);
+        $adapter->setFieldDefinition($fieldDefinition);
 
         return $adapter;
     }
