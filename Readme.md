@@ -5,8 +5,11 @@ Pimcore backend powered by Elasticsearch.
 
 ## Integration into Pimcore
 
-### Installation
-TBD
+### Installation and Configuration
+- During installation, all tables and the configuration file in `app/config/pimcore/advancedobjectsearch` are created. 
+- Before starting, the configuration file has to be set up correctly: 
+  - add Elasticsearch host(s)
+  - configure index prefix
 
 ### GUI
 GUI for creating searches against ES index with
