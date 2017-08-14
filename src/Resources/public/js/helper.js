@@ -78,8 +78,9 @@ pimcore.bundle.advancedObjectSearch.helper = {
 
             }.bind(this)
         });
+    },
 
-
+    initializeStatusIcon: function() {
         //adding status icon
         var statusBar = Ext.get("pimcore_status");
 
@@ -90,7 +91,6 @@ pimcore.bundle.advancedObjectSearch.helper = {
         pimcore.helpers.initMenuTooltips();
 
         this.checkIndexStatus(statusIcon);
-
     },
 
     checkIndexStatus: function(statusIcon) {

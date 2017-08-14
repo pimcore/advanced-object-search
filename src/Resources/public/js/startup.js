@@ -24,12 +24,13 @@ pimcore.bundle.advancedObjectSearch = Class.create(pimcore.plugin.admin, {
     },
  
     pimcoreReady: function (params,broker){
-
         var perspectiveCfg = pimcore.globalmanager.get("perspective");
 
         var searchMenu = pimcore.globalmanager.get("layout_toolbar").searchMenu;
         if(searchMenu && perspectiveCfg.inToolbar("search.advancedObjectSearch")) {
             pimcore.bundle.advancedObjectSearch.helper.rebuildEsSearchMenu();
+            pimcore.bundle.advancedObjectSearch.helper.initializeStatusIcon();
+
         }
     }
 });
