@@ -5,6 +5,7 @@ namespace ESBackendSearch;
 use Elasticsearch\Client;
 use Pimcore\API\Plugin as PluginLib;
 use Pimcore\Model\Object\AbstractObject;
+use Pimcore\Model\Object\ClassDefinition;
 use Pimcore\Model\Object\Concrete;
 
 class Plugin extends PluginLib\AbstractPlugin implements PluginLib\PluginInterface
@@ -19,6 +20,8 @@ class Plugin extends PluginLib\AbstractPlugin implements PluginLib\PluginInterfa
         // register your events here
         \Pimcore::getEventManager()->attach("object.postUpdate", array($this, "updateObject"));
         \Pimcore::getEventManager()->attach("object.preDelete", array($this, "deleteObject"));
+        \Pimcore::getEventManager()->attach("object.class.postUpdate", array($this, "updateMapping"));
+
 
         \Pimcore::getEventManager()->attach('system.console.init', function (\Zend_EventManager_Event $e) {
             /** @var \Pimcore\Console\Application $application */
@@ -59,6 +62,12 @@ class Plugin extends PluginLib\AbstractPlugin implements PluginLib\PluginInterfa
             $service = new \ESBackendSearch\Service();
             $service->doDeleteFromIndex($object);
         }
+    }
+
+    public function updateMapping($event) {
+        $classDefinition = $event->getTarget();
+        $service = new Service();
+        $service->updateMapping($classDefinition);
     }
 
     public function maintenance() {

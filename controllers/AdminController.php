@@ -391,6 +391,13 @@ class ESBackendSearch_AdminController extends \Pimcore\Controller\Action\Admin {
     }
 
 
+    public function checkIndexStatusAction() {
+
+        $service = new \ESBackendSearch\Service();
+        $this->_helper->json(['indexUptodate' => $service->updateQueueEmpty()]);
+
+    }
+
 
     public function testAction() {
 

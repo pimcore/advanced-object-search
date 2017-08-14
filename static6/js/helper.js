@@ -68,6 +68,38 @@ pimcore.plugin.esbackendsearch.helper = {
         });
 
 
+        //adding status icon
+        var statusBar = Ext.get("pimcore_status");
+
+        var statusIcon = Ext.get(statusBar.insertHtml('afterBegin',
+            '<div id="pimcore_icon_esbackendsearch_toolbar" data-menu-tooltip="'
+            + t("plugin_esbackendsearch_updating_index") + '"></div>'));
+
+        pimcore.helpers.initMenuTooltips();
+
+        this.checkIndexStatus(statusIcon);
+
+    },
+
+    checkIndexStatus: function(statusIcon) {
+
+        Ext.Ajax.request({
+            url: "/plugin/ESBackendSearch/admin/check-index-status",
+            method: "get",
+            success: function (response) {
+                var rdata = Ext.decode(response.responseText);
+
+                if(rdata.indexUptodate === true) {
+                    statusIcon.hide();
+                } else {
+                    statusIcon.show();
+                }
+
+                setTimeout(this.checkIndexStatus.bind(this, statusIcon), 10000);
+
+            }.bind(this)
+        });
+
     },
 
     openEsSearch: function(id, callback) {

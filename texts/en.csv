@@ -36,3 +36,4 @@ plugin_esbackendsearch_remove_from_shortcuts, Remove From Short Cuts
 plugin_esbackendsearch_short_cut_error, Cannot add short cut for not saved search
 plugin_esbackendsearch_ignoreInheritance, No Inheritance
 plugin_esbackendsearch_date, Date
+plugin_esbackendsearch_updating_index, Currently updating search index

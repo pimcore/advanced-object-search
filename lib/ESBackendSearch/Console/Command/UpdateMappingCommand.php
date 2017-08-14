@@ -24,7 +24,6 @@ class UpdateMappingCommand extends AbstractCommand
     protected function execute(InputInterface $input, OutputInterface $output)
     {
         $service = new Service();
-        $client = \ESBackendSearch\Plugin::getESClient();
 
         $classes = [];
 
@@ -47,40 +46,7 @@ class UpdateMappingCommand extends AbstractCommand
 
             $this->output->writeln("Processing " . $class->getName() . " -> index $indexName");
 
-            try {
-                \Logger::info("Deleting index $indexName for class " . $class->getName());
-                $response = $client->indices()->delete(["index" => $indexName]);
-                \Logger::debug(json_encode($response));
-            } catch (\Exception $e) {
-                \Logger::debug($e);
-            }
-
-            try {
-                \Logger::info("Creating index $indexName for class " . $class->getName());
-                $body = [
-                    'settings' => [
-                        'index' => [
-                            'mapping' => [
-                                'nested_fields' => [
-                                    'limit' => 200
-                                ]
-                            ]
-                        ]
-                    ]
-                ];
-                $response = $client->indices()->create(["index" => $indexName, "body" => $body]);
-                \Logger::debug(json_encode($response));
-            } catch (\Exception $e) {
-                \Logger::err($e);
-            }
-
-            \Logger::info("Putting mapping for class " . $class->getName());
-            $mapping = $service->generateMapping(\Pimcore\Model\Object\ClassDefinition::getByName($class->getName()));
-            $response = $client->indices()->putMapping($mapping);
-            \Logger::debug(json_encode($response));
-
-            $db = \Pimcore\Db::get();
-            $db->query("UPDATE " . Plugin::QUEUE_TABLE_NAME . " SET in_queue = 1 WHERE classId = ?", $class->getId());
+            $service->updateMapping($class);
 
         }
     }

@@ -122,6 +122,87 @@ class Service {
 
     }
 
+    /**
+     * updates mapping for given Object class
+     *  - update mapping without recreating index
+     *  - if that fails, delete and create index and try update mapping again and resets update queue
+     *  - if that also fails, throws exception
+     *
+     * @param ClassDefinition $classDefinition
+     */
+    public function updateMapping(ClassDefinition $classDefinition) {
+
+        //updating mapping without recreating index
+        try {
+            $this->doUpdateMapping($classDefinition);
+            return true;
+        } catch (\Exception $e) {
+            \Logger::info($e);
+            //try recreating index
+            $this->createIndex($classDefinition);
+        }
+
+        $this->doUpdateMapping($classDefinition);
+
+        //only reset update queue when index was recreated
+        $db = \Pimcore\Db::get();
+        $db->query("UPDATE " . Plugin::QUEUE_TABLE_NAME . " SET in_queue = 1 WHERE classId = ?", $classDefinition->getId());
+        return true;
+    }
+
+    /**
+     * updates mapping for index - throws exception if not successful
+     *
+     * @param ClassDefinition $classDefinition
+     */
+    protected function doUpdateMapping(ClassDefinition $classDefinition) {
+        $client = Plugin::getESClient();
+
+        $mapping = $this->generateMapping($classDefinition);
+        $response = $client->indices()->putMapping($mapping);
+        \Logger::debug(json_encode($response));
+
+    }
+
+    /**
+     * creates new elastic search index and deletes old one if exists
+     *
+     * @param ClassDefinition $classDefinition
+     */
+    protected function createIndex(ClassDefinition $classDefinition) {
+        $indexName = $this->getIndexName($classDefinition->getName());
+        $client = Plugin::getESClient();
+
+        try {
+            \Logger::info("Deleting index $indexName for class " . $classDefinition->getName());
+            $response = $client->indices()->delete(["index" => $indexName]);
+            \Logger::debug(json_encode($response));
+        } catch (\Exception $e) {
+            \Logger::debug($e);
+        }
+
+        try {
+            \Logger::info("Creating index $indexName for class " . $classDefinition->getName());
+            $body = [
+                'settings' => [
+                    'index' => [
+                        'mapping' => [
+                            'nested_fields' => [
+                                'limit' => 200
+                            ]
+                        ]
+                    ]
+                ]
+            ];
+            $response = $client->indices()->create(["index" => $indexName, "body" => $body]);
+            \Logger::debug(json_encode($response));
+        } catch (\Exception $e) {
+            \Logger::err($e);
+        }
+    }
+
+
+
 
     /**
      * returns index data array for given object
@@ -288,6 +369,18 @@ class Service {
         }
     }
 
+    /**
+     * returns if update queue is empty
+     *
+     * @return bool
+     */
+    public function updateQueueEmpty() {
+        $db = \Pimcore\Db::get();
+        $count = $db->fetchOne("SELECT count(*) FROM " . Plugin::QUEUE_TABLE_NAME . " WHERE in_queue = 1");
+
+        return $count == 0;
+    }
+
 
     /**
      * @param ClassDefinition $objectClass
@@ -327,7 +420,7 @@ class Service {
     }
 
     /**
-     * popuates bool query from given filters. for details to filters see comment on getFilter() method
+     * populates bool query from given filters. for details to filters see comment on getFilter() method
      *
      * @param BoolQuery $query
      * @param ClassDefinition $objectClass
