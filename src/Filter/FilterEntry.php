@@ -1,6 +1,6 @@
 <?php
 
-namespace ESBackendSearch;
+namespace AdvancedObjectSearchBundle\Filter;
 
 use ONGR\ElasticsearchDSL\BuilderInterface;
 use ONGR\ElasticsearchDSL\Query\BoolQuery;

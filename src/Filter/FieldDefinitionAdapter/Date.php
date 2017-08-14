@@ -1,6 +1,6 @@
 <?php
 
-namespace ESBackendSearch\FieldDefinitionAdapter;
+namespace AdvancedObjectSearchBundle\Filter\FieldDefinitionAdapter;
 
 
 class Date extends Datetime implements IFieldDefinitionAdapter {

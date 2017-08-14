@@ -2,7 +2,7 @@
 
 namespace ESBackendSearch\Console\Command;
 
-use ESBackendSearch\Plugin;
+use ESBackendSearch\AdvancedObjectSearchBundle;
 use ESBackendSearch\Service;
 use Pimcore\Console\AbstractCommand;
 use Pimcore\Model\Object\ClassDefinition;

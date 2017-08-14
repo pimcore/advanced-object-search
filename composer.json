@@ -1,9 +1,17 @@
 {
-  "name": "pimcore-plugins/ESBackendSearch",
-  "type": "pimcore-plugin",
-  "require": {
-    "pimcore/installer-plugin": ">=1",
-    "elasticsearch\/elasticsearch": "~2.0",
-    "ongr\/elasticsearch-dsl": "1.1.2"
+  "name": "pimcore/advanced-object-search",
+  "license": "GPL-3.0+",
+  "type": "pimcore-bundle",
+  "autoload": {
+    "psr-4": {
+      "AdvancedObjectSearchBundle\\": "src/"
+    }
+  },
+  "extra": {
+    "pimcore": {
+      "bundles": [
+        "AdvancedObjectSearchBundle\\AdvancedObjectSearchBundle"
+      ]
+    }
   }
 }

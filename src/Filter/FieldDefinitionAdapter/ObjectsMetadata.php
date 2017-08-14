@@ -1,6 +1,6 @@
 <?php
 
-namespace ESBackendSearch\FieldDefinitionAdapter;
+namespace AdvancedObjectSearchBundle\Filter\FieldDefinitionAdapter;
 
 
 class ObjectsMetadata extends Objects implements IFieldDefinitionAdapter {
@@ -12,4 +12,4 @@ class ObjectsMetadata extends Objects implements IFieldDefinitionAdapter {
      */
     protected $fieldType = "objectsMetadata";
 
-} 
+}

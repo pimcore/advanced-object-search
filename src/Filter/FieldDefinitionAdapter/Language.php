@@ -1,6 +1,6 @@
 <?php
 
-namespace ESBackendSearch\FieldDefinitionAdapter;
+namespace AdvancedObjectSearchBundle\Filter\FieldDefinitionAdapter;
 
 
 class Language extends Select implements IFieldDefinitionAdapter {

@@ -1,6 +1,6 @@
 <?php
 
-namespace AdvancesObjectSearchBundle\Model\SavedSearch;
+namespace AdvancedObjectSearchBundle\Model\SavedSearch;
 
 use Pimcore\Model;
 use Pimcore\Model\Document;

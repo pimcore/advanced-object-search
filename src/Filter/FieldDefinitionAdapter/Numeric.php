@@ -1,6 +1,6 @@
 <?php
 
-namespace ESBackendSearch\FieldDefinitionAdapter;
+namespace AdvancedObjectSearchBundle\Filter\FieldDefinitionAdapter;
 
 use DeepCopy\Filter\Filter;
 use ESBackendSearch\FieldSelectionInformation;
@@ -12,14 +12,14 @@ use Pimcore\Model\Object\AbstractObject;
 use Pimcore\Model\Object\ClassDefinition\Data;
 use Pimcore\Model\Object\Concrete;
 
-class Datetime extends Numeric implements IFieldDefinitionAdapter {
+class Numeric extends DefaultAdapter implements IFieldDefinitionAdapter {
 
     /**
      * field type for search frontend
      *
      * @var string
      */
-    protected $fieldType = "datetime";
+    protected $fieldType = "numeric";
 
     /**
      * @return array
@@ -31,10 +31,10 @@ class Datetime extends Numeric implements IFieldDefinitionAdapter {
                 [
                     'properties' => [
                         self::ES_MAPPING_PROPERTY_STANDARD => [
-                            'type' => 'date',
+                            'type' => 'float',
                         ],
                         self::ES_MAPPING_PROPERTY_NOT_INHERITED => [
-                            'type' => 'date',
+                            'type' => 'float',
                         ]
                     ]
                 ]
@@ -43,7 +43,7 @@ class Datetime extends Numeric implements IFieldDefinitionAdapter {
             return [
                 $this->fieldDefinition->getName(),
                 [
-                    'type' => 'date',
+                    'type' => 'float',
                 ]
             ];
         }
@@ -54,10 +54,10 @@ class Datetime extends Numeric implements IFieldDefinitionAdapter {
      * @param $fieldFilter
      *
      * filter field format as follows:
-     *   - simple date like
-     *       2017-02-26   --> creates TermQuery
+     *   - simple number like
+     *       234.54   --> creates TermQuery
      *   - array with gt, gte, lt, lte like
-     *      ["gte" => 2017-02-26, "lte" => 2017-05-26] --> creates RangeQuery
+     *      ["gte" => 40, "lte" => 45] --> creates RangeQuery
      *
      * @param bool $ignoreInheritance
      * @param string $path
@@ -65,18 +65,30 @@ class Datetime extends Numeric implements IFieldDefinitionAdapter {
      */
     public function getQueryPart($fieldFilter, $ignoreInheritance = false, $path = "") {
         if(is_array($fieldFilter)) {
-
-            foreach($fieldFilter as &$value) {
-                $datetime = new \DateTime($value);
-                $value = $datetime->format(\DateTime::ISO8601);
-            }
-
             return new RangeQuery($path . $this->fieldDefinition->getName() . $this->buildQueryFieldPostfix($ignoreInheritance), $fieldFilter);
         } else {
-            $datetime = new \DateTime($fieldFilter);
-            $datetime = $datetime->format(\DateTime::ISO8601);
-            return new TermQuery($path . $this->fieldDefinition->getName() . $this->buildQueryFieldPostfix($ignoreInheritance), $datetime);
+            return new TermQuery($path . $this->fieldDefinition->getName() . $this->buildQueryFieldPostfix($ignoreInheritance), $fieldFilter);
         }
+    }
+
+
+
+    /**
+     * returns selectable fields with their type information for search frontend
+     *
+     * @return FieldSelectionInformation[]
+     */
+    public function getFieldSelectionInformation()
+    {
+        return [new FieldSelectionInformation(
+            $this->fieldDefinition->getName(),
+            $this->fieldDefinition->getTitle(),
+            $this->fieldType,
+            [
+                'operators' => ['lt', 'lte', 'eq', 'gte', 'gt', FilterEntry::EXISTS, FilterEntry::NOT_EXISTS ],
+                'classInheritanceEnabled' => $this->considerInheritance
+            ]
+        )];
     }
 
     /**
@@ -90,13 +102,7 @@ class Datetime extends Numeric implements IFieldDefinitionAdapter {
             AbstractObject::setGetInheritedValues(false);
         }
 
-        $value = null;
-
-        $getter = "get" . $this->fieldDefinition->getName();
-        $valueObject = $object->$getter();
-        if($valueObject) {
-            $value = $valueObject->format(\DateTime::ISO8601);
-        }
+        $value = $this->fieldDefinition->getForWebserviceExport($object);
 
         if($ignoreInheritance) {
             AbstractObject::setGetInheritedValues($inheritanceBackup);
@@ -104,5 +110,6 @@ class Datetime extends Numeric implements IFieldDefinitionAdapter {
 
         return $value;
     }
+
 
 }

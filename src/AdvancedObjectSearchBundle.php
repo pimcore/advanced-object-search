@@ -1,6 +1,6 @@
 <?php
 
-namespace ESBackendSearch;
+namespace AdvancedObjectSearchBundle;
 
 use Elasticsearch\Client;
 use Pimcore\API\Plugin as PluginLib;
@@ -8,7 +8,7 @@ use Pimcore\Model\Object\AbstractObject;
 use Pimcore\Model\Object\ClassDefinition;
 use Pimcore\Model\Object\Concrete;
 
-class Plugin extends PluginLib\AbstractPlugin implements PluginLib\PluginInterface
+class AdvancedObjectSearchBundle extends PluginLib\AbstractPlugin implements PluginLib\PluginInterface
 {
 
     const QUEUE_TABLE_NAME = "plugin_esbackendsearch_update_queue";

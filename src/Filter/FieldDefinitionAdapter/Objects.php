@@ -1,6 +1,6 @@
 <?php
 
-namespace ESBackendSearch\FieldDefinitionAdapter;
+namespace AdvancedObjectSearchBundle\Filter\FieldDefinitionAdapter;
 
 use ESBackendSearch\FieldSelectionInformation;
 use ESBackendSearch\FilterEntry;
@@ -16,7 +16,7 @@ class Objects extends Href implements IFieldDefinitionAdapter {
      */
     protected $fieldType = "objects";
 
-    
+
     /**
      * returns selectable fields with their type information for search frontend
      *

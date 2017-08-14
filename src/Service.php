@@ -1,6 +1,6 @@
 <?php
 
-namespace ESBackendSearch;
+namespace AdvancedObjectSearchBundle;
 
 use ESBackendSearch\FieldDefinitionAdapter\DefaultAdapter;
 use ESBackendSearch\FieldDefinitionAdapter\IFieldDefinitionAdapter;
@@ -76,7 +76,7 @@ class Service {
      * @return string
      */
     public function getIndexName($classname) {
-        $config = Plugin::getConfig();
+        $config = AdvancedObjectSearchBundle::getConfig();
         return $config['index-prefix'] . strtolower($classname);
     }
 
@@ -146,7 +146,7 @@ class Service {
 
         //only reset update queue when index was recreated
         $db = \Pimcore\Db::get();
-        $db->query("UPDATE " . Plugin::QUEUE_TABLE_NAME . " SET in_queue = 1 WHERE classId = ?", $classDefinition->getId());
+        $db->query("UPDATE " . AdvancedObjectSearchBundle::QUEUE_TABLE_NAME . " SET in_queue = 1 WHERE classId = ?", $classDefinition->getId());
         return true;
     }
 
@@ -156,7 +156,7 @@ class Service {
      * @param ClassDefinition $classDefinition
      */
     protected function doUpdateMapping(ClassDefinition $classDefinition) {
-        $client = Plugin::getESClient();
+        $client = AdvancedObjectSearchBundle::getESClient();
 
         $mapping = $this->generateMapping($classDefinition);
         $response = $client->indices()->putMapping($mapping);
@@ -171,7 +171,7 @@ class Service {
      */
     protected function createIndex(ClassDefinition $classDefinition) {
         $indexName = $this->getIndexName($classDefinition->getName());
-        $client = Plugin::getESClient();
+        $client = AdvancedObjectSearchBundle::getESClient();
 
         try {
             \Logger::info("Deleting index $indexName for class " . $classDefinition->getName());
@@ -246,7 +246,7 @@ class Service {
      */
     public function doUpdateIndexData(Concrete $object, $ignoreUpdateQueue = false) {
 
-        $client = Plugin::getESClient();
+        $client = AdvancedObjectSearchBundle::getESClient();
 
         $params = [
             'index' => strtolower($object->getClassName()),
@@ -293,11 +293,11 @@ class Service {
         $db = \Pimcore\Db::get();
 
         //add object to update queue (if not exists) or set in_queue to false
-        $currentEntry = $db->fetchRow("SELECT in_queue FROM " . Plugin::QUEUE_TABLE_NAME . " WHERE o_id = ?", $object->getId());
+        $currentEntry = $db->fetchRow("SELECT in_queue FROM " . AdvancedObjectSearchBundle::QUEUE_TABLE_NAME . " WHERE o_id = ?", $object->getId());
         if(!$currentEntry) {
-            $db->insert(Plugin::QUEUE_TABLE_NAME, ['o_id' => $object->getId(), 'classId' => $object->getClassId()]);
+            $db->insert(AdvancedObjectSearchBundle::QUEUE_TABLE_NAME, ['o_id' => $object->getId(), 'classId' => $object->getClassId()]);
         } else if($currentEntry['in_queue']) {
-            $db->query("UPDATE " . Plugin::QUEUE_TABLE_NAME . " SET in_queue = 0, worker_timestamp = 0, worker_id = null WHERE o_id = ?", $object->getId());
+            $db->query("UPDATE " . AdvancedObjectSearchBundle::QUEUE_TABLE_NAME . " SET in_queue = 0, worker_timestamp = 0, worker_id = null WHERE o_id = ?", $object->getId());
         }
     }
 
@@ -308,7 +308,7 @@ class Service {
      * @param Concrete $object
      */
     public function doDeleteFromIndex(Concrete $object) {
-        $client = Plugin::getESClient();
+        $client = AdvancedObjectSearchBundle::getESClient();
 
         $params = [
             'index' => strtolower($object->getClassName()),
@@ -332,7 +332,7 @@ class Service {
         //need check, if there are sub objects because update on empty result set is too slow
         $objects = $db->fetchCol("SELECT o_id FROM objects WHERE o_path LIKE ?", array($object->getFullPath() . "/%"));
         if($objects) {
-            $updateStatement = "UPDATE " . Plugin::QUEUE_TABLE_NAME . " SET in_queue = 1 WHERE o_id IN (".implode(',',$objects).")";
+            $updateStatement = "UPDATE " . AdvancedObjectSearchBundle::QUEUE_TABLE_NAME . " SET in_queue = 1 WHERE o_id IN (".implode(',',$objects).")";
             $db->query($updateStatement);
         }
     }
@@ -350,10 +350,10 @@ class Service {
         $workerTimestamp = \Zend_Date::now()->getTimestamp();
         $db = \Pimcore\Db::get();
 
-        $db->query("UPDATE " . Plugin::QUEUE_TABLE_NAME . " SET worker_id = ?, worker_timestamp = ? WHERE in_queue = 1 AND (ISNULL(worker_timestamp) OR worker_timestamp < ?) LIMIT " . intval($limit),
+        $db->query("UPDATE " . AdvancedObjectSearchBundle::QUEUE_TABLE_NAME . " SET worker_id = ?, worker_timestamp = ? WHERE in_queue = 1 AND (ISNULL(worker_timestamp) OR worker_timestamp < ?) LIMIT " . intval($limit),
             array($workerId, $workerTimestamp, $workerTimestamp - 3000));
 
-        $entries = $db->fetchCol("SELECT o_id FROM " . Plugin::QUEUE_TABLE_NAME . " WHERE worker_id = ?", array($workerId));
+        $entries = $db->fetchCol("SELECT o_id FROM " . AdvancedObjectSearchBundle::QUEUE_TABLE_NAME . " WHERE worker_id = ?", array($workerId));
 
         if($entries) {
             foreach($entries as $objectId) {
@@ -376,7 +376,7 @@ class Service {
      */
     public function updateQueueEmpty() {
         $db = \Pimcore\Db::get();
-        $count = $db->fetchOne("SELECT count(*) FROM " . Plugin::QUEUE_TABLE_NAME . " WHERE in_queue = 1");
+        $count = $db->fetchOne("SELECT count(*) FROM " . AdvancedObjectSearchBundle::QUEUE_TABLE_NAME . " WHERE in_queue = 1");
 
         return $count == 0;
     }
@@ -490,7 +490,7 @@ class Service {
      * @return array
      */
     public function doFilter($classId, array $filters, $fullTextQuery, $from = null, $size = null) {
-        $client = Plugin::getESClient();
+        $client = AdvancedObjectSearchBundle::getESClient();
 
         $classDefinition = \Pimcore\Model\Object\ClassDefinition::getById($classId);
 

@@ -1,6 +1,6 @@
 <?php
 
-namespace ESBackendSearch\FieldDefinitionAdapter;
+namespace AdvancedObjectSearchBundle\Filter\FieldDefinitionAdapter;
 
 use ESBackendSearch\FieldSelectionInformation;
 use ESBackendSearch\FilterEntry;

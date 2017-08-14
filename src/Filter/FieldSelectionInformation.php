@@ -1,6 +1,6 @@
 <?php
 
-namespace ESBackendSearch;
+namespace AdvancedObjectSearchBundle\Filter;
 
 class FieldSelectionInformation {
 
@@ -100,7 +100,7 @@ class FieldSelectionInformation {
         $this->context = $context;
     }
 
-    
+
     public function toArray() {
         return [
             'fieldName' => $this->fieldName,

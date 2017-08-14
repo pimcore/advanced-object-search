@@ -1,6 +1,6 @@
 <?php
 
-namespace AdvancesObjectSearchBundle\Controller;
+namespace AdvancedObjectSearchBundle\Controller;
 
 use Pimcore\Model\Object;
 
