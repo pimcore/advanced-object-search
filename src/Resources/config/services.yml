@@ -150,7 +150,7 @@ services:
         arguments:
             - '@bundle.advanced_object_search.service'
 
-    bundle.advanced_object_search.filter.Time:
+    bundle.advanced_object_search.filter.time:
         class: AdvancedObjectSearchBundle\Filter\FieldDefinitionAdapter\Time
         shared: false
         arguments:

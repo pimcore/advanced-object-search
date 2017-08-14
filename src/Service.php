@@ -81,10 +81,12 @@ class Service {
     public function getFieldDefinitionAdapter(ClassDefinition\Data $fieldDefinition, bool $considerInheritance) {
         $adapter = null;
 
-        $adapter = $this->container->get("bundle.advanced_object_search.filter." . $fieldDefinition->fieldtype);
-        if(empty($adapter)) {
+        try {
+            $adapter = $this->container->get("bundle.advanced_object_search.filter." . $fieldDefinition->fieldtype);
+        } catch (\Exception $exception) {
             $adapter = $this->container->get("bundle.advanced_object_search.filter.default");
         }
+
         $adapter->setConsiderInheritance($considerInheritance);
         $adapter->setFieldDefinition($fieldDefinition);
 
@@ -456,9 +458,9 @@ class Service {
      * @return \ONGR\ElasticsearchDSL\Search
      */
     public function getFilter(ClassDefinition $objectClass, array $filters) {
-        $search = new \ONGR\ElasticsearchDSL\Search();
+        $search = new Search();
         if(!empty($filters)) {
-            $search->addFilter($this->doPopulateQuery(new BoolQuery(), $objectClass, $filters), BoolQuery::MUST);
+            $search->addPostFilter($this->doPopulateQuery(new BoolQuery(), $objectClass, $filters), BoolQuery::MUST);
         }
         return $search;
     }
