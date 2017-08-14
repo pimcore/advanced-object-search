@@ -1,8 +1,10 @@
 <?php
 
+namespace AdvancesObjectSearchBundle\Controller;
+
 use Pimcore\Model\Object;
 
-class ESBackendSearch_AdminController extends \Pimcore\Controller\Action\Admin {
+class AdminController extends \Pimcore\Controller\Action\Admin {
 
 
     public function getFieldsAction() {
@@ -35,7 +37,7 @@ class ESBackendSearch_AdminController extends \Pimcore\Controller\Action\Admin {
                 break;
 
             default:
-                throw new Exception("Invalid type '$type''");
+                throw new \Exception("Invalid type '$type''");
 
 
         }
