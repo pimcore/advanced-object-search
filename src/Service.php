@@ -19,6 +19,7 @@ use AdvancedObjectSearchBundle\Filter\FieldDefinitionAdapter\DefaultAdapter;
 use AdvancedObjectSearchBundle\Filter\FieldDefinitionAdapter\IFieldDefinitionAdapter;
 use AdvancedObjectSearchBundle\Filter\FieldSelectionInformation;
 use AdvancedObjectSearchBundle\Filter\FilterEntry;
+use AdvancedObjectSearchBundle\Tools\Installer;
 use ONGR\ElasticsearchDSL\BuilderInterface;
 use ONGR\ElasticsearchDSL\Query\BoolQuery;
 use ONGR\ElasticsearchDSL\Query\QueryStringQuery;
@@ -163,7 +164,7 @@ class Service {
 
         //only reset update queue when index was recreated
         $db = \Pimcore\Db::get();
-        $db->query("UPDATE " . AdvancedObjectSearchBundle::QUEUE_TABLE_NAME . " SET in_queue = 1 WHERE classId = ?", $classDefinition->getId());
+        $db->query("UPDATE " . Installer::QUEUE_TABLE_NAME . " SET in_queue = 1 WHERE classId = ?", $classDefinition->getId());
         return true;
     }
 
@@ -310,11 +311,11 @@ class Service {
         $db = \Pimcore\Db::get();
 
         //add object to update queue (if not exists) or set in_queue to false
-        $currentEntry = $db->fetchRow("SELECT in_queue FROM " . AdvancedObjectSearchBundle::QUEUE_TABLE_NAME . " WHERE o_id = ?", $object->getId());
+        $currentEntry = $db->fetchRow("SELECT in_queue FROM " . Installer::QUEUE_TABLE_NAME . " WHERE o_id = ?", $object->getId());
         if(!$currentEntry) {
-            $db->insert(AdvancedObjectSearchBundle::QUEUE_TABLE_NAME, ['o_id' => $object->getId(), 'classId' => $object->getClassId()]);
+            $db->insert(Installer::QUEUE_TABLE_NAME, ['o_id' => $object->getId(), 'classId' => $object->getClassId()]);
         } else if($currentEntry['in_queue']) {
-            $db->query("UPDATE " . AdvancedObjectSearchBundle::QUEUE_TABLE_NAME . " SET in_queue = 0, worker_timestamp = 0, worker_id = null WHERE o_id = ?", $object->getId());
+            $db->query("UPDATE " . Installer::QUEUE_TABLE_NAME . " SET in_queue = 0, worker_timestamp = 0, worker_id = null WHERE o_id = ?", $object->getId());
         }
     }
 
@@ -349,7 +350,7 @@ class Service {
         //need check, if there are sub objects because update on empty result set is too slow
         $objects = $db->fetchCol("SELECT o_id FROM objects WHERE o_path LIKE ?", array($object->getFullPath() . "/%"));
         if($objects) {
-            $updateStatement = "UPDATE " . AdvancedObjectSearchBundle::QUEUE_TABLE_NAME . " SET in_queue = 1 WHERE o_id IN (".implode(',',$objects).")";
+            $updateStatement = "UPDATE " . Installer::QUEUE_TABLE_NAME . " SET in_queue = 1 WHERE o_id IN (".implode(',',$objects).")";
             $db->query($updateStatement);
         }
     }
@@ -367,10 +368,10 @@ class Service {
         $workerTimestamp = \Zend_Date::now()->getTimestamp();
         $db = \Pimcore\Db::get();
 
-        $db->query("UPDATE " . AdvancedObjectSearchBundle::QUEUE_TABLE_NAME . " SET worker_id = ?, worker_timestamp = ? WHERE in_queue = 1 AND (ISNULL(worker_timestamp) OR worker_timestamp < ?) LIMIT " . intval($limit),
+        $db->query("UPDATE " . Installer::QUEUE_TABLE_NAME . " SET worker_id = ?, worker_timestamp = ? WHERE in_queue = 1 AND (ISNULL(worker_timestamp) OR worker_timestamp < ?) LIMIT " . intval($limit),
             array($workerId, $workerTimestamp, $workerTimestamp - 3000));
 
-        $entries = $db->fetchCol("SELECT o_id FROM " . AdvancedObjectSearchBundle::QUEUE_TABLE_NAME . " WHERE worker_id = ?", array($workerId));
+        $entries = $db->fetchCol("SELECT o_id FROM " . Installer::QUEUE_TABLE_NAME . " WHERE worker_id = ?", array($workerId));
 
         if($entries) {
             foreach($entries as $objectId) {
@@ -393,7 +394,7 @@ class Service {
      */
     public function updateQueueEmpty() {
         $db = \Pimcore\Db::get();
-        $count = $db->fetchOne("SELECT count(*) FROM " . AdvancedObjectSearchBundle::QUEUE_TABLE_NAME . " WHERE in_queue = 1");
+        $count = $db->fetchOne("SELECT count(*) FROM " . Installer::QUEUE_TABLE_NAME . " WHERE in_queue = 1");
 
         return $count == 0;
     }
