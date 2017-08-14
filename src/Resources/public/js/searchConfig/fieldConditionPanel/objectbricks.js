@@ -12,8 +12,8 @@
  */
 
 
-pimcore.registerNS("pimcore.plugin.esbackendsearch.searchConfig.fieldConditionPanel.objectbricks");
-pimcore.plugin.esbackendsearch.searchConfig.fieldConditionPanel.objectbricks = Class.create(pimcore.plugin.esbackendsearch.searchConfig.fieldConditionPanel.fieldcollections, {
+pimcore.registerNS("pimcore.bundle.advancedObjectSearch.searchConfig.fieldConditionPanel.objectbricks");
+pimcore.bundle.advancedObjectSearch.searchConfig.fieldConditionPanel.objectbricks = Class.create(pimcore.bundle.advancedObjectSearch.searchConfig.fieldConditionPanel.fieldcollections, {
 
     collectionType: 'objectbrick'
 

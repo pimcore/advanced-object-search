@@ -12,7 +12,7 @@
  */
 
 
-pimcore.registerNS("pimcore.plugin.esbackendsearch.searchConfig.fieldConditionPanel.multihrefMetadata");
-pimcore.plugin.esbackendsearch.searchConfig.fieldConditionPanel.multihrefMetadata = Class.create(pimcore.plugin.esbackendsearch.searchConfig.fieldConditionPanel.href, {
+pimcore.registerNS("pimcore.bundle.advancedObjectSearch.searchConfig.fieldConditionPanel.multihrefMetadata");
+pimcore.bundle.advancedObjectSearch.searchConfig.fieldConditionPanel.multihrefMetadata = Class.create(pimcore.bundle.advancedObjectSearch.searchConfig.fieldConditionPanel.href, {
 
 });

@@ -12,8 +12,8 @@
  */
 
 
-pimcore.registerNS("pimcore.plugin.esbackendsearch.searchConfig.fieldConditionPanel.default");
-pimcore.plugin.esbackendsearch.searchConfig.fieldConditionPanel.default = Class.create({
+pimcore.registerNS("pimcore.bundle.advancedObjectSearch.searchConfig.fieldConditionPanel.default");
+pimcore.bundle.advancedObjectSearch.searchConfig.fieldConditionPanel.default = Class.create({
 
     fieldSelectionInformation: null,
     data: {},
@@ -34,7 +34,7 @@ pimcore.plugin.esbackendsearch.searchConfig.fieldConditionPanel.default = Class.
 
         this.termField = Ext.create('Ext.form.field.Text',
             {
-                fieldLabel:  t("plugin_esbackendsearch_term"),
+                fieldLabel:  t("bundle_advancedObjectSearch_term"),
                 width: 400,
                 style: "padding-left: 20px",
                 value: this.data.filterEntryData
@@ -43,7 +43,7 @@ pimcore.plugin.esbackendsearch.searchConfig.fieldConditionPanel.default = Class.
 
         this.inheritanceField = Ext.create('Ext.form.field.Checkbox',
             {
-                fieldLabel:  t("plugin_esbackendsearch_ignoreInheritance"),
+                fieldLabel:  t("bundle_advancedObjectSearch_ignoreInheritance"),
                 style: "padding-left: 20px",
                 value: this.data.ignoreInheritance,
                 hidden: !this.fieldSelectionInformation.context.classInheritanceEnabled
@@ -64,7 +64,7 @@ pimcore.plugin.esbackendsearch.searchConfig.fieldConditionPanel.default = Class.
         this.operatorField = Ext.create('Ext.form.ComboBox',
             {
 
-                fieldLabel:  t("plugin_esbackendsearch_operator"),
+                fieldLabel:  t("bundle_advancedObjectSearch_operator"),
                 store: this.fieldSelectionInformation.context.operators,
                 value: value,
                 queryMode: 'local',

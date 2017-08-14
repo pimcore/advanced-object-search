@@ -12,8 +12,8 @@
  */
 
 
-pimcore.registerNS("pimcore.plugin.esbackendsearch.searchConfig.fieldConditionPanel.numeric");
-pimcore.plugin.esbackendsearch.searchConfig.fieldConditionPanel.numeric = Class.create(pimcore.plugin.esbackendsearch.searchConfig.fieldConditionPanel.default, {
+pimcore.registerNS("pimcore.bundle.advancedObjectSearch.searchConfig.fieldConditionPanel.numeric");
+pimcore.bundle.advancedObjectSearch.searchConfig.fieldConditionPanel.numeric = Class.create(pimcore.bundle.advancedObjectSearch.searchConfig.fieldConditionPanel.default, {
 
     getConditionPanel: function() {
 
@@ -36,14 +36,14 @@ pimcore.plugin.esbackendsearch.searchConfig.fieldConditionPanel.numeric = Class.
             {
                 width: 400,
                 style: "padding-left: 20px",
-                fieldLabel:  t("plugin_esbackendsearch_term"),
+                fieldLabel:  t("bundle_advancedObjectSearch_term"),
                 value: termFieldValue
             }
         );
 
         this.inheritanceField = Ext.create('Ext.form.field.Checkbox',
             {
-                fieldLabel:  t("plugin_esbackendsearch_ignoreInheritance"),
+                fieldLabel:  t("bundle_advancedObjectSearch_ignoreInheritance"),
                 style: "padding-left: 20px",
                 value: this.data.ignoreInheritance,
                 hidden: !this.fieldSelectionInformation.context.classInheritanceEnabled

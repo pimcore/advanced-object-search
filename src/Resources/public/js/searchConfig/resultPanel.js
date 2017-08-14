@@ -12,8 +12,8 @@
  */
 
 
-pimcore.registerNS("pimcore.plugin.esbackendsearch.searchConfig.resultPanel");
-pimcore.plugin.esbackendsearch.searchConfig.resultPanel = Class.create(pimcore.object.helpers.gridTabAbstract, {
+pimcore.registerNS("pimcore.bundle.advancedObjectSearch.searchConfig.resultPanel");
+pimcore.bundle.advancedObjectSearch.searchConfig.resultPanel = Class.create(pimcore.object.helpers.gridTabAbstract, {
     systemColumns: ["id", "fullpath", "type", "subtype", "filename", "classname", "creationDate", "modificationDate"],
 
     parent: null,
@@ -31,9 +31,9 @@ pimcore.plugin.esbackendsearch.searchConfig.resultPanel = Class.create(pimcore.o
 
         if (this.layout == null) {
             this.layout = new Ext.Panel({
-                title: t('plugin_esbackendsearch_results'),
+                title: t('bundle_advancedObjectSearch_results'),
                 border: false,
-                iconCls: "pimcore_icon_esbackendsearch_grid",
+                iconCls: "pimcore_bundle_advancedObjectSearch_grid",
                 layout: "fit",
                 listeners: {
                     activate: function() {
@@ -99,7 +99,7 @@ pimcore.plugin.esbackendsearch.searchConfig.resultPanel = Class.create(pimcore.o
         var gridHelper = new pimcore.object.helpers.grid(
             this.selectedClass,
             fields,
-            "/plugin/ESBackendSearch/admin/grid-proxy/classId/" + this.classId,
+            "/admin/bundle/advanced-object-search/admin/grid-proxy/classId/" + this.classId,
             {
                 language: this.gridLanguage,
                 limit: itemsPerPage
@@ -332,7 +332,7 @@ pimcore.plugin.esbackendsearch.searchConfig.resultPanel = Class.create(pimcore.o
 
 
             Ext.Ajax.request({
-                url: "/plugin/ESBackendSearch/admin/get-batch-jobs",
+                url: "/admin/bundle/advanced-object-search/admin/get-batch-jobs",
                 params: params,
                 success: function (columnIndex,response) {
                     var rdata = Ext.decode(response.responseText);
@@ -357,7 +357,7 @@ pimcore.plugin.esbackendsearch.searchConfig.resultPanel = Class.create(pimcore.o
         };
 
         Ext.Ajax.request({
-            url: "/plugin/ESBackendSearch/admin/get-export-jobs",
+            url: "/admin/bundle/advanced-object-search/admin/get-export-jobs",
             params: params,
             success: function (response) {
                 var rdata = Ext.decode(response.responseText);

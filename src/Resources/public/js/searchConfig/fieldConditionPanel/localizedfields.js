@@ -12,8 +12,8 @@
  */
 
 
-pimcore.registerNS("pimcore.plugin.esbackendsearch.searchConfig.fieldConditionPanel.localizedfields");
-pimcore.plugin.esbackendsearch.searchConfig.fieldConditionPanel.localizedfields = Class.create(pimcore.plugin.esbackendsearch.searchConfig.fieldConditionPanel.default, {
+pimcore.registerNS("pimcore.bundle.advancedObjectSearch.searchConfig.fieldConditionPanel.localizedfields");
+pimcore.bundle.advancedObjectSearch.searchConfig.fieldConditionPanel.localizedfields = Class.create(pimcore.bundle.advancedObjectSearch.searchConfig.fieldConditionPanel.default, {
 
     getConditionPanel: function() {
 
@@ -28,11 +28,11 @@ pimcore.plugin.esbackendsearch.searchConfig.fieldConditionPanel.localizedfields 
             
         }
 
-        this.subPanel = new pimcore.plugin.esbackendsearch.searchConfig.fieldConditionPanel[this.fieldSelectionInformation.context.subType](this.fieldSelectionInformation, subData);
+        this.subPanel = new pimcore.bundle.advancedObjectSearch.searchConfig.fieldConditionPanel[this.fieldSelectionInformation.context.subType](this.fieldSelectionInformation, subData);
 
         this.languageField = Ext.create('Ext.form.ComboBox',
             {
-                fieldLabel: t("plugin_esbackendsearch_language"),
+                fieldLabel: t("bundle_advancedObjectSearch_language"),
                 name: "language",
                 store: this.fieldSelectionInformation.context.languages,
                 value: language,

@@ -12,8 +12,8 @@
  */
 
 
-pimcore.registerNS("pimcore.plugin.esbackendsearch.searchConfig.fieldConditionPanel.select");
-pimcore.plugin.esbackendsearch.searchConfig.fieldConditionPanel.select = Class.create(pimcore.plugin.esbackendsearch.searchConfig.fieldConditionPanel.default, {
+pimcore.registerNS("pimcore.bundle.advancedObjectSearch.searchConfig.fieldConditionPanel.select");
+pimcore.bundle.advancedObjectSearch.searchConfig.fieldConditionPanel.select = Class.create(pimcore.bundle.advancedObjectSearch.searchConfig.fieldConditionPanel.default, {
 
     getConditionPanel: function() {
 
@@ -24,7 +24,7 @@ pimcore.plugin.esbackendsearch.searchConfig.fieldConditionPanel.select = Class.c
 
         this.termField = Ext.create('Ext.form.ComboBox',
             {
-                fieldLabel:  t("plugin_esbackendsearch_term"),
+                fieldLabel:  t("bundle_advancedObjectSearch_term"),
                 width: 400,
                 store: optionStore,
                 queryMode: 'local',
@@ -37,7 +37,7 @@ pimcore.plugin.esbackendsearch.searchConfig.fieldConditionPanel.select = Class.c
 
         this.inheritanceField = Ext.create('Ext.form.field.Checkbox',
             {
-                fieldLabel:  t("plugin_esbackendsearch_ignoreInheritance"),
+                fieldLabel:  t("bundle_advancedObjectSearch_ignoreInheritance"),
                 style: "padding-left: 20px",
                 value: this.data.ignoreInheritance,
                 hidden: !this.fieldSelectionInformation.context.classInheritanceEnabled

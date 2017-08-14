@@ -12,8 +12,8 @@
  */
 
 
-pimcore.registerNS("pimcore.plugin.esbackendsearch.searchConfigPanel");
-pimcore.plugin.esbackendsearch.searchConfigPanel = Class.create(pimcore.element.abstract, {
+pimcore.registerNS("pimcore.bundle.advancedObjectSearch.searchConfigPanel");
+pimcore.bundle.advancedObjectSearch.searchConfigPanel = Class.create(pimcore.element.abstract, {
 
     initialize: function(data) {
         this.data = data;
@@ -24,7 +24,7 @@ pimcore.plugin.esbackendsearch.searchConfigPanel = Class.create(pimcore.element.
         this.tab = new Ext.TabPanel({
             activeTab: 0,
             id: this.getTabId(),
-            iconCls: "pimcore_icon_esbackendsearch",
+            iconCls: "pimcore_bundle_advancedObjectSearch",
             closable: true,
             forceLayout: true,
             items: [this.getConditions(), this.getResults(), this.getSaveAndShare()]
@@ -89,7 +89,7 @@ pimcore.plugin.esbackendsearch.searchConfigPanel = Class.create(pimcore.element.
 
                         if(newValue != oldValue) {
                             this.conditionPanelContainer.removeAll();
-                            this.conditionPanel = new pimcore.plugin.esbackendsearch.searchConfig.conditionPanel(newValue);
+                            this.conditionPanel = new pimcore.bundle.advancedObjectSearch.searchConfig.conditionPanel(newValue);
                             this.conditionPanelContainer.add(this.conditionPanel.getConditionPanel());
                         }
 
@@ -99,7 +99,7 @@ pimcore.plugin.esbackendsearch.searchConfigPanel = Class.create(pimcore.element.
         );
 
         if(this.data.classId) {
-            this.conditionPanel = new pimcore.plugin.esbackendsearch.searchConfig.conditionPanel(this.data.classId, this.data.conditions);
+            this.conditionPanel = new pimcore.bundle.advancedObjectSearch.searchConfig.conditionPanel(this.data.classId, this.data.conditions);
             this.conditionPanelContainer.add(this.conditionPanel.getConditionPanel());
         }
 
@@ -108,15 +108,15 @@ pimcore.plugin.esbackendsearch.searchConfigPanel = Class.create(pimcore.element.
             scrollable: true,
             style: "padding: 10px",
             labelWidth: 400,
-            title: t("plugin_esbackendsearch_filter"),
-            iconCls: "pimcore_icon_esbackendsearch_filter",
+            title: t("bundle_advancedObjectSearch_filter"),
+            iconCls: "pimcore_bundle_advancedObjectSearch_filter",
             items: [this.classSelection, this.conditionPanelContainer]
         });
 
     },
 
     getResults: function() {
-        this.resultPanel = new pimcore.plugin.esbackendsearch.searchConfig.resultPanel(this, this.data.gridConfig);
+        this.resultPanel = new pimcore.bundle.advancedObjectSearch.searchConfig.resultPanel(this, this.data.gridConfig);
         return this.resultPanel.getLayout();
     },
 
@@ -127,7 +127,7 @@ pimcore.plugin.esbackendsearch.searchConfigPanel = Class.create(pimcore.element.
             autoLoad: true,
             proxy: {
                 type: 'ajax',
-                url: '/plugin/ESBackendSearch/admin/get-users',
+                url: '/admin/bundle/advanced-object-search/admin/get-users',
                 reader: {
                     rootProperty: 'data',
                     idProperty: 'id'
@@ -146,7 +146,7 @@ pimcore.plugin.esbackendsearch.searchConfigPanel = Class.create(pimcore.element.
         this.sharingField = Ext.create('Ext.form.field.Tag', {
             name: "shared_users",
             width: 500,
-            fieldLabel: t("plugin_esbackendsearch_users"),
+            fieldLabel: t("bundle_advancedObjectSearch_users"),
             queryDelay: 0,
             resizable: true,
             queryMode: 'local',
@@ -163,9 +163,9 @@ pimcore.plugin.esbackendsearch.searchConfigPanel = Class.create(pimcore.element.
         var buttons = [];
 
         
-        var buttonText = t("plugin_esbackendsearch_add_to_shortcuts");
+        var buttonText = t("bundle_advancedObjectSearch_add_to_shortcuts");
         if(this.data.settings && this.data.settings.hasShortCut) {
-            buttonText = t("plugin_esbackendsearch_remove_from_shortcuts");
+            buttonText = t("bundle_advancedObjectSearch_remove_from_shortcuts");
         }
 
         this.toggleShortCutButton = Ext.create('Ext.button.Button', {
@@ -190,15 +190,15 @@ pimcore.plugin.esbackendsearch.searchConfigPanel = Class.create(pimcore.element.
             });
         } else if(!this.data.settings.isOwner) {
             buttons.push({
-                text: t("plugin_esbackendsearch_save_as_copy"),
+                text: t("bundle_advancedObjectSearch_save_as_copy"),
                 iconCls: "pimcore_icon_apply",
                 handler: this.saveAsCopy.bind(this)
             });
         }
 
         this.settingsForm = Ext.create('Ext.form.FormPanel', {
-            title: t("plugin_esbackendsearch_save_and_share"),
-            iconCls: "pimcore_icon_esbackendsearch_saveAndShare",
+            title: t("bundle_advancedObjectSearch_save_and_share"),
+            iconCls: "pimcore_bundle_advancedObjectSearch_saveAndShare",
             bodyStyle: "padding:10px;",
             autoScroll: true,
             border:false,
@@ -212,13 +212,13 @@ pimcore.plugin.esbackendsearch.searchConfigPanel = Class.create(pimcore.element.
                 value: this.data.settings ? this.data.settings.description : ""
             }, {
                 xtype: "textfield",
-                fieldLabel: t("plugin_esbackendsearch_category"),
+                fieldLabel: t("bundle_advancedObjectSearch_category"),
                 name: "category",
                 width: 500,
                 value: this.data.settings ? this.data.settings.category: ""
             }, {
                 xtype: "fieldset",
-                title: t("plugin_esbackendsearch_share"),
+                title: t("bundle_advancedObjectSearch_share"),
                 closeable: true,
                 items: [
                     this.sharingField
@@ -260,7 +260,7 @@ pimcore.plugin.esbackendsearch.searchConfigPanel = Class.create(pimcore.element.
         pimcore.globalmanager.remove(this.getTabId());
 
         Ext.Ajax.request({
-            url: "/plugin/ESBackendSearch/admin/save",
+            url: "/admin/bundle/advanced-object-search/admin/save",
             params: {
                 id: this.data ? this.data.id : null,
                 data: saveData
@@ -269,7 +269,7 @@ pimcore.plugin.esbackendsearch.searchConfigPanel = Class.create(pimcore.element.
             success: function (response) {
                 var rdata = Ext.decode(response.responseText);
                 if (rdata && rdata.success) {
-                    pimcore.helpers.showNotification(t("success"), t("plugin_esbackendsearch_save_success"), "success");
+                    pimcore.helpers.showNotification(t("success"), t("bundle_advancedObjectSearch_save_success"), "success");
 
                     if(!this.data) {
                         this.data = {};
@@ -285,7 +285,7 @@ pimcore.plugin.esbackendsearch.searchConfigPanel = Class.create(pimcore.element.
                     this.resetChanges();
                 }
                 else {
-                    pimcore.helpers.showNotification(t("error"), t("plugin_esbackendsearch_save_error"), "error",t(rdata.message));
+                    pimcore.helpers.showNotification(t("error"), t("bundle_advancedObjectSearch_save_error"), "error",t(rdata.message));
                 }
             }.bind(this)
         });
@@ -295,12 +295,12 @@ pimcore.plugin.esbackendsearch.searchConfigPanel = Class.create(pimcore.element.
     saveAsCopy: function () {
         this.data.id = null;
         this.sharingField.setValue("");
-        this.nameField.setValue(this.nameField.getValue() + " " + t("plugin_esbackendsearch_name_copy_suffix"));
+        this.nameField.setValue(this.nameField.getValue() + " " + t("bundle_advancedObjectSearch_name_copy_suffix"));
 
         var saveData = this.getSaveData();
 
         Ext.Ajax.request({
-            url: "/plugin/ESBackendSearch/admin/save",
+            url: "/admin/bundle/advanced-object-search/admin/save",
             params: {
                 id: this.data ? this.data.id : null,
                 data: saveData
@@ -309,25 +309,25 @@ pimcore.plugin.esbackendsearch.searchConfigPanel = Class.create(pimcore.element.
             success: function (response) {
                 var rdata = Ext.decode(response.responseText);
                 if (rdata && rdata.success) {
-                    pimcore.helpers.showNotification(t("success"), t("plugin_esbackendsearch_save_success"), "success");
+                    pimcore.helpers.showNotification(t("success"), t("bundle_advancedObjectSearch_save_success"), "success");
 
                     this.tab.close();
 
                     Ext.Ajax.request({
-                        url: "/plugin/ESBackendSearch/admin/load-search",
+                        url: "/admin/bundle/advanced-object-search/admin/load-search",
                         params: {
                             id: rdata.id
                         },
                         method: "get",
                         success: function (response) {
                             var rdata = Ext.decode(response.responseText);
-                            var esSearch = new pimcore.plugin.esbackendsearch.searchConfigPanel(rdata);
+                            var esSearch = new pimcore.bundle.advancedObjectSearch.searchConfigPanel(rdata);
                             pimcore.globalmanager.add(esSearch.getTabId(), esSearch);
                         }.bind(this)
                     });
                 }
                 else {
-                    pimcore.helpers.showNotification(t("error"), t("plugin_esbackendsearch_save_error"), "error",t(rdata.message));
+                    pimcore.helpers.showNotification(t("error"), t("bundle_advancedObjectSearch_save_error"), "error",t(rdata.message));
                 }
             }.bind(this)
         });
@@ -335,17 +335,17 @@ pimcore.plugin.esbackendsearch.searchConfigPanel = Class.create(pimcore.element.
 
     delete: function() {
         if(!this.data && !this.data.id) {
-            pimcore.helpers.showNotification(t("error"), t("plugin_esbackendsearch_delete_error"), "error");
+            pimcore.helpers.showNotification(t("error"), t("bundle_advancedObjectSearch_delete_error"), "error");
         } else {
             Ext.MessageBox.show({
                 title:t('delete'),
-                msg: t("plugin_esbackendsearch_delete_really"),
+                msg: t("bundle_advancedObjectSearch_delete_really"),
                 buttons: Ext.Msg.OKCANCEL ,
                 icon: Ext.MessageBox.INFO ,
                 fn: function(button) {
                     if (button == "ok") {
                         Ext.Ajax.request({
-                            url: "/plugin/ESBackendSearch/admin/delete",
+                            url: "/admin/bundle/advanced-object-search/admin/delete",
                             params: {
                                 id: this.data.id
                             },
@@ -365,10 +365,10 @@ pimcore.plugin.esbackendsearch.searchConfigPanel = Class.create(pimcore.element.
 
     toggleShortCut: function() {
         if(!this.data && !this.data.id) {
-            pimcore.helpers.showNotification(t("error"), t("plugin_esbackendsearch_short_cut_error"), "error");
+            pimcore.helpers.showNotification(t("error"), t("bundle_advancedObjectSearch_short_cut_error"), "error");
         } else {
             Ext.Ajax.request({
-                url: "/plugin/ESBackendSearch/admin/toggle-short-cut",
+                url: "/admin/bundle/advanced-object-search/admin/toggle-short-cut",
                 params: {
                     id: this.data.id
                 },
@@ -377,11 +377,11 @@ pimcore.plugin.esbackendsearch.searchConfigPanel = Class.create(pimcore.element.
                     var rdata = Ext.decode(response.responseText);
                     if(rdata.success) {
                         if(rdata.hasShortCut) {
-                            this.toggleShortCutButton.setText(t("plugin_esbackendsearch_remove_from_shortcuts"));
+                            this.toggleShortCutButton.setText(t("bundle_advancedObjectSearch_remove_from_shortcuts"));
                         } else {
-                            this.toggleShortCutButton.setText(t("plugin_esbackendsearch_add_to_shortcuts"));
+                            this.toggleShortCutButton.setText(t("bundle_advancedObjectSearch_add_to_shortcuts"));
                         }
-                        pimcore.plugin.esbackendsearch.helper.rebuildEsSearchMenu();
+                        pimcore.bundle.advancedObjectSearch.helper.rebuildEsSearchMenu();
                     }
 
 
@@ -394,7 +394,7 @@ pimcore.plugin.esbackendsearch.searchConfigPanel = Class.create(pimcore.element.
     },
 
     setTitle: function(name) {
-        var title = t("plugin_esbackendsearch");
+        var title = t("bundle_advancedObjectSearch");
         if(name) {
             title = title + ": " + name;
         } else if(this.data.settings && this.data.settings.name) {

@@ -12,8 +12,8 @@
  */
 
 
-pimcore.registerNS("pimcore.plugin.esbackendsearch.searchConfig.conditionPanel");
-pimcore.plugin.esbackendsearch.searchConfig.conditionPanel = Class.create({
+pimcore.registerNS("pimcore.bundle.advancedObjectSearch.searchConfig.conditionPanel");
+pimcore.bundle.advancedObjectSearch.searchConfig.conditionPanel = Class.create({
 
     classId: null,
     data: {},
@@ -30,11 +30,11 @@ pimcore.plugin.esbackendsearch.searchConfig.conditionPanel = Class.create({
     },
 
     getConditionPanel: function() {
-        var helper = new pimcore.plugin.esbackendsearch.searchConfig.conditionPanelContainerBuilder(this.classId, this, "root-panel", this.conditionEntryPanelLayout);
+        var helper = new pimcore.bundle.advancedObjectSearch.searchConfig.conditionPanelContainerBuilder(this.classId, this, "root-panel", this.conditionEntryPanelLayout);
         this.conditionsContainerInner = helper.buildConditionsContainerInner();
 
         this.termField = Ext.create('Ext.form.field.Text', {
-            fieldLabel:  t("plugin_esbackendsearch_fulltextterm"),
+            fieldLabel:  t("bundle_advancedObjectSearch_fulltextterm"),
             width: "100%",
             value: this.data.fulltextSearchTerm
         });

@@ -12,8 +12,8 @@
  */
 
 
-pimcore.registerNS("pimcore.plugin.esbackendsearch.searchConfig.conditionPanelContainerBuilder");
-pimcore.plugin.esbackendsearch.searchConfig.conditionPanelContainerBuilder = Class.create({
+pimcore.registerNS("pimcore.bundle.advancedObjectSearch.searchConfig.conditionPanelContainerBuilder");
+pimcore.bundle.advancedObjectSearch.searchConfig.conditionPanelContainerBuilder = Class.create({
 
     initialize: function(classId, parentPanel, panelId, conditionEntryPanelLayout) {
         this.classId = classId;
@@ -36,7 +36,7 @@ pimcore.plugin.esbackendsearch.searchConfig.conditionPanelContainerBuilder = Cla
                 }
             ],
             collapsible: true,
-            title: t("plugin_esbackendsearch_filters"),
+            title: t("bundle_advancedObjectSearch_filters"),
             border: false,
             items: []
         });
@@ -48,7 +48,7 @@ pimcore.plugin.esbackendsearch.searchConfig.conditionPanelContainerBuilder = Cla
             handler: function (type, data) {
                 this.addConditionEntryPanel(this.parentPanel, this.classId, this.conditionEntryPanelLayout, this.conditionsContainerInner);
             }.bind(this),
-            text: t("plugin_esbackendsearch_condition")
+            text: t("bundle_advancedObjectSearch_condition")
         });
 
         addMenu.add({
@@ -57,7 +57,7 @@ pimcore.plugin.esbackendsearch.searchConfig.conditionPanelContainerBuilder = Cla
             handler: function (type, data) {
                 this.addConditionGroupPanel(this.parentPanel, this.classId, this.conditionEntryPanelLayout, this.conditionsContainerInner);
             }.bind(this),
-            text: t("plugin_esbackendsearch_group")
+            text: t("bundle_advancedObjectSearch_group")
         });
 
 
@@ -66,7 +66,7 @@ pimcore.plugin.esbackendsearch.searchConfig.conditionPanelContainerBuilder = Cla
     },
 
     addConditionEntryPanel: function(data) {
-        var itemClass = new pimcore.plugin.esbackendsearch.searchConfig.conditionEntryPanel(this.classId, this.conditionEntryPanelLayout);
+        var itemClass = new pimcore.bundle.advancedObjectSearch.searchConfig.conditionEntryPanel(this.classId, this.conditionEntryPanelLayout);
         var item = itemClass.getConditionPanel(this.parentPanel, data);
         this.conditionsContainerInner.add(item);
         item.updateLayout();
@@ -74,7 +74,7 @@ pimcore.plugin.esbackendsearch.searchConfig.conditionPanelContainerBuilder = Cla
     },
 
     addConditionGroupPanel: function(data) {
-        var itemClass = new pimcore.plugin.esbackendsearch.searchConfig.conditionGroupPanel(this.classId, this.conditionEntryPanelLayout);
+        var itemClass = new pimcore.bundle.advancedObjectSearch.searchConfig.conditionGroupPanel(this.classId, this.conditionEntryPanelLayout);
         var item = itemClass.getConditionPanel(this.parentPanel, data);
         this.conditionsContainerInner.add(item);
         item.updateLayout();

@@ -12,8 +12,8 @@
  */
 
 
-pimcore.registerNS("pimcore.plugin.esbackendsearch.searchConfig.fieldConditionPanel.href");
-pimcore.plugin.esbackendsearch.searchConfig.fieldConditionPanel.href = Class.create(pimcore.plugin.esbackendsearch.searchConfig.fieldConditionPanel.default, {
+pimcore.registerNS("pimcore.bundle.advancedObjectSearch.searchConfig.fieldConditionPanel.href");
+pimcore.bundle.advancedObjectSearch.searchConfig.fieldConditionPanel.href = Class.create(pimcore.bundle.advancedObjectSearch.searchConfig.fieldConditionPanel.default, {
 
     inheritanceField: null,
 
@@ -28,7 +28,7 @@ pimcore.plugin.esbackendsearch.searchConfig.fieldConditionPanel.href = Class.cre
 
         this.typeField = Ext.create('Ext.form.ComboBox',
             {
-                fieldLabel: t("plugin_esbackendsearch_type"),
+                fieldLabel: t("bundle_advancedObjectSearch_type"),
                 store: typeStore,
                 // value: data.condition,
                 queryMode: 'local',
@@ -43,7 +43,7 @@ pimcore.plugin.esbackendsearch.searchConfig.fieldConditionPanel.href = Class.cre
 
                             this.idsField = Ext.create('Ext.form.field.Text',
                                 {
-                                    fieldLabel:  t("plugin_esbackendsearch_ids"),
+                                    fieldLabel:  t("bundle_advancedObjectSearch_ids"),
                                     width: 400,
                                     value: this.data.filterEntryData && this.data.filterEntryData.id ? this.data.filterEntryData.id.join() : ""
                                 }
@@ -70,7 +70,7 @@ pimcore.plugin.esbackendsearch.searchConfig.fieldConditionPanel.href = Class.cre
 
                             this.classSelection = Ext.create('Ext.form.ComboBox',
                                 {
-                                    fieldLabel: t("plugin_esbackendsearch_subclass"),
+                                    fieldLabel: t("bundle_advancedObjectSearch_subclass"),
                                     store: filteredClassStore,
                                     valueField: 'id',
                                     displayField: 'translatedText',
@@ -84,7 +84,7 @@ pimcore.plugin.esbackendsearch.searchConfig.fieldConditionPanel.href = Class.cre
 
                                             if(newValue != oldValue) {
                                                 this.subConditionsPanel.removeAll();
-                                                this.subConditions = new pimcore.plugin.esbackendsearch.searchConfig.conditionPanel(newValue, null, "auto");
+                                                this.subConditions = new pimcore.bundle.advancedObjectSearch.searchConfig.conditionPanel(newValue, null, "auto");
                                                 this.subConditionsPanel.add(this.subConditions.getConditionPanel());
                                             }
 
@@ -96,7 +96,7 @@ pimcore.plugin.esbackendsearch.searchConfig.fieldConditionPanel.href = Class.cre
                             this.subConditionsPanel = Ext.create('Ext.panel.Panel', {});
 
                             if(this.data.filterEntryData && this.data.filterEntryData.classId) {
-                                this.subConditions = new pimcore.plugin.esbackendsearch.searchConfig.conditionPanel(this.data.filterEntryData.classId, this.data.filterEntryData, "auto");
+                                this.subConditions = new pimcore.bundle.advancedObjectSearch.searchConfig.conditionPanel(this.data.filterEntryData.classId, this.data.filterEntryData, "auto");
                                 this.subConditionsPanel.add(this.subConditions.getConditionPanel());
                             }
 
@@ -119,7 +119,7 @@ pimcore.plugin.esbackendsearch.searchConfig.fieldConditionPanel.href = Class.cre
 
         this.inheritanceField = Ext.create('Ext.form.field.Checkbox',
             {
-                fieldLabel:  t("plugin_esbackendsearch_ignoreInheritance"),
+                fieldLabel:  t("bundle_advancedObjectSearch_ignoreInheritance"),
                 style: "padding-left: 20px",
                 value: this.data.ignoreInheritance,
                 hidden: !this.fieldSelectionInformation.context.classInheritanceEnabled

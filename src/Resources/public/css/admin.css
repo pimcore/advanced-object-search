@@ -12,23 +12,23 @@
  */
 
 
-.pimcore_icon_esbackendsearch_saveAndShare {
+.pimcore_bundle_advancedObjectSearch_saveAndShare {
     background: url("/pimcore/static6/img/flat-color-icons/collaboration.svg") center center no-repeat !important;
 }
 
-.pimcore_icon_esbackendsearch_grid {
+.pimcore_bundle_advancedObjectSearch_grid {
     background: url("/pimcore/static6/img/flat-color-icons/grid.svg") center center no-repeat !important;
 }
 
-.pimcore_icon_esbackendsearch_filter {
+.pimcore_bundle_advancedObjectSearch_filter {
     background: url("/pimcore/static6/img/flat-color-icons/filled_filter.svg") center center no-repeat !important;
 }
 
-.pimcore_icon_esbackendsearch {
+.pimcore_bundle_advancedObjectSearch {
     background: url("/pimcore/static6/img/flat-color-icons/binoculars.svg") center center no-repeat !important;
 }
 
-/*.pimcore_icon_esbackendsearch:before {
+/*.pimcore_bundle_advancedObjectSearch:before {
     position: absolute;
     width: 12px;
     height: 12px;
@@ -38,14 +38,14 @@
     background: url(/pimcore/static6/img/flat-color-icons/opened_folder.svg) center center no-repeat !important;
 }*/
 
-#pimcore_icon_esbackendsearch_toolbar {
+#pimcore_bundle_advancedObjectSearch_toolbar {
     background-image: url(/pimcore/static6/img/flat-color-icons/binoculars.svg) !important;
     filter: grayscale(0%) !important;
     -webkit-filter: grayscale(0%) !important;
     position: relative;
 }
 
-#pimcore_icon_esbackendsearch_toolbar:before {
+#pimcore_bundle_advancedObjectSearch_toolbar:before {
     position: absolute;
     width: 12px;
     height: 12px;

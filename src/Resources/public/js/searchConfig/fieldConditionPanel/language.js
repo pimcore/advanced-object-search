@@ -12,7 +12,7 @@
  */
 
 
-pimcore.registerNS("pimcore.plugin.esbackendsearch.searchConfig.fieldConditionPanel.language");
-pimcore.plugin.esbackendsearch.searchConfig.fieldConditionPanel.language = Class.create(pimcore.plugin.esbackendsearch.searchConfig.fieldConditionPanel.select, {
+pimcore.registerNS("pimcore.bundle.advancedObjectSearch.searchConfig.fieldConditionPanel.language");
+pimcore.bundle.advancedObjectSearch.searchConfig.fieldConditionPanel.language = Class.create(pimcore.bundle.advancedObjectSearch.searchConfig.fieldConditionPanel.select, {
 
 });

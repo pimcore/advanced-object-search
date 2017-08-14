@@ -12,11 +12,11 @@
  */
 
 
-pimcore.registerNS("pimcore.plugin.esbackendsearch.searchConfig.conditionGroupPanel");
-pimcore.plugin.esbackendsearch.searchConfig.conditionGroupPanel = Class.create(pimcore.plugin.esbackendsearch.searchConfig.conditionAbstractPanel, {
+pimcore.registerNS("pimcore.bundle.advancedObjectSearch.searchConfig.conditionGroupPanel");
+pimcore.bundle.advancedObjectSearch.searchConfig.conditionGroupPanel = Class.create(pimcore.bundle.advancedObjectSearch.searchConfig.conditionAbstractPanel, {
 
     getConditionPanel: function(panel, data) {
-        var niceName = t("plugin_esbackendsearch_group");
+        var niceName = t("bundle_advancedObjectSearch_group");
 
         var myId = Ext.id();
 
@@ -36,7 +36,7 @@ pimcore.plugin.esbackendsearch.searchConfig.conditionGroupPanel = Class.create(p
     },
 
     getInnerConditionPanel: function(myId, data) {
-        var helper = new pimcore.plugin.esbackendsearch.searchConfig.conditionPanelContainerBuilder(this.classId, this, myId, this.conditionEntryPanelLayout);
+        var helper = new pimcore.bundle.advancedObjectSearch.searchConfig.conditionPanelContainerBuilder(this.classId, this, myId, this.conditionEntryPanelLayout);
         this.conditionsContainerInner = helper.buildConditionsContainerInner();
 
         if(data.filterEntryData) {
@@ -57,7 +57,7 @@ pimcore.plugin.esbackendsearch.searchConfig.conditionGroupPanel = Class.create(p
         this.operatorField = Ext.create('Ext.form.ComboBox',
             {
 
-                fieldLabel:  t("plugin_esbackendsearch_operator"),
+                fieldLabel:  t("bundle_advancedObjectSearch_operator"),
                 store: ["must", "should"],
                 value: data ? data.operator : "",
                 queryMode: 'local',

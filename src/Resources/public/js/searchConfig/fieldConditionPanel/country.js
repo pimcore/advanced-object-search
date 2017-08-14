@@ -12,7 +12,7 @@
  */
 
 
-pimcore.registerNS("pimcore.plugin.esbackendsearch.searchConfig.fieldConditionPanel.country");
-pimcore.plugin.esbackendsearch.searchConfig.fieldConditionPanel.country = Class.create(pimcore.plugin.esbackendsearch.searchConfig.fieldConditionPanel.select, {
+pimcore.registerNS("pimcore.bundle.advancedObjectSearch.searchConfig.fieldConditionPanel.country");
+pimcore.bundle.advancedObjectSearch.searchConfig.fieldConditionPanel.country = Class.create(pimcore.bundle.advancedObjectSearch.searchConfig.fieldConditionPanel.select, {
 
 });

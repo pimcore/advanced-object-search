@@ -12,11 +12,11 @@
  */
 
 
-pimcore.registerNS("pimcore.plugin.esbackendsearch");
+pimcore.registerNS("pimcore.bundle.advancedObjectSearch");
 
-pimcore.plugin.esbackendsearch = Class.create(pimcore.plugin.admin, {
+pimcore.bundle.advancedObjectSearch = Class.create(pimcore.plugin.admin, {
     getClassName: function() {
-        return "pimcore.plugin.esbackendsearch";
+        return "pimcore.plugin.advancedObjectSearch";
     },
 
     initialize: function() {
@@ -28,11 +28,11 @@ pimcore.plugin.esbackendsearch = Class.create(pimcore.plugin.admin, {
         var perspectiveCfg = pimcore.globalmanager.get("perspective");
 
         var searchMenu = pimcore.globalmanager.get("layout_toolbar").searchMenu;
-        if(searchMenu && perspectiveCfg.inToolbar("search.esBackendSearch")) {
-            pimcore.plugin.esbackendsearch.helper.rebuildEsSearchMenu();
+        if(searchMenu && perspectiveCfg.inToolbar("search.advancedObjectSearch")) {
+            pimcore.bundle.advancedObjectSearch.helper.rebuildEsSearchMenu();
         }
     }
 });
 
-var esbackendsearchPlugin = new pimcore.plugin.esbackendsearch();
+var advancedObjectSearchPlugin = new pimcore.bundle.advancedObjectSearch();
 

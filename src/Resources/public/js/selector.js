@@ -12,8 +12,8 @@
  */
 
 
-pimcore.registerNS("pimcore.plugin.esbackendsearch.selector");
-pimcore.plugin.esbackendsearch.selector = Class.create({
+pimcore.registerNS("pimcore.bundle.advancedObjectSearch.selector");
+pimcore.bundle.advancedObjectSearch.selector = Class.create({
 
     initialize: function () {
         this.panel = new Ext.Panel({
@@ -48,7 +48,7 @@ pimcore.plugin.esbackendsearch.selector = Class.create({
         this.tabpanel = new Ext.Panel({
             id: this.myTabId,
             iconCls: "pimcore_icon_search",
-            title: t("plugin_esbackendsearch_open_saved_searches"),
+            title: t("bundle_advancedObjectSearch_open_saved_searches"),
             border: false,
             layout: "fit",
             closable:true,
@@ -66,7 +66,7 @@ pimcore.plugin.esbackendsearch.selector = Class.create({
 
     openSearch: function (data) {
 
-        pimcore.plugin.esbackendsearch.helper.openEsSearch(data.id, function() {
+        pimcore.bundle.advancedObjectSearch.helper.openEsSearch(data.id, function() {
             this.window.close();
         }.bind(this));
 
@@ -124,7 +124,7 @@ pimcore.plugin.esbackendsearch.selector = Class.create({
             pageSize: 50,
             proxy : {
                 type: 'ajax',
-                url: '/plugin/ESBackendSearch/admin/find',
+                url: '/admin/bundle/advanced-object-search/admin/find',
                 reader: {
                     type: 'json',
                     totalProperty: 'total',
@@ -140,8 +140,8 @@ pimcore.plugin.esbackendsearch.selector = Class.create({
                 {header: 'ID', width: 40, sortable: true, dataIndex: 'id', hidden: true},
                 {header: t("name"), flex: 200, sortable: true, dataIndex: 'name'},
                 {header: t("description"), width: 200, sortable: true, dataIndex: 'description', hidden: true},
-                {header: t("plugin_esbackendsearch_category"), width: 150, sortable: true, dataIndex: 'category'},
-                {header: t("plugin_esbackendsearch_owner"), width: 150, sortable: false, dataIndex: 'ownerId', renderer: function (value, metaData, record, rowIndex, colIndex, store) {
+                {header: t("bundle_advancedObjectSearch_category"), width: 150, sortable: true, dataIndex: 'category'},
+                {header: t("bundle_advancedObjectSearch_owner"), width: 150, sortable: false, dataIndex: 'ownerId', renderer: function (value, metaData, record, rowIndex, colIndex, store) {
                     return record.data.owner;
                 }}
             ];

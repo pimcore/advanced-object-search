@@ -12,8 +12,8 @@
  */
 
 
-pimcore.registerNS("pimcore.plugin.esbackendsearch.searchConfig.fieldConditionPanel.time");
-pimcore.plugin.esbackendsearch.searchConfig.fieldConditionPanel.time = Class.create(pimcore.plugin.esbackendsearch.searchConfig.fieldConditionPanel.datetime, {
+pimcore.registerNS("pimcore.bundle.advancedObjectSearch.searchConfig.fieldConditionPanel.time");
+pimcore.bundle.advancedObjectSearch.searchConfig.fieldConditionPanel.time = Class.create(pimcore.bundle.advancedObjectSearch.searchConfig.fieldConditionPanel.datetime, {
 
     showDateField: false,
 

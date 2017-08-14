@@ -12,8 +12,8 @@
  */
 
 
-pimcore.registerNS("pimcore.plugin.esbackendsearch.searchConfig.conditionAbstractPanel");
-pimcore.plugin.esbackendsearch.searchConfig.conditionAbstractPanel = Class.create({
+pimcore.registerNS("pimcore.bundle.advancedObjectSearch.searchConfig.conditionAbstractPanel");
+pimcore.bundle.advancedObjectSearch.searchConfig.conditionAbstractPanel = Class.create({
 
     fieldCondition: null,
     fieldConditionPanel: null,

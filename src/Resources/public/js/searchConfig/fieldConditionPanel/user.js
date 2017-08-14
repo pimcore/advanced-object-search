@@ -12,7 +12,7 @@
  */
 
 
-pimcore.registerNS("pimcore.plugin.esbackendsearch.searchConfig.fieldConditionPanel.user");
-pimcore.plugin.esbackendsearch.searchConfig.fieldConditionPanel.user = Class.create(pimcore.plugin.esbackendsearch.searchConfig.fieldConditionPanel.select, {
+pimcore.registerNS("pimcore.bundle.advancedObjectSearch.searchConfig.fieldConditionPanel.user");
+pimcore.bundle.advancedObjectSearch.searchConfig.fieldConditionPanel.user = Class.create(pimcore.bundle.advancedObjectSearch.searchConfig.fieldConditionPanel.select, {
 
 });

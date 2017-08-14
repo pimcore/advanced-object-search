@@ -12,7 +12,7 @@
  */
 
 
-pimcore.registerNS("pimcore.plugin.esbackendsearch.searchConfig.fieldConditionPanel.multiselect");
-pimcore.plugin.esbackendsearch.searchConfig.fieldConditionPanel.multiselect = Class.create(pimcore.plugin.esbackendsearch.searchConfig.fieldConditionPanel.select, {
+pimcore.registerNS("pimcore.bundle.advancedObjectSearch.searchConfig.fieldConditionPanel.multiselect");
+pimcore.bundle.advancedObjectSearch.searchConfig.fieldConditionPanel.multiselect = Class.create(pimcore.bundle.advancedObjectSearch.searchConfig.fieldConditionPanel.select, {
 
 });

@@ -12,19 +12,19 @@
  */
 
 
-pimcore.registerNS("pimcore.plugin.esbackendsearch.helper");
-pimcore.plugin.esbackendsearch.helper = {
+pimcore.registerNS("pimcore.bundle.advancedObjectSearch.helper");
+pimcore.bundle.advancedObjectSearch.helper = {
 
     rebuildEsSearchMenu: function() {
 
         var searchMenu = pimcore.globalmanager.get("layout_toolbar").searchMenu;
 
-        var esSearchMenu = pimcore.globalmanager.get("plugin_essearch_menu");
+        var esSearchMenu = pimcore.globalmanager.get("bundle_advancedObjectSearch_menu");
 
         if(!esSearchMenu) {
             esSearchMenu = Ext.create('Ext.menu.Item', {
-                text: t("plugin_esbackendsearch"),
-                iconCls: "pimcore_icon_esbackendsearch",
+                text: t("bundle_advancedObjectSearch"),
+                iconCls: "pimcore_bundle_advancedObjectSearch",
                 hideOnClick: false,
                 menu: {
                     cls: "pimcore_navigation_flyout",
@@ -35,28 +35,28 @@ pimcore.plugin.esbackendsearch.helper = {
             });
             searchMenu.add(esSearchMenu);
 
-            pimcore.globalmanager.add("plugin_essearch_menu", esSearchMenu);
+            pimcore.globalmanager.add("bundle_advancedObjectSearch_menu", esSearchMenu);
         }
         esSearchMenu.getMenu().removeAll();
         
         esSearchMenu.getMenu().add({
-            text: t("plugin_esbackendsearch_new"),
-            iconCls: "pimcore_icon_esbackendsearch",
+            text: t("bundle_advancedObjectSearch_new"),
+            iconCls: "pimcore_bundle_advancedObjectSearch",
             handler: function () {
-                var esSearch = new pimcore.plugin.esbackendsearch.searchConfigPanel();
+                var esSearch = new pimcore.bundle.advancedObjectSearch.searchConfigPanel();
                 pimcore.globalmanager.add(esSearch.getTabId(), esSearch);
             }
         });
         esSearchMenu.getMenu().add({
-            text: t("plugin_esbackendsearch_search"),
-            iconCls: "pimcore_icon_esbackendsearch",
+            text: t("bundle_advancedObjectSearch_search"),
+            iconCls: "pimcore_bundle_advancedObjectSearch",
             handler: function () {
-                new pimcore.plugin.esbackendsearch.selector();
+                new pimcore.bundle.advancedObjectSearch.selector();
             }
         });
 
         Ext.Ajax.request({
-            url: "/plugin/ESBackendSearch/admin/load-short-cuts",
+            url: "/admin/bundle/advanced-object-search/admin/load-short-cuts",
             method: "get",
             success: function (response) {
                 var rdata = Ext.decode(response.responseText);
@@ -68,9 +68,9 @@ pimcore.plugin.esbackendsearch.helper = {
                         var id = rdata.entries[i].id;
                         esSearchMenu.getMenu().add({
                             text: rdata.entries[i].name,
-                            iconCls: "pimcore_icon_esbackendsearch",
+                            iconCls: "pimcore_bundle_advancedObjectSearch",
                             handler: function (id) {
-                                pimcore.plugin.esbackendsearch.helper.openEsSearch(id);
+                                pimcore.bundle.advancedObjectSearch.helper.openEsSearch(id);
                             }.bind(this, id)
                         });
                     }
@@ -84,8 +84,8 @@ pimcore.plugin.esbackendsearch.helper = {
         var statusBar = Ext.get("pimcore_status");
 
         var statusIcon = Ext.get(statusBar.insertHtml('afterBegin',
-            '<div id="pimcore_icon_esbackendsearch_toolbar" data-menu-tooltip="'
-            + t("plugin_esbackendsearch_updating_index") + '"></div>'));
+            '<div id="pimcore_bundle_advancedObjectSearch_toolbar" data-menu-tooltip="'
+            + t("bundle_advancedObjectSearch_updating_index") + '"></div>'));
 
         pimcore.helpers.initMenuTooltips();
 
@@ -96,7 +96,7 @@ pimcore.plugin.esbackendsearch.helper = {
     checkIndexStatus: function(statusIcon) {
 
         Ext.Ajax.request({
-            url: "/plugin/ESBackendSearch/admin/check-index-status",
+            url: "/admin/bundle/advanced-object-search/admin/check-index-status",
             method: "get",
             success: function (response) {
                 var rdata = Ext.decode(response.responseText);
@@ -116,7 +116,7 @@ pimcore.plugin.esbackendsearch.helper = {
 
     openEsSearch: function(id, callback) {
         Ext.Ajax.request({
-            url: "/plugin/ESBackendSearch/admin/load-search",
+            url: "/admin/bundle/advanced-object-search/admin/load-search",
             params: {
                 id: id
             },
@@ -129,7 +129,7 @@ pimcore.plugin.esbackendsearch.helper = {
                     pimcore.globalmanager.get(tabId).activate();
                 }
                 catch (e) {
-                    var esSearch = new pimcore.plugin.esbackendsearch.searchConfigPanel(rdata);
+                    var esSearch = new pimcore.bundle.advancedObjectSearch.searchConfigPanel(rdata);
                     pimcore.globalmanager.add(esSearch.getTabId(), esSearch);
                 }
 

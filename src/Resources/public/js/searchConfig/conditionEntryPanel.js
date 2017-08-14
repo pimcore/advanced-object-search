@@ -12,11 +12,11 @@
  */
 
 
-pimcore.registerNS("pimcore.plugin.esbackendsearch.searchConfig.conditionEntryPanel");
-pimcore.plugin.esbackendsearch.searchConfig.conditionEntryPanel = Class.create(pimcore.plugin.esbackendsearch.searchConfig.conditionAbstractPanel, {
+pimcore.registerNS("pimcore.bundle.advancedObjectSearch.searchConfig.conditionEntryPanel");
+pimcore.bundle.advancedObjectSearch.searchConfig.conditionEntryPanel = Class.create(pimcore.bundle.advancedObjectSearch.searchConfig.conditionAbstractPanel, {
 
     getConditionPanel: function(panel, data) {
-        var niceName = t("plugin_esbackendsearch_condition");
+        var niceName = t("bundle_advancedObjectSearch_condition");
 
         if(typeof data == "undefined") {
             data = {};
@@ -27,7 +27,7 @@ pimcore.plugin.esbackendsearch.searchConfig.conditionEntryPanel = Class.create(p
             autoLoad: true,
             proxy: {
                 type: 'ajax',
-                url: '/plugin/ESBackendSearch/admin/get-fields',
+                url: '/admin/bundle/advanced-object-search/admin/get-fields',
                 reader: {
                     rootProperty: 'data',
                     idProperty: 'fieldName'
@@ -61,7 +61,7 @@ pimcore.plugin.esbackendsearch.searchConfig.conditionEntryPanel = Class.create(p
         this.fieldSelection = Ext.create('Ext.form.ComboBox',
             {
 
-                fieldLabel: t("plugin_esbackendsearch_field"),
+                fieldLabel: t("bundle_advancedObjectSearch_field"),
                 name: "condition",
                 store: fieldStore,
                 queryMode: 'local',
@@ -75,8 +75,8 @@ pimcore.plugin.esbackendsearch.searchConfig.conditionEntryPanel = Class.create(p
                             var fieldSelectionInformation = record.data;
 
                             this.fieldConditionPanel.removeAll();
-                            if(pimcore.plugin.esbackendsearch.searchConfig.fieldConditionPanel[fieldSelectionInformation.fieldType]) {
-                                this.fieldCondition = new pimcore.plugin.esbackendsearch.searchConfig.fieldConditionPanel[fieldSelectionInformation.fieldType](fieldSelectionInformation, data, this.classId);
+                            if(pimcore.bundle.advancedObjectSearch.searchConfig.fieldConditionPanel[fieldSelectionInformation.fieldType]) {
+                                this.fieldCondition = new pimcore.bundle.advancedObjectSearch.searchConfig.fieldConditionPanel[fieldSelectionInformation.fieldType](fieldSelectionInformation, data, this.classId);
                                 this.fieldConditionPanel.add(this.fieldCondition.getConditionPanel());
                             } else {
                                 console.log("ERROR - no implementation for field condition panel for " + fieldSelectionInformation.fieldType);

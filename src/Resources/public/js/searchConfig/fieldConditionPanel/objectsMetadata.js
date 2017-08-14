@@ -12,7 +12,7 @@
  */
 
 
-pimcore.registerNS("pimcore.plugin.esbackendsearch.searchConfig.fieldConditionPanel.objectsMetadata");
-pimcore.plugin.esbackendsearch.searchConfig.fieldConditionPanel.objectsMetadata = Class.create(pimcore.plugin.esbackendsearch.searchConfig.fieldConditionPanel.href, {
+pimcore.registerNS("pimcore.bundle.advancedObjectSearch.searchConfig.fieldConditionPanel.objectsMetadata");
+pimcore.bundle.advancedObjectSearch.searchConfig.fieldConditionPanel.objectsMetadata = Class.create(pimcore.bundle.advancedObjectSearch.searchConfig.fieldConditionPanel.href, {
 
 });

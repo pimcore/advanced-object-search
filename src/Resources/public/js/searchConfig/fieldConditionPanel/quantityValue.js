@@ -12,8 +12,8 @@
  */
 
 
-pimcore.registerNS("pimcore.plugin.esbackendsearch.searchConfig.fieldConditionPanel.quantityValue");
-pimcore.plugin.esbackendsearch.searchConfig.fieldConditionPanel.quantityValue = Class.create(pimcore.plugin.esbackendsearch.searchConfig.fieldConditionPanel.numeric, {
+pimcore.registerNS("pimcore.bundle.advancedObjectSearch.searchConfig.fieldConditionPanel.quantityValue");
+pimcore.bundle.advancedObjectSearch.searchConfig.fieldConditionPanel.quantityValue = Class.create(pimcore.bundle.advancedObjectSearch.searchConfig.fieldConditionPanel.numeric, {
 
     getConditionPanel: function() {
 
@@ -65,7 +65,7 @@ pimcore.plugin.esbackendsearch.searchConfig.fieldConditionPanel.quantityValue = 
 
         this.inheritanceField = Ext.create('Ext.form.field.Checkbox',
             {
-                fieldLabel:  t("plugin_esbackendsearch_ignoreInheritance"),
+                fieldLabel:  t("bundle_advancedObjectSearch_ignoreInheritance"),
                 style: "padding-left: 20px",
                 value: this.data.ignoreInheritance,
                 hidden: !this.fieldSelectionInformation.context.classInheritanceEnabled
@@ -80,7 +80,7 @@ pimcore.plugin.esbackendsearch.searchConfig.fieldConditionPanel.quantityValue = 
                     xtype: "fieldcontainer",
                     style: "padding-left: 20px",
                     layout: 'hbox',
-                    fieldLabel:  t("plugin_esbackendsearch_term"),
+                    fieldLabel:  t("bundle_advancedObjectSearch_term"),
                     items: [
                         this.termField,
                         this.unitField

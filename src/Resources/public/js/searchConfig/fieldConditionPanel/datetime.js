@@ -12,8 +12,8 @@
  */
 
 
-pimcore.registerNS("pimcore.plugin.esbackendsearch.searchConfig.fieldConditionPanel.datetime");
-pimcore.plugin.esbackendsearch.searchConfig.fieldConditionPanel.datetime = Class.create(pimcore.plugin.esbackendsearch.searchConfig.fieldConditionPanel.numeric, {
+pimcore.registerNS("pimcore.bundle.advancedObjectSearch.searchConfig.fieldConditionPanel.datetime");
+pimcore.bundle.advancedObjectSearch.searchConfig.fieldConditionPanel.datetime = Class.create(pimcore.bundle.advancedObjectSearch.searchConfig.fieldConditionPanel.numeric, {
 
     showTimeField: true,
     showDateField: true,
@@ -58,7 +58,7 @@ pimcore.plugin.esbackendsearch.searchConfig.fieldConditionPanel.datetime = Class
 
         this.inheritanceField = Ext.create('Ext.form.field.Checkbox',
             {
-                fieldLabel:  t("plugin_esbackendsearch_ignoreInheritance"),
+                fieldLabel:  t("bundle_advancedObjectSearch_ignoreInheritance"),
                 style: "padding-left: 20px",
                 value: this.data.ignoreInheritance,
                 hidden: !this.fieldSelectionInformation.context.classInheritanceEnabled
@@ -83,7 +83,7 @@ pimcore.plugin.esbackendsearch.searchConfig.fieldConditionPanel.datetime = Class
                 {
                     xtype: 'fieldcontainer',
                     layout: 'hbox',
-                    fieldLabel: t("plugin_esbackendsearch_date"),
+                    fieldLabel: t("bundle_advancedObjectSearch_date"),
                     style: "padding-left: 20px",
                     items: [this.datefield, this.timefield]
                 },
