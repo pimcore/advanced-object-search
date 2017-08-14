@@ -27,6 +27,16 @@ use Pimcore\Model\Schedule\Maintenance\Job;
 
 class IndexUpdateListener
 {
+    /**
+     * @var Service
+     */
+    protected $service;
+
+    public function __construct(Service $service)
+    {
+        $this->service = $service;
+    }
+
     public function updateObject(ObjectEvent $event)
     {
         $inheritanceBackup = AbstractObject::getGetInheritedValues();
@@ -34,8 +44,7 @@ class IndexUpdateListener
 
         $object = $event->getObject();
         if($object instanceof Concrete) {
-            $service = new Service();
-            $service->doUpdateIndexData($object);
+            $this->service->doUpdateIndexData($object);
         }
 
         AbstractObject::setGetInheritedValues($inheritanceBackup);
@@ -45,22 +54,19 @@ class IndexUpdateListener
     {
         $object = $event->getObject();
         if($object instanceof Concrete) {
-            $service = new Service();
-            $service->doDeleteFromIndex($object);
+            $this->service->doDeleteFromIndex($object);
         }
     }
 
     public function updateMapping(ClassDefinitionEvent $event) {
         $classDefinition = $event->getClassDefinition();
-        $service = new Service();
-        $service->updateMapping($classDefinition);
+        $this->service->updateMapping($classDefinition);
     }
 
     public function deleteIndex(ClassDefinitionEvent $event) {
         $classDefinition = $event->getClassDefinition();
-        $service = new Service();
         try {
-            $service->deleteIndex($classDefinition);
+            $this->service->deleteIndex($classDefinition);
         } catch (\Exception $e) {
             Logger::err($e);
         }
@@ -71,8 +77,7 @@ class IndexUpdateListener
     }
 
     public function maintenance() {
-        $service = new Service();
-        $service->processUpdateQueue(500);
+        $this->service->processUpdateQueue(500);
     }
 
 }

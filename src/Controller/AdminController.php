@@ -67,7 +67,7 @@ class AdminController extends AdminerController {
 
         }
 
-        $service = new Service();
+        $service = $this->get('bundle.advanced_object_search.service');
         $fieldSelectionInformationEntries = $service->getFieldSelectionInformationForClassDefinition($definition, $allowInheritance);
 
         $fields = [];
@@ -118,7 +118,7 @@ class AdminController extends AdminerController {
 
 
             //get ID list from ES Service
-            $service = new Service($this->getUser());
+            $service = $this->get('bundle.advanced_object_search.service');
             $data = json_decode($request->get("filter"), true);
             $results = $service->doFilter($data['classId'], $data['conditions']['filters'], $data['conditions']['fulltextSearchTerm'], $start, $limit);
 
@@ -163,7 +163,7 @@ class AdminController extends AdminerController {
         $class = Object\ClassDefinition::getById($request->get("classId"));
 
         //get ID list from ES Service
-        $service = new Service($this->getUser());
+        $service = $this->get('bundle.advanced_object_search.service');
         $data = json_decode($request->get("filter"), true);
         $results = $service->doFilter($data['classId'], $data['conditions']['filters'], $data['conditions']['fulltextSearchTerm']);
 
@@ -200,7 +200,7 @@ class AdminController extends AdminerController {
         }
 
         //get ID list from ES Service
-        $service = new Service($this->getUser());
+        $service = $this->get('bundle.advanced_object_search.service');
         $data = json_decode($request->get("filter"), true);
 
         $results = $service->doFilter(
@@ -464,7 +464,7 @@ class AdminController extends AdminerController {
     public function checkIndexStatusAction(Request $request)
     {
 
-        $service = new Service();
+        $service = $this->get('bundle.advanced_object_search.service');
         return $this->json(['indexUptodate' => $service->updateQueueEmpty()]);
 
     }

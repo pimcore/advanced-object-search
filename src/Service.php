@@ -25,11 +25,12 @@ use ONGR\ElasticsearchDSL\Query\Compound\BoolQuery;
 use ONGR\ElasticsearchDSL\Query\FullText\QueryStringQuery;
 use ONGR\ElasticsearchDSL\Query\TermLevel\WildcardQuery;
 use ONGR\ElasticsearchDSL\Search;
-use Pimcore\Logger;
+use Pimcore\Bundle\AdminBundle\Security\User\TokenStorageUserResolver;
 use Pimcore\Model\Object\ClassDefinition;
 use Pimcore\Model\Object\Concrete;
 use Pimcore\Model\Object\Fieldcollection\Definition;
 use Pimcore\Model\User;
+use Psr\Log\LoggerInterface;
 
 class Service {
 
@@ -39,12 +40,18 @@ class Service {
     protected $user;
 
     /**
+     * @var LoggerInterface
+     */
+    protected $logger;
+
+    /**
      * Service constructor.
      * @param User|null $user  - if user is set, filtering considers user permissions
      */
-    public function __construct(User $user = null)
+    public function __construct(LoggerInterface $logger, TokenStorageUserResolver $userResolver)
     {
-        $this->user = $user;
+        $this->user = $userResolver->getUser();
+        $this->logger = $logger;
     }
 
     /**
@@ -156,7 +163,7 @@ class Service {
             $this->doUpdateMapping($classDefinition);
             return true;
         } catch (\Exception $e) {
-            Logger::info($e);
+            $this->logger->info($e);
             //try recreating index
             $this->createIndex($classDefinition);
         }
@@ -179,7 +186,7 @@ class Service {
 
         $mapping = $this->generateMapping($classDefinition);
         $response = $client->indices()->putMapping($mapping);
-        Logger::debug(json_encode($response));
+        $this->logger->debug(json_encode($response));
 
     }
 
@@ -195,11 +202,11 @@ class Service {
         try {
             $this->deleteIndex($classDefinition);
         } catch (\Exception $e) {
-            Logger::debug($e);
+            $this->logger->debug($e);
         }
 
         try {
-            Logger::info("Creating index $indexName for class " . $classDefinition->getName());
+            $this->logger->info("Creating index $indexName for class " . $classDefinition->getName());
             $body = [
                 'settings' => [
                     'index' => [
@@ -212,9 +219,9 @@ class Service {
                 ]
             ];
             $response = $client->indices()->create(["index" => $indexName, "body" => $body]);
-            Logger::debug(json_encode($response));
+            $this->logger->debug(json_encode($response));
         } catch (\Exception $e) {
-            Logger::err($e);
+            $this->logger->error($e);
         }
     }
 
@@ -227,9 +234,9 @@ class Service {
     public function deleteIndex(ClassDefinition $classDefinition) {
         $indexName = $this->getIndexName($classDefinition->getName());
         $client = AdvancedObjectSearchBundle::getESClient();
-        Logger::info("Deleting index $indexName for class " . $classDefinition->getName());
+        $this->logger->info("Deleting index $indexName for class " . $classDefinition->getName());
         $response = $client->indices()->delete(["index" => $indexName]);
-        Logger::debug(json_encode($response));
+        $this->logger->debug(json_encode($response));
     }
 
 
@@ -287,7 +294,7 @@ class Service {
             $indexDocument = $client->get($params);
             $originalChecksum = $indexDocument["_source"]["o_checksum"];
         } catch(\Exception $e) {
-            Logger::debug($e->getMessage());
+            $this->logger->debug($e->getMessage());
             $originalChecksum = -1;
         }
 
@@ -295,11 +302,11 @@ class Service {
 
         if($indexUpdateParams['body']['o_checksum'] != $originalChecksum) {
             $response = $client->index($indexUpdateParams);
-            Logger::info("Updates es index for object " . $object->getId());
-            Logger::debug(json_encode($response));
+            $this->logger->info("Updates es index for object " . $object->getId());
+            $this->logger->debug(json_encode($response));
 
         } else {
-            Logger::info("Not updating index for object " . $object->getId() . " - nothing has changed.");
+            $this->logger->info("Not updating index for object " . $object->getId() . " - nothing has changed.");
         }
 
 
@@ -346,8 +353,8 @@ class Service {
         ];
 
         $response = $client->delete($params);
-        Logger::info("Deleting object " . $object->getId() . " from es index.");
-        Logger::debug(json_encode($response));
+        $this->logger->info("Deleting object " . $object->getId() . " from es index.");
+        $this->logger->debug(json_encode($response));
     }
 
 
@@ -386,7 +393,7 @@ class Service {
 
         if($entries) {
             foreach($entries as $objectId) {
-                Logger::info("Worker $workerId updating index for element " . $objectId);
+                $this->logger->info("Worker $workerId updating index for element " . $objectId);
                 $object = Concrete::getById($objectId);
                 if($object) {
                     $this->doUpdateIndexData($object);
@@ -548,7 +555,7 @@ class Service {
             'body' => $search->toArray()
         ];
 
-        Logger::info("Filter-Params: " . json_encode($params));
+        $this->logger->info("Filter-Params: " . json_encode($params));
 
         return $client->search($params);
     }

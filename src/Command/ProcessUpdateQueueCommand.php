@@ -32,7 +32,7 @@ class ProcessUpdateQueueCommand extends AbstractCommand
 
     protected function execute(InputInterface $input, OutputInterface $output)
     {
-        $service = new Service();
+        $service = $this->getContainer()->get("bundle.advanced_object_search.service");
         $count = 1;
 
         while($count) {

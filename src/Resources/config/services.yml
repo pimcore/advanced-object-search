@@ -1,11 +1,22 @@
 
 services:
-    app.event_listener.test:
+    bundle.advanced_object_search.service:
+        class: AdvancedObjectSearchBundle\Service
+        arguments:
+            - '@logger'
+            - '@pimcore_admin.security.token_storage_user_resolver'
+        tags:
+            - { name: monolog.logger, channel: pimcore_advanced_object_search }
+
+    bundle.advanced_object_search.eventlisteners:
         class: AdvancedObjectSearchBundle\EventListener\IndexUpdateListener
+        arguments:
+            - '@bundle.advanced_object_search.service'
         tags:
             - { name: kernel.event_listener, event: pimcore.object.postUpdate, method: updateObject }
             - { name: kernel.event_listener, event: pimcore.object.preDelete, method: deleteObject }
             - { name: kernel.event_listener, event: pimcore.class.postUpdate, method: updateMapping }
             - { name: kernel.event_listener, event: pimcore.class.postDelete, method: deleteIndex }
             - { name: kernel.event_listener, event: pimcore.system.maintenance, method: registerMaintenanceJob }
+
 
