@@ -1,6 +1,6 @@
 <?php
 
-namespace ESBackendSearch;
+namespace AdvancesObjectSearchBundle\Model;
 
 use Pimcore\Model;
 

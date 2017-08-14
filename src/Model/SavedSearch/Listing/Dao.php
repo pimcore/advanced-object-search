@@ -1,6 +1,6 @@
 <?php
 
-namespace ESBackendSearch\SavedSearch\Listing;
+namespace AdvancesObjectSearchBundle\Model\SavedSearch\Listing;
 
 use ESBackendSearch\SavedSearch;
 use Pimcore\Model;
