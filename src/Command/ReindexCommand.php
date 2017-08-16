@@ -35,6 +35,9 @@ class ReindexCommand extends AbstractCommand
 
     protected function execute(InputInterface $input, OutputInterface $output)
     {
+        /**
+         * @var $service Service
+         */
         $service = $this->getContainer()->get("bundle.advanced_object_search.service");
 
         $classes = [];
@@ -70,7 +73,7 @@ class ReindexCommand extends AbstractCommand
                     try {
                         $service->doUpdateIndexData($object, true);
                     } catch (\Exception $e) {
-                        \Logger::err($e);
+                        $this->writeError($e);
                     }
                 }
                 \Pimcore::collectGarbage();
