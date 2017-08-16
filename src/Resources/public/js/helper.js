@@ -107,7 +107,7 @@ pimcore.bundle.advancedObjectSearch.helper = {
                     statusIcon.show();
                 }
 
-                setTimeout(this.checkIndexStatus.bind(this, statusIcon), 10000);
+                setTimeout(this.checkIndexStatus.bind(this, statusIcon), 60000);
 
             }.bind(this)
         });
