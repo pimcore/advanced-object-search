@@ -340,7 +340,7 @@ class Service {
         $db = \Pimcore\Db::get();
 
         //add object to update queue (if not exists) or set in_queue to false
-        $currentEntry = $db->fetchRow("SELECT in_queue FROM " . Installer::QUEUE_TABLE_NAME . " WHERE o_id = ?", $object->getId());
+        $currentEntry = $db->fetchRow("SELECT in_queue FROM " . Installer::QUEUE_TABLE_NAME . " WHERE o_id = ?", [$object->getId()]);
         if(!$currentEntry) {
             $db->insert(Installer::QUEUE_TABLE_NAME, ['o_id' => $object->getId(), 'classId' => $object->getClassId()]);
         } else if($currentEntry['in_queue']) {
