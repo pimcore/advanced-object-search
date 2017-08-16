@@ -73,7 +73,7 @@ class IndexUpdateListener
     }
 
     public function registerMaintenanceJob(MaintenanceEvent $maintenanceEvent) {
-        $maintenanceEvent->getManager()->registerJob(new Job(get_class($this), $this, "maintenance"));
+        $maintenanceEvent->getManager()->registerJob(new Job(get_class($this), [$this, "maintenance"]));
     }
 
     public function maintenance() {
