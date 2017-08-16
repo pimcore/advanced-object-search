@@ -93,7 +93,7 @@ class AdminController extends AdminerController {
         }
 
         if ($request->get("data")) {
-            $this->forward("grid-proxy", "object", "admin");
+            return $this->forward("PimcoreAdminBundle:Admin/Object:gridProxy", [], $request->query->all());
         } else {
 
             // get list of objects
@@ -203,12 +203,14 @@ class AdminController extends AdminerController {
         $service = $this->get('bundle.advanced_object_search.service');
         $data = json_decode($request->get("filter"), true);
 
+        //TODO eventually add ID filter for preselected export
+
         $results = $service->doFilter(
             $data['classId'],
             $data['conditions']['filters'],
             $data['conditions']['fulltextSearchTerm'],
             0,
-            9999 // elastic search cannot export more results dann 9999 in one request
+            9999 // elastic search cannot export more results than 9999 in one request
         );
 
         $ids = $service->extractIdsFromResult($results);

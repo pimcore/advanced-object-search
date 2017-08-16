@@ -15,6 +15,7 @@
 pimcore.registerNS("pimcore.bundle.advancedObjectSearch.searchConfig.resultPanel");
 pimcore.bundle.advancedObjectSearch.searchConfig.resultPanel = Class.create(pimcore.object.helpers.gridTabAbstract, {
     systemColumns: ["id", "fullpath", "type", "subtype", "filename", "classname", "creationDate", "modificationDate"],
+    noBatchColumns: [],
 
     parent: null,
     gridConfigData: {},
@@ -101,8 +102,7 @@ pimcore.bundle.advancedObjectSearch.searchConfig.resultPanel = Class.create(pimc
             fields,
             "/admin/bundle/advanced-object-search/admin/grid-proxy?classId=" + this.classId,
             {
-                language: this.gridLanguage,
-                limit: itemsPerPage
+                language: this.gridLanguage
             },
             false
         );
@@ -116,12 +116,12 @@ pimcore.bundle.advancedObjectSearch.searchConfig.resultPanel = Class.create(pimc
         this.store.setPageSize(itemsPerPage);
 
         var proxy = this.store.getProxy();
-        proxy.setActionMethods({
-            create : 'GET',
-            read   : 'POST',
-            update : 'GET',
-            destroy: 'GET'
-        });
+        // proxy.setActionMethods({
+        //     create : 'POST',
+        //     read   : 'POST',
+        //     update : 'POST',
+        //     destroy: 'POST'
+        // });
 
         proxy.extraParams.filter = this.parent.getSaveData();
 
@@ -333,6 +333,7 @@ pimcore.bundle.advancedObjectSearch.searchConfig.resultPanel = Class.create(pimc
 
             Ext.Ajax.request({
                 url: "/admin/bundle/advanced-object-search/admin/get-batch-jobs",
+                method: "POST",
                 params: params,
                 success: function (columnIndex,response) {
                     var rdata = Ext.decode(response.responseText);
@@ -349,16 +350,29 @@ pimcore.bundle.advancedObjectSearch.searchConfig.resultPanel = Class.create(pimc
     exportPrepare: function(){
         var jobs = [];
 
+        var fields = this.getGridConfig().columns;
+        var fieldKeys = Object.keys(fields);
+
+        //create the ids array which contains chosen rows to export
+        var ids = [];
+        var selectedRows = this.grid.getSelectionModel().getSelection();
+        for (var i = 0; i < selectedRows.length; i++) {
+            ids.push(selectedRows[i].get("id"));
+        }
+
         var params = {
             filter: this.parent.getSaveData(),
             classId: this.classId,
             objecttype: this.objecttype,
-            language: this.gridLanguage
+            language: this.gridLanguage,
+            "ids[]": ids,
+            "fields[]": fieldKeys
         };
 
         Ext.Ajax.request({
             url: "/admin/bundle/advanced-object-search/admin/get-export-jobs",
             params: params,
+            method: "POST",
             success: function (response) {
                 var rdata = Ext.decode(response.responseText);
 
