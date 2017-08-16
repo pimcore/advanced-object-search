@@ -190,7 +190,7 @@ class Service {
 
         //only reset update queue when index was recreated
         $db = \Pimcore\Db::get();
-        $db->query("UPDATE " . Installer::QUEUE_TABLE_NAME . " SET in_queue = 1 WHERE classId = ?", [$classDefinition->getId()]);
+        $db->executeQuery("UPDATE " . Installer::QUEUE_TABLE_NAME . " SET in_queue = 1 WHERE classId = ?", [$classDefinition->getId()]);
         return true;
     }
 
@@ -344,7 +344,7 @@ class Service {
         if(!$currentEntry) {
             $db->insert(Installer::QUEUE_TABLE_NAME, ['o_id' => $object->getId(), 'classId' => $object->getClassId()]);
         } else if($currentEntry['in_queue']) {
-            $db->query("UPDATE " . Installer::QUEUE_TABLE_NAME . " SET in_queue = 0, worker_timestamp = 0, worker_id = null WHERE o_id = ?", $object->getId());
+            $db->executeQuery("UPDATE " . Installer::QUEUE_TABLE_NAME . " SET in_queue = 0, worker_timestamp = 0, worker_id = null WHERE o_id = ?", [$object->getId()]);
         }
     }
 
@@ -379,7 +379,7 @@ class Service {
         $objects = $db->fetchCol("SELECT o_id FROM objects WHERE o_path LIKE ?", array($object->getFullPath() . "/%"));
         if($objects) {
             $updateStatement = "UPDATE " . Installer::QUEUE_TABLE_NAME . " SET in_queue = 1 WHERE o_id IN (".implode(',',$objects).")";
-            $db->query($updateStatement);
+            $db->executeQuery($updateStatement);
         }
     }
 
@@ -396,8 +396,8 @@ class Service {
         $workerTimestamp = time();
         $db = \Pimcore\Db::get();
 
-        $db->query("UPDATE " . Installer::QUEUE_TABLE_NAME . " SET worker_id = ?, worker_timestamp = ? WHERE in_queue = 1 AND (ISNULL(worker_timestamp) OR worker_timestamp < ?) LIMIT " . intval($limit),
-            array($workerId, $workerTimestamp, $workerTimestamp - 3000));
+        $db->executeQuery("UPDATE " . Installer::QUEUE_TABLE_NAME . " SET worker_id = ?, worker_timestamp = ? WHERE in_queue = 1 AND (ISNULL(worker_timestamp) OR worker_timestamp < ?) LIMIT " . intval($limit),
+            [$workerId, $workerTimestamp, $workerTimestamp - 3000]);
 
         $entries = $db->fetchCol("SELECT o_id FROM " . Installer::QUEUE_TABLE_NAME . " WHERE worker_id = ?", array($workerId));
 
