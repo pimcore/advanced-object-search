@@ -16,8 +16,6 @@
 namespace AdvancedObjectSearchBundle\Controller;
 
 use AdvancedObjectSearchBundle\Model\SavedSearch;
-use AdvancedObjectSearchBundle\Service;
-use Pimcore\Bundle\AdminBundle\Controller\Admin\External\AdminerController;
 use Pimcore\Model\Object;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
@@ -26,7 +24,7 @@ use Symfony\Component\Routing\Annotation\Route;
  * Class AdminController
  * @Route("/admin")
  */
-class AdminController extends AdminerController {
+class AdminController extends \Pimcore\Bundle\AdminBundle\Controller\AdminController {
 
     /**
      * @param Request $request

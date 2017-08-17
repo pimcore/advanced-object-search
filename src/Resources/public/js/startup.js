@@ -25,9 +25,10 @@ pimcore.bundle.advancedObjectSearch = Class.create(pimcore.plugin.admin, {
  
     pimcoreReady: function (params,broker){
         var perspectiveCfg = pimcore.globalmanager.get("perspective");
+        var user = pimcore.globalmanager.get("user");
 
         var searchMenu = pimcore.globalmanager.get("layout_toolbar").searchMenu;
-        if(searchMenu && perspectiveCfg.inToolbar("search.advancedObjectSearch")) {
+        if(searchMenu && perspectiveCfg.inToolbar("search.advancedObjectSearch") && user.isAllowed("bundle_advancedsearch_search")) {
             pimcore.bundle.advancedObjectSearch.helper.rebuildEsSearchMenu();
             pimcore.bundle.advancedObjectSearch.helper.initializeStatusIcon();
 
