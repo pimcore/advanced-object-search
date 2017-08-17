@@ -431,7 +431,7 @@ class AdminController extends AdminerController {
         // condition for users with groups having DAM permission
         $condition = [];
         $rolesList = new \Pimcore\Model\User\Role\Listing();
-        $rolesList->addConditionParam("CONCAT(',', permissions, ',') LIKE ?", '%,plugin_es_search,%');
+        $rolesList->addConditionParam("CONCAT(',', permissions, ',') LIKE ?", '%,bundle_advancedsearch_search,%');
         $rolesList->load();
         $roles = $rolesList->getRoles();
 
@@ -443,7 +443,7 @@ class AdminController extends AdminerController {
         $list = new \Pimcore\Model\User\Listing();
 
         $condition[] = "admin = 1";
-        $list->addConditionParam("((CONCAT(',', permissions, ',') LIKE ? ) OR " . implode(" OR ", $condition) . ")", '%,plugin_es_search,%');
+        $list->addConditionParam("((CONCAT(',', permissions, ',') LIKE ? ) OR " . implode(" OR ", $condition) . ")", '%,bundle_advancedsearch_search,%');
         $list->addConditionParam('id != ?', $this->getUser()->getId());
         $list->load();
         $userList = $list->getUsers();
