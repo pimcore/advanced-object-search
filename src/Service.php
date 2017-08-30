@@ -27,9 +27,9 @@ use ONGR\ElasticsearchDSL\Query\FullText\QueryStringQuery;
 use ONGR\ElasticsearchDSL\Query\TermLevel\WildcardQuery;
 use ONGR\ElasticsearchDSL\Search;
 use Pimcore\Bundle\AdminBundle\Security\User\TokenStorageUserResolver;
-use Pimcore\Model\Object\ClassDefinition;
-use Pimcore\Model\Object\Concrete;
-use Pimcore\Model\Object\Fieldcollection\Definition;
+use Pimcore\Model\DataObject\ClassDefinition;
+use Pimcore\Model\DataObject\Concrete;
+use Pimcore\Model\DataObject\Fieldcollection\Definition;
 use Pimcore\Model\User;
 use Psr\Container\ContainerInterface;
 use Psr\Log\LoggerInterface;
@@ -313,17 +313,17 @@ class Service {
 
         if($indexUpdateParams['body']['o_checksum'] != $originalChecksum) {
             $response = $this->esClient->index($indexUpdateParams);
-            $this->logger->info("Updates es index for object " . $object->getId());
+            $this->logger->info("Updates es index for data object " . $object->getId());
             $this->logger->debug(json_encode($response));
 
         } else {
-            $this->logger->info("Not updating index for object " . $object->getId() . " - nothing has changed.");
+            $this->logger->info("Not updating index for data object " . $object->getId() . " - nothing has changed.");
         }
 
 
 
         //updates update queue for object
-        $this->updateUpdateQueueForObject($object);
+        $this->updateUpdateQueueForDataObject($object);
 
         if(!$ignoreUpdateQueue) {
             //sets all children as dirty
@@ -336,7 +336,7 @@ class Service {
      *
      * @param Concrete $object
      */
-    protected function updateUpdateQueueForObject(Concrete $object) {
+    protected function updateUpdateQueueForDataObject(Concrete $object) {
         $db = \Pimcore\Db::get();
 
         //add object to update queue (if not exists) or set in_queue to false
@@ -363,7 +363,7 @@ class Service {
         ];
 
         $response = $this->esClient->delete($params);
-        $this->logger->info("Deleting object " . $object->getId() . " from es index.");
+        $this->logger->info("Deleting data object " . $object->getId() . " from es index.");
         $this->logger->debug(json_encode($response));
     }
 

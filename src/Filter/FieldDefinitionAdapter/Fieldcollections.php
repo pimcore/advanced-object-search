@@ -20,10 +20,10 @@ use AdvancedObjectSearchBundle\Filter\FilterEntry;
 use ONGR\ElasticsearchDSL\BuilderInterface;
 use ONGR\ElasticsearchDSL\Query\Compound\BoolQuery;
 use ONGR\ElasticsearchDSL\Query\Joining\NestedQuery;
-use Pimcore\Model\Object\AbstractObject;
-use Pimcore\Model\Object\ClassDefinition\Data;
-use Pimcore\Model\Object\Concrete;
-use Pimcore\Model\Object\Fieldcollection;
+use Pimcore\Model\DataObject\AbstractObject;
+use Pimcore\Model\DataObject\ClassDefinition\Data;
+use Pimcore\Model\DataObject\Concrete;
+use Pimcore\Model\DataObject\Fieldcollection;
 
 class Fieldcollections extends DefaultAdapter implements IFieldDefinitionAdapter {
 
@@ -165,7 +165,7 @@ class Fieldcollections extends DefaultAdapter implements IFieldDefinitionAdapter
 
             foreach($fieldCollectionItems->getItems() as $item) {
                 /**
-                 * @var $item \Pimcore\Model\Object\Fieldcollection\Data\AbstractData
+                 * @var $item \Pimcore\Model\DataObject\Fieldcollection\Data\AbstractData
                  */
                 $definition = Fieldcollection\Definition::getByKey($item->getType());
 

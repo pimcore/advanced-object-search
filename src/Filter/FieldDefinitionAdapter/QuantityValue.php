@@ -21,8 +21,8 @@ use ONGR\ElasticsearchDSL\BuilderInterface;
 use ONGR\ElasticsearchDSL\Query\Compound\BoolQuery;
 use ONGR\ElasticsearchDSL\Query\TermLevel\RangeQuery;
 use ONGR\ElasticsearchDSL\Query\TermLevel\TermQuery;
-use Pimcore\Model\Object\AbstractObject;
-use Pimcore\Model\Object\Concrete;
+use Pimcore\Model\DataObject\AbstractObject;
+use Pimcore\Model\DataObject\Concrete;
 
 class QuantityValue extends Numeric implements IFieldDefinitionAdapter {
 

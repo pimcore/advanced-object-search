@@ -18,8 +18,8 @@ namespace AdvancedObjectSearchBundle\Filter\FieldDefinitionAdapter;
 use AdvancedObjectSearchBundle\Filter\FieldSelectionInformation;
 use AdvancedObjectSearchBundle\Filter\FilterEntry;
 use ONGR\ElasticsearchDSL\Query\Compound\BoolQuery;
-use Pimcore\Model\Object\AbstractObject;
-use Pimcore\Model\Object\Concrete;
+use Pimcore\Model\DataObject\AbstractObject;
+use Pimcore\Model\DataObject\Concrete;
 
 class Select extends DefaultAdapter implements IFieldDefinitionAdapter {
 

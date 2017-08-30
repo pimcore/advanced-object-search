@@ -21,14 +21,14 @@ GUI for creating searches against ES index with
 
 ### Plugin Hooks
 Following event listeners are called automatically
-- `pimcore.object.postUpdate` - object is updated in ES index, all child objects are added to update queue.
-- `pimcore.object.preDelete`  - object is deleted from ES index.
+- `pimcore.object.postUpdate` - data object is updated in ES index, all child objects are added to update queue.
+- `pimcore.object.preDelete`  - data object is deleted from ES index.
 - `pimcore.class.postUpdate`  - ES index mapping is updated or index recreated if necessary.
 
 ### Pimcore Console
 Functions in Pimcore console.
 - `advanced-object-search:process-update-queue` --> processes whole update queue of es search index.
-- `advanced-object-search:re-index` --> Reindex all objects of given class. Does not delete index first or resets update queue.
+- `advanced-object-search:re-index` --> Reindex all data objects of given class. Does not delete index first or resets update queue.
 - `advanced-object-search:update-mapping` --> Deletes and recreates mapping of given classes. Resets update queue for given class.
 
 For details see documentation directly in Pimcore console.
@@ -40,9 +40,9 @@ With every Pimcore maintenance call, 500 entries of update queue are processed.
 
 ## API Methods
 
-### Create Mapping for object classes
+### Create Mapping for data object classes
 
-Per object class one index with one document type is created.
+Per data object class one index with one document type is created.
 ```php
 <?php
 /**
@@ -55,7 +55,7 @@ $service->updateMapping(ClassDefinition::getByName("Product"));
 
 ### Update index data
 
-On object save or via script:
+On data object save or via script:
 ```php
 <?php
 /**

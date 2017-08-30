@@ -19,8 +19,8 @@ use AdvancedObjectSearchBundle\Filter\FieldSelectionInformation;
 use AdvancedObjectSearchBundle\Service;
 use ONGR\ElasticsearchDSL\BuilderInterface;
 use ONGR\ElasticsearchDSL\Query\TermLevel\ExistsQuery;
-use Pimcore\Model\Object\ClassDefinition\Data;
-use Pimcore\Model\Object\Concrete;
+use Pimcore\Model\DataObject\ClassDefinition\Data;
+use Pimcore\Model\DataObject\Concrete;
 
 interface IFieldDefinitionAdapter {
 

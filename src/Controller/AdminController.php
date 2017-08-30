@@ -16,7 +16,7 @@
 namespace AdvancedObjectSearchBundle\Controller;
 
 use AdvancedObjectSearchBundle\Model\SavedSearch;
-use Pimcore\Model\Object;
+use Pimcore\Model\DataObject;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
 
@@ -39,22 +39,22 @@ class AdminController extends \Pimcore\Bundle\AdminBundle\Controller\AdminContro
         switch ($type) {
             case "class":
                 $classId = intval($request->get("class_id"));
-                $definition = \Pimcore\Model\Object\ClassDefinition::getById($classId);
+                $definition = DataObject\ClassDefinition::getById($classId);
                 $allowInheritance = $definition->getAllowInherit();
                 break;
 
             case "fieldcollection":
                 $key = strip_tags($request->get("key"));
-                $definition = Object\Fieldcollection\Definition::getByKey($key);
+                $definition = DataObject\Fieldcollection\Definition::getByKey($key);
                 $allowInheritance = false;
                 break;
 
             case "objectbrick":
                 $key = strip_tags($request->get("key"));
-                $definition = Object\Objectbrick\Definition::getByKey($key);
+                $definition = DataObject\Objectbrick\Definition::getByKey($key);
 
                 $classId = intval($request->get("class_id"));
-                $classDefinition = \Pimcore\Model\Object\ClassDefinition::getById($classId);
+                $classDefinition = DataObject\ClassDefinition::getById($classId);
                 $allowInheritance = $classDefinition->getAllowInherit();
 
                 break;
@@ -95,7 +95,7 @@ class AdminController extends \Pimcore\Bundle\AdminBundle\Controller\AdminContro
         } else {
 
             // get list of objects
-            $class = Object\ClassDefinition::getById($request->get("classId"));
+            $class = DataObject\ClassDefinition::getById($request->get("classId"));
             $className = $class->getName();
 
             $fields = array();
@@ -112,7 +112,7 @@ class AdminController extends \Pimcore\Bundle\AdminBundle\Controller\AdminContro
                 $start = $request->get("start");
             }
 
-            $listClass = "\\Pimcore\\Model\\Object\\" . ucfirst($className) . "\\Listing";
+            $listClass = "\\Pimcore\\Model\\DataObject\\" . ucfirst($className) . "\\Listing";
 
 
             //get ID list from ES Service
@@ -124,7 +124,7 @@ class AdminController extends \Pimcore\Bundle\AdminBundle\Controller\AdminContro
             $ids = $service->extractIdsFromResult($results);
 
             /**
-             * @var $list \Pimcore\Model\Object\Listing
+             * @var $list \Pimcore\Model\DataObject\Listing
              */
             $list = new $listClass();
             $list->setObjectTypes(["object", "folder", "variant"]);
@@ -140,7 +140,7 @@ class AdminController extends \Pimcore\Bundle\AdminBundle\Controller\AdminContro
 
             $objects = array();
             foreach ($list->getObjects() as $object) {
-                $o = Object\Service::gridObjectData($object, $fields, $requestedLanguage);
+                $o = DataObject\Service::gridObjectData($object, $fields, $requestedLanguage);
                 $objects[] = $o;
             }
             return $this->json(array("data" => $objects, "success" => true, "total" => $total));
@@ -158,7 +158,7 @@ class AdminController extends \Pimcore\Bundle\AdminBundle\Controller\AdminContro
             $request->setLocale($request->get("language"));
         }
 
-        $class = Object\ClassDefinition::getById($request->get("classId"));
+        $class = DataObject\ClassDefinition::getById($request->get("classId"));
 
         //get ID list from ES Service
         $service = $this->get('bundle.advanced_object_search.service');
@@ -168,7 +168,7 @@ class AdminController extends \Pimcore\Bundle\AdminBundle\Controller\AdminContro
         $ids = $service->extractIdsFromResult($results);
 
         $className = $class->getName();
-        $listClass = "\\Pimcore\\Model\\Object\\" . ucfirst($className) . "\\Listing";
+        $listClass = "\\Pimcore\\Model\\DataObject\\" . ucfirst($className) . "\\Listing";
         $list = new $listClass();
         $list->setObjectTypes(["object", "folder", "variant"]);
         $list->setCondition("o_id IN (" . implode(",", $ids) . ")");

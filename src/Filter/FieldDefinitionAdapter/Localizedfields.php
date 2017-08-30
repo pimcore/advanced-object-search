@@ -21,11 +21,10 @@ use AdvancedObjectSearchBundle\Service;
 use ONGR\ElasticsearchDSL\BuilderInterface;
 use ONGR\ElasticsearchDSL\Query\Compound\BoolQuery;
 use ONGR\ElasticsearchDSL\Query\Joining\NestedQuery;
-use Pimcore\Model\Object\ClassDefinition\Data;
-use Pimcore\Model\Object\Concrete;
+use Pimcore\Model\DataObject\ClassDefinition\Data;
+use Pimcore\Model\DataObject\Concrete;
 use Pimcore\Service\Locale;
 use Pimcore\Tool;
-use Symfony\Component\HttpFoundation\RequestStack;
 
 class Localizedfields extends DefaultAdapter implements IFieldDefinitionAdapter {
 

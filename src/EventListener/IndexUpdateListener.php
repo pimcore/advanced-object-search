@@ -17,12 +17,12 @@ namespace AdvancedObjectSearchBundle\EventListener;
 
 
 use AdvancedObjectSearchBundle\Service;
-use Pimcore\Event\Model\Object\ClassDefinitionEvent;
+use Pimcore\Event\Model\DataObject\ClassDefinitionEvent;
 use Pimcore\Event\Model\ObjectEvent;
 use Pimcore\Event\System\MaintenanceEvent;
 use Pimcore\Logger;
-use Pimcore\Model\Object\AbstractObject;
-use Pimcore\Model\Object\Concrete;
+use Pimcore\Model\DataObject\AbstractObject;
+use Pimcore\Model\DataObject\Concrete;
 use Pimcore\Model\Schedule\Maintenance\Job;
 
 class IndexUpdateListener

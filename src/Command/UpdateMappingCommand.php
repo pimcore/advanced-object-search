@@ -15,9 +15,8 @@
 
 namespace AdvancedObjectSearchBundle\Command;
 
-use AdvancedObjectSearchBundle\Service;
 use Pimcore\Console\AbstractCommand;
-use Pimcore\Model\Object\ClassDefinition;
+use Pimcore\Model\DataObject\ClassDefinition;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
