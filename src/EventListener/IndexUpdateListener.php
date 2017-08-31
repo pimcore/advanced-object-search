@@ -18,7 +18,7 @@ namespace AdvancedObjectSearchBundle\EventListener;
 
 use AdvancedObjectSearchBundle\Service;
 use Pimcore\Event\Model\DataObject\ClassDefinitionEvent;
-use Pimcore\Event\Model\ObjectEvent;
+use Pimcore\Event\Model\DataObjectEvent;
 use Pimcore\Event\System\MaintenanceEvent;
 use Pimcore\Logger;
 use Pimcore\Model\DataObject\AbstractObject;
