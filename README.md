@@ -21,8 +21,8 @@ GUI for creating searches against ES index with
 
 ### Plugin Hooks
 Following event listeners are called automatically
-- `pimcore.object.postUpdate` - data object is updated in ES index, all child objects are added to update queue.
-- `pimcore.object.preDelete`  - data object is deleted from ES index.
+- `pimcore.dataobject.postUpdate` - data object is updated in ES index, all child objects are added to update queue.
+- `pimcore.dataobject.preDelete`  - data object is deleted from ES index.
 - `pimcore.class.postUpdate`  - ES index mapping is updated or index recreated if necessary.
 
 ### Pimcore Console
