@@ -37,7 +37,7 @@ class IndexUpdateListener
         $this->service = $service;
     }
 
-    public function updateObject(ObjectEvent $event)
+    public function updateObject(DataObjectEvent $event)
     {
         $inheritanceBackup = AbstractObject::getGetInheritedValues();
         AbstractObject::setGetInheritedValues(true);
@@ -50,7 +50,7 @@ class IndexUpdateListener
         AbstractObject::setGetInheritedValues($inheritanceBackup);
     }
 
-    public function deleteObject(ObjectEvent $event)
+    public function deleteObject(DataObjectEvent $event)
     {
         $object = $event->getObject();
         if($object instanceof Concrete) {
