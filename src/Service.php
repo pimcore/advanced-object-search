@@ -296,7 +296,7 @@ class Service {
     public function doUpdateIndexData(Concrete $object, $ignoreUpdateQueue = false) {
 
         $params = [
-            'index' => strtolower($object->getClassName()),
+            'index' => $this->getIndexName($object->getClassName()),
             'type' =>  $object->getClassName(),
             'id' => $object->getId()
         ];
@@ -357,7 +357,7 @@ class Service {
     public function doDeleteFromIndex(Concrete $object) {
 
         $params = [
-            'index' => strtolower($object->getClassName()),
+            'index' => $this->getIndexName($object->getClassName()),
             'type' =>  $object->getClassName(),
             'id' => $object->getId()
         ];
