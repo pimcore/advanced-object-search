@@ -362,9 +362,14 @@ class Service {
             'id' => $object->getId()
         ];
 
-        $response = $this->esClient->delete($params);
-        $this->logger->info("Deleting data object " . $object->getId() . " from es index.");
-        $this->logger->debug(json_encode($response));
+        try {
+            $response = $this->esClient->delete($params);
+            $this->logger->info("Deleting data object " . $object->getId() . " from es index.");
+            $this->logger->debug(json_encode($response));
+        } catch (Missing404Exception $e) {
+            $this->logger->info("Cannot delete data object " . $object->getId() . " from es index because not found.");
+        }
+
     }
 
 
