@@ -90,6 +90,7 @@ pimcore.bundle.advancedObjectSearch.searchConfig.resultPanel = Class.create(pimc
             this.gridLanguage = response.language;
         } else {
             fields = response;
+            this.buildColumnConfigMenu(true);
         }
 
         this.fieldObject = {};
@@ -172,6 +173,17 @@ pimcore.bundle.advancedObjectSearch.searchConfig.resultPanel = Class.create(pimc
 
         var plugins = [this.cellEditing ];
 
+        this.columnConfigButton = new Ext.SplitButton({
+            text: t('grid_column_config'),
+            iconCls: "pimcore_icon_table_col pimcore_icon_overlay_edit",
+            handler: function () {
+                this.openColumnConfig();
+            }.bind(this),
+            menu: []
+        });
+
+        this.buildColumnConfigMenu(true);
+
         this.grid = Ext.create('Ext.grid.Panel', {
             frame: false,
             store: this.store,
@@ -212,11 +224,7 @@ pimcore.bundle.advancedObjectSearch.searchConfig.resultPanel = Class.create(pimc
 
 
                     }.bind(this)
-                },"-",{
-                    text: t("grid_column_config"),
-                    iconCls: "pimcore_icon_table_col pimcore_icon_overlay_edit",
-                    handler: this.openColumnConfig.bind(this)
-                } 
+                },"-", this.columnConfigButton
             ],
             listeners: {
                 rowdblclick: function (grid, record, tr, rowIndex, e, eOpts ) {
