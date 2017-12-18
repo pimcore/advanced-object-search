@@ -469,3 +469,5 @@ pimcore.bundle.advancedObjectSearch.searchConfig.resultPanel = Class.create(pimc
     }
 
 });
+
+pimcore.object.search.addMethods(pimcore.object.helpers.gridcolumnconfig);
