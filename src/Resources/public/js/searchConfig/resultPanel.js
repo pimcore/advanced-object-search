@@ -23,6 +23,7 @@ pimcore.bundle.advancedObjectSearch.searchConfig.resultPanel = Class.create(pimc
     fieldObject: {},
     initialize: function(parent, gridConfigData) {
         this.parent = parent;
+        this.settings = {};
         if(gridConfigData) {
             this.gridConfigData = gridConfigData;
         }
@@ -74,7 +75,7 @@ pimcore.bundle.advancedObjectSearch.searchConfig.resultPanel = Class.create(pimc
 
     },
 
-    createGrid: function(fromConfig, response) {
+    createGrid: function (fromConfig, response, settings, save) {
         var fields = [];
 
         var itemsPerPage = 20;
@@ -88,8 +89,13 @@ pimcore.bundle.advancedObjectSearch.searchConfig.resultPanel = Class.create(pimc
 
             fields = response.availableFields;
             this.gridLanguage = response.language;
+
+            this.settings = response.settings || {};
+            this.availableConfigs = response.availableConfigs;
+            this.sharedConfigs = response.sharedConfigs;
         } else {
             fields = response;
+            this.settings = settings;
             this.buildColumnConfigMenu(true);
         }
 
