@@ -63,7 +63,21 @@ pimcore.bundle.advancedObjectSearch.searchConfig.resultPanel = Class.create(pimc
 
             if (this.gridConfigData.language) {
                 this.gridLanguage = this.gridConfigData.language;
-                this.createGrid(true, this.gridConfigData.columns);
+
+                Ext.Ajax.request({
+                    url: "/admin/object-helper/grid-get-column-config",
+                    params: {name: this.selectedClass, gridtype: "grid"},
+                    success: function(response) {
+                        response = Ext.decode(response.responseText);
+                        var settings = response.settings || {};
+                        this.availableConfigs = response.availableConfigs;
+                        this.sharedConfigs = response.sharedConfigs;
+
+                        this.createGrid(true, this.gridConfigData.columns, settings);
+                    }.bind(this)
+                });
+
+
             } else {
                 Ext.Ajax.request({
                     url: "/admin/object-helper/grid-get-column-config",
@@ -73,6 +87,21 @@ pimcore.bundle.advancedObjectSearch.searchConfig.resultPanel = Class.create(pimc
             }
         }
 
+    },
+
+    getTableDescription: function () {
+        Ext.Ajax.request({
+            url: "/admin/object-helper/grid-get-column-config",
+            params: {
+                id: this.classId,
+                // objectId:
+                // this.object.id,
+                gridtype: "grid",
+                gridConfigId: this.settings ? this.settings.gridConfigId : null,
+                searchType: this.searchType
+            },
+            success: this.createGrid.bind(this, false)
+        });
     },
 
     createGrid: function (fromConfig, response, settings, save) {
@@ -96,7 +125,9 @@ pimcore.bundle.advancedObjectSearch.searchConfig.resultPanel = Class.create(pimc
         } else {
             fields = response;
             this.settings = settings;
-            this.buildColumnConfigMenu(true);
+            if (this.columnConfigButton) {
+                this.buildColumnConfigMenu(true);
+            }
         }
 
         this.fieldObject = {};
@@ -122,15 +153,6 @@ pimcore.bundle.advancedObjectSearch.searchConfig.resultPanel = Class.create(pimc
         this.store = gridHelper.getStore();
         this.store.setPageSize(itemsPerPage);
 
-        var proxy = this.store.getProxy();
-        // proxy.setActionMethods({
-        //     create : 'POST',
-        //     read   : 'POST',
-        //     update : 'POST',
-        //     destroy: 'POST'
-        // });
-
-        proxy.extraParams.filter = this.parent.getSaveData();
 
         var gridColumns = gridHelper.getGridColumns();
 
@@ -254,6 +276,16 @@ pimcore.bundle.advancedObjectSearch.searchConfig.resultPanel = Class.create(pimc
         }.bind(this));
 
         gridHelper.applyGridEvents(this.grid);
+
+        var proxy = this.store.getProxy();
+        // proxy.setActionMethods({
+        //     create : 'POST',
+        //     read   : 'POST',
+        //     update : 'POST',
+        //     destroy: 'POST'
+        // });
+
+        proxy.extraParams.filter = this.parent.getSaveData();
 
         this.store.load();
 
