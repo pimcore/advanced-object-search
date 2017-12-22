@@ -469,7 +469,7 @@ pimcore.bundle.advancedObjectSearch.searchConfig.resultPanel = Class.create(pimc
         };
         var dialog = new pimcore.object.helpers.gridConfigDialog(columnConfig, function(data) {
                 this.gridLanguage = data.language;
-                this.createGrid(true, data.columns);
+                this.createGrid(true, data.columns, this.settings);
             }.bind(this), function(data) {
                 Ext.Ajax.request({
                     url: "/admin/object-helper/grid-get-column-config",
