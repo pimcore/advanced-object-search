@@ -129,7 +129,7 @@ pimcore.bundle.advancedObjectSearch.searchConfig.fieldConditionPanel.fieldcollec
                 displayField: 'fieldLabel',
                 listeners: {
                     change: function( item, newValue, oldValue, eOpts ) {
-                        var record = item.getStore().findRecord('fieldName', newValue);
+                        var record = item.getStore().getAt(item.getStore().findExact('fieldName', newValue));
                         if(record) {
                             var fieldSelectionInformation = record.data;
 
