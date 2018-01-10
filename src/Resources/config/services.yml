@@ -35,6 +35,12 @@ services:
         arguments:
             - '@bundle.advanced_object_search.service'
 
+    bundle.advanced_object_search.filter.calculatedValue:
+        class: AdvancedObjectSearchBundle\Filter\FieldDefinitionAdapter\CalculatedValue
+        shared: false
+        arguments:
+            - '@bundle.advanced_object_search.service'
+
     bundle.advanced_object_search.filter.chechbox:
         class: AdvancedObjectSearchBundle\Filter\FieldDefinitionAdapter\Checkbox
         shared: false
