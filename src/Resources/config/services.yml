@@ -22,6 +22,7 @@ services:
             - '@bundle.advanced_object_search.service'
         tags:
             - { name: kernel.event_listener, event: pimcore.dataobject.postUpdate, method: updateObject }
+            - { name: kernel.event_listener, event: pimcore.dataobject.postAdd, method: updateObject }
             - { name: kernel.event_listener, event: pimcore.dataobject.preDelete, method: deleteObject }
             - { name: kernel.event_listener, event: pimcore.class.postUpdate, method: updateMapping }
             - { name: kernel.event_listener, event: pimcore.class.postDelete, method: deleteIndex }
