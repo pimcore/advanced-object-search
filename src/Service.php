@@ -593,7 +593,7 @@ class Service {
                     $boolFilter->add(new WildcardQuery("path", $forbiddenObjectPaths[$i] . "*"), BoolQuery::MUST);
                 }
 
-                $search->addFilter($boolFilter, BoolQuery::MUST_NOT);
+                $search->addPostFilter($boolFilter, BoolQuery::MUST_NOT);
             }
         }
     }

@@ -91,7 +91,7 @@ class AdminController extends \Pimcore\Bundle\AdminBundle\Controller\AdminContro
         }
 
         if ($request->get("data")) {
-            return $this->forward("PimcoreAdminBundle:Admin/Object:gridProxy", [], $request->query->all());
+            return $this->forward("PimcoreAdminBundle:Admin/DataObject:gridProxy", [], $request->query->all());
         } else {
 
             // get list of objects
