@@ -542,7 +542,7 @@ class Service {
      * @return array
      */
     public function doFilter($classId, array $filters, $fullTextQuery, $from = null, $size = null) {
-        $classDefinition = \Pimcore\Model\Object\ClassDefinition::getById($classId);
+        $classDefinition = \Pimcore\Model\DataObject\ClassDefinition::getById($classId);
 
         $search = $this->getFilter($classDefinition, $filters);
 
