@@ -11,7 +11,7 @@ services:
             - '@logger'
             - '@pimcore_admin.security.token_storage_user_resolver'
             - '@bundle.advanced_object_search.es_client'
-            - '@service_container'
+            - '@bundle.advanced_object_search.filter_locator'
 
         tags:
             - { name: monolog.logger, channel: pimcore_advanced_object_search }
@@ -28,7 +28,9 @@ services:
             - { name: kernel.event_listener, event: pimcore.class.postDelete, method: deleteIndex }
             - { name: kernel.event_listener, event: pimcore.system.maintenance, method: registerMaintenanceJob }
 
-
+    bundle.advanced_object_search.filter_locator:
+        class: Symfony\Component\DependencyInjection\ServiceLocator
+        tags: ['container.service_locator']
 
     bundle.advanced_object_search.filter.default:
         class: AdvancedObjectSearchBundle\Filter\FieldDefinitionAdapter\DefaultAdapter
@@ -42,7 +44,7 @@ services:
         arguments:
             - '@bundle.advanced_object_search.service'
 
-    bundle.advanced_object_search.filter.chechbox:
+    bundle.advanced_object_search.filter.checkbox:
         class: AdvancedObjectSearchBundle\Filter\FieldDefinitionAdapter\Checkbox
         shared: false
         arguments:

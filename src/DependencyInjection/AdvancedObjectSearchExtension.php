@@ -18,14 +18,13 @@ namespace AdvancedObjectSearchBundle\DependencyInjection;
 use Symfony\Component\Config\FileLocator;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Loader\YamlFileLoader;
-use Symfony\Component\HttpKernel\DependencyInjection\Extension;
+use Symfony\Component\DependencyInjection\Reference;
+use Symfony\Component\HttpKernel\DependencyInjection\ConfigurableExtension;
 
-class AdvancedObjectSearchExtension extends Extension
+class AdvancedObjectSearchExtension extends ConfigurableExtension
 {
-    /**
-     * @inheritDoc
-     */
-    public function load(array $configs, ContainerBuilder $container)
+
+    public function loadInternal(array $config, ContainerBuilder $container)
     {
         $loader = new YamlFileLoader(
             $container,
@@ -34,5 +33,18 @@ class AdvancedObjectSearchExtension extends Extension
 
 
         $loader->load('services.yml');
+
+
+
+        // load mappings for field definition adapters
+        $serviceLocator = $container->getDefinition("bundle.advanced_object_search.filter_locator");
+        $arguments = [];
+
+        foreach ($config['field_definition_adapters'] as $key => $serviceId) {
+            $arguments[$key] = new Reference($serviceId);
+        }
+
+        $serviceLocator->setArgument(0, $arguments);
     }
+    
 }

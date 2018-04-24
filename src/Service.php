@@ -55,7 +55,7 @@ class Service {
     /**
      * @var ContainerInterface
      */
-    protected $container;
+    protected $filterLocator;
 
     /**
      * Service constructor.
@@ -64,12 +64,12 @@ class Service {
      * @param Client $esClient
      * @param ContainerInterface $container
      */
-    public function __construct(LoggerInterface $logger, TokenStorageUserResolver $userResolver, Client $esClient, ContainerInterface $container)
+    public function __construct(LoggerInterface $logger, TokenStorageUserResolver $userResolver, Client $esClient, ContainerInterface $filterLocator)
     {
         $this->user = $userResolver->getUser();
         $this->logger = $logger;
         $this->esClient = $esClient;
-        $this->container = $container;
+        $this->filterLocator = $filterLocator;
     }
 
     /**
@@ -82,10 +82,10 @@ class Service {
     public function getFieldDefinitionAdapter(ClassDefinition\Data $fieldDefinition, bool $considerInheritance) {
         $adapter = null;
 
-        try {
-            $adapter = $this->container->get("bundle.advanced_object_search.filter." . $fieldDefinition->fieldtype);
-        } catch (\Exception $exception) {
-            $adapter = $this->container->get("bundle.advanced_object_search.filter.default");
+        if ($this->filterLocator->has($fieldDefinition->fieldtype)) {
+            $adapter = $this->filterLocator->get($fieldDefinition->fieldtype);
+        } else {
+            $adapter = $this->filterLocator->get('default');
         }
 
         $adapter->setConsiderInheritance($considerInheritance);
