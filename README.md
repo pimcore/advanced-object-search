@@ -176,3 +176,16 @@ Currently following data types are not supported - but can be added if needed in
 - StructuredTable
 - Geographic data types
 - Image data types
+
+
+
+## Integrate new Data Type
+
+- Implement Field Definition Adapter by implementing the `IFieldDefinitionAdapter` interface. 
+- Register new Field Definition Adapter as service
+- Add mapping in configuration like 
+```yml
+advanced_object_search: 
+    field_definition_adapters:
+        newDataTypeName: SERVICE_ID_OF_FIELD_DEFINITION_ADAPTER
+``` 
