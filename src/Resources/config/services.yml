@@ -31,31 +31,6 @@ services:
     bundle.advanced_object_search.filter_locator:
         class: Symfony\Component\DependencyInjection\ServiceLocator
         tags: ['container.service_locator']
-        arguments:
-            -
-                default: '@bundle.advanced_object_search.filter.default'
-                calculatedValue: '@bundle.advanced_object_search.filter.calculatedValue'
-                checkbox: '@bundle.advanced_object_search.filter.checkbox'
-                country: '@bundle.advanced_object_search.filter.country'
-                countrymultiselect: '@bundle.advanced_object_search.filter.countrymultiselect'
-                date: '@bundle.advanced_object_search.filter.date'
-                datetime: '@bundle.advanced_object_search.filter.datetime'
-                fieldcollections: '@bundle.advanced_object_search.filter.fieldcollections'
-                href: '@bundle.advanced_object_search.filter.href'
-                language: '@bundle.advanced_object_search.filter.language'
-                languagemultiselect: '@bundle.advanced_object_search.filter.languagemultiselect'
-                localizedfields: '@bundle.advanced_object_search.filter.localizedfields'
-                multihref: '@bundle.advanced_object_search.filter.multihref'
-                multihrefMetadata: '@bundle.advanced_object_search.filter.multihrefMetadata'
-                multiselect: '@bundle.advanced_object_search.filter.multiselect'
-                numeric: '@bundle.advanced_object_search.filter.numeric'
-                objectbricks: '@bundle.advanced_object_search.filter.objectbricks'
-                objects: '@bundle.advanced_object_search.filter.objects'
-                objectsMetadata: '@bundle.advanced_object_search.filter.objectsMetadata'
-                quantityValue: '@bundle.advanced_object_search.filter.quantityValue'
-                select: '@bundle.advanced_object_search.filter.select'
-                time: '@bundle.advanced_object_search.filter.time'
-                user: '@bundle.advanced_object_search.filter.user'
 
     bundle.advanced_object_search.filter.default:
         class: AdvancedObjectSearchBundle\Filter\FieldDefinitionAdapter\DefaultAdapter
