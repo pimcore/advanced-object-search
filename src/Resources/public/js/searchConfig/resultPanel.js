@@ -203,7 +203,7 @@ pimcore.bundle.advancedObjectSearch.searchConfig.resultPanel = Class.create(pimc
         var plugins = [this.cellEditing];
 
         this.columnConfigButton = new Ext.SplitButton({
-            text: t('grid_column_config'),
+            text: t('grid_options'),
             iconCls: "pimcore_icon_table_col pimcore_icon_overlay_edit",
             handler: function () {
                 this.openColumnConfig();
@@ -278,12 +278,6 @@ pimcore.bundle.advancedObjectSearch.searchConfig.resultPanel = Class.create(pimc
         gridHelper.applyGridEvents(this.grid);
 
         var proxy = this.store.getProxy();
-        // proxy.setActionMethods({
-        //     create : 'POST',
-        //     read   : 'POST',
-        //     update : 'POST',
-        //     destroy: 'POST'
-        // });
 
         proxy.extraParams.filter = this.parent.getSaveData();
 
@@ -441,17 +435,25 @@ pimcore.bundle.advancedObjectSearch.searchConfig.resultPanel = Class.create(pimc
         var fieldKeys = Object.keys(fields);
 
         var visibleColumns = [];
-        for (var i = 0; i < fieldKeys.length; i++) {
-            if (!fields[fieldKeys[i]].hidden) {
+        for(var i = 0; i < fieldKeys.length; i++) {
+            var field = fields[fieldKeys[i]];
+            if(!field.hidden) {
                 var fc = {
                     key: fieldKeys[i],
-                    label: fields[fieldKeys[i]].fieldConfig.label,
-                    dataType: fields[fieldKeys[i]].fieldConfig.type,
-                    layout: fields[fieldKeys[i]].fieldConfig.layout
+                    label: field.fieldConfig.label,
+                    dataType: field.fieldConfig.type,
+                    layout: field.fieldConfig.layout
                 };
-                if (fields[fieldKeys[i]].fieldConfig.width) {
-                    fc.width = fields[fieldKeys[i]].fieldConfig.width;
+                if (field.fieldConfig.width) {
+                    fc.width = field.fieldConfig.width;
                 }
+
+                if (field.isOperator) {
+                    fc.isOperator = true;
+                    fc.attributes = field.fieldConfig.attributes;
+
+                }
+
                 visibleColumns.push(fc);
             }
         }
