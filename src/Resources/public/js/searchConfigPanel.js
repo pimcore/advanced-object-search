@@ -38,6 +38,11 @@ pimcore.bundle.advancedObjectSearch.searchConfigPanel = Class.create(pimcore.ele
         tabPanel.add(this.tab);
         tabPanel.setActiveItem(this.getTabId());
 
+        // open result panel for saved searches
+        if(this.data.id) {
+            this.tab.setActiveItem(this.resultPanel.getLayout());
+        }
+
         this.tab.on("destroy", function () {
             pimcore.globalmanager.remove(this.getTabId());
         }.bind(this));
