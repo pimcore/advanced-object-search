@@ -487,17 +487,37 @@ pimcore.bundle.advancedObjectSearch.searchConfig.resultPanel = Class.create(pimc
     getSaveData: function () {
         if (this.grid) {
             var config = this.getGridConfig();
+            var gridColumns = this.grid.getView().getHeaderCt().getGridColumns();
             var columnsConfig = [];
-
             var keys = Object.keys(config.columns);
-            for (var i = 0; i < keys.length; i++) {
 
+            for (var i = 0; i < keys.length; i++) {
                 var entry = config.columns[keys[i]].fieldConfig;
+
                 if (entry) {
                     entry.position = config.columns[keys[i]].position;
+
+                    // store widths according to extjs
+                    if (entry.layout || entry.isOperator) {
+                        for (var j = 0; j < gridColumns.length; j++) {
+                            var column = gridColumns[j];
+
+                            if (column.dataIndex === entry.key) {
+                                if (entry.isOperator) {
+                                    // operator columns need the width directly on the entry
+                                    entry.width = column.width;
+                                } else {
+                                    // basic columns on the layout object
+                                    entry.layout.width = column.width;
+                                }
+
+                                break;
+                            }
+                        }
+                    }
+
                     columnsConfig.push(entry);
                 }
-
             }
 
             config.columns = columnsConfig;
