@@ -39,8 +39,24 @@ pimcore.bundle.advancedObjectSearch.searchConfigPanel = Class.create(pimcore.ele
         tabPanel.setActiveItem(this.getTabId());
 
         // open result panel for saved searches
-        if(this.data.id) {
-            this.tab.setActiveItem(this.resultPanel.getLayout());
+        if(this.data.classId && data.conditions && data.conditions.filters) {
+            // count conditions
+            this.filterCount = 0;
+            this.loadedFilterCount = 0;
+            this.countFilter(data.conditions.filters);
+
+            // wait for the conditions to load, after that the filters are ready
+            // for the grid view, otherwise wrong results will be displayed
+            var listener = function() {
+                this.loadedFilterCount++;
+
+                if(this.filterCount === this.loadedFilterCount) {
+                    this.conditionPanel.getPanel().un("condition:loaded", listener);
+                    this.tab.setActiveItem(this.resultPanel.getLayout());
+                }
+            }.bind(this);
+
+            this.conditionPanel.getPanel().on("condition:loaded", listener);
         }
 
         this.tab.on("destroy", function () {
@@ -48,6 +64,18 @@ pimcore.bundle.advancedObjectSearch.searchConfigPanel = Class.create(pimcore.ele
         }.bind(this));
 
         pimcore.layout.refresh();
+    },
+
+    countFilter: function(filters) {
+        for(var i = 0; i < filters.length; i++) {
+            var filter = filters[i];
+
+            if(filter.fieldname === "~~group~~") {
+                this.countFilter(filter.filterEntryData);
+            } else {
+                this.filterCount++;
+            }
+        }
     },
 
     getTabId: function() {
