@@ -228,6 +228,9 @@ class Service {
                         'mapping' => [
                             'nested_fields' => [
                                 'limit' => 200
+                            ],
+                            'total_fields' => [
+                                'limit' => 100000
                             ]
                         ]
                     ]
