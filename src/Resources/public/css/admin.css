@@ -13,33 +13,23 @@
 
 
 .pimcore_bundle_advancedObjectSearch_saveAndShare {
-    background: url("/pimcore/static6/img/flat-color-icons/collaboration.svg") center center no-repeat !important;
+    background: url("/bundles/pimcoreadmin/img/flat-color-icons/collaboration.svg") center center no-repeat !important;
 }
 
 .pimcore_bundle_advancedObjectSearch_grid {
-    background: url("/pimcore/static6/img/flat-color-icons/grid.svg") center center no-repeat !important;
+    background: url("/bundles/pimcoreadmin/img/flat-color-icons/grid.svg") center center no-repeat !important;
 }
 
 .pimcore_bundle_advancedObjectSearch_filter {
-    background: url("/pimcore/static6/img/flat-color-icons/filled_filter.svg") center center no-repeat !important;
+    background: url("/bundles/pimcoreadmin/img/flat-color-icons/filled_filter.svg") center center no-repeat !important;
 }
 
 .pimcore_bundle_advancedObjectSearch {
-    background: url("/pimcore/static6/img/flat-color-icons/binoculars.svg") center center no-repeat !important;
+    background: url("/bundles/pimcoreadmin/img/flat-color-icons/binoculars.svg") center center no-repeat !important;
 }
 
-/*.pimcore_bundle_advancedObjectSearch:before {
-    position: absolute;
-    width: 12px;
-    height: 12px;
-    bottom: 0px;
-    left: 0px;
-    content: "";
-    background: url(/pimcore/static6/img/flat-color-icons/opened_folder.svg) center center no-repeat !important;
-}*/
-
 #pimcore_bundle_advancedObjectSearch_toolbar {
-    background-image: url(/pimcore/static6/img/flat-color-icons/binoculars.svg) !important;
+    background-image: url(/bundles/pimcoreadmin/img/flat-color-icons/binoculars.svg) !important;
     filter: grayscale(0%) !important;
     -webkit-filter: grayscale(0%) !important;
     position: relative;
@@ -52,5 +42,5 @@
     bottom: 0px;
     right: 5px;
     content: "";
-    background: url(/pimcore/static6/img/flat-color-icons/settings.svg) center center no-repeat !important;
+    background: url(/bundles/pimcoreadmin/img/flat-color-icons/settings.svg) center center no-repeat !important;
 }

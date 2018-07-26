@@ -164,7 +164,7 @@ pimcore.bundle.advancedObjectSearch.searchConfig.resultPanel = Class.create(pimc
             items: [
                 {
                     tooltip: t('open'),
-                    icon: "/pimcore/static6/img/flat-color-icons/cursor.svg",
+                    icon: "/bundles/pimcoreadmin/img/flat-color-icons/cursor.svg",
                     handler: function (grid, rowIndex) {
                         var data = grid.getStore().getAt(rowIndex);
                         pimcore.helpers.openObject(data.id);
