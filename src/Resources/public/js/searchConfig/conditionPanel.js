@@ -29,6 +29,14 @@ pimcore.bundle.advancedObjectSearch.searchConfig.conditionPanel = Class.create({
         }
     },
 
+    getPanel: function() {
+        if(!this.panel) {
+            return this.getConditionPanel();
+        }
+
+        return this.panel;
+    },
+
     getConditionPanel: function() {
         var helper = new pimcore.bundle.advancedObjectSearch.searchConfig.conditionPanelContainerBuilder(this.classId, this, "root-panel", this.conditionEntryPanelLayout);
         this.conditionsContainerInner = helper.buildConditionsContainerInner();
@@ -43,13 +51,15 @@ pimcore.bundle.advancedObjectSearch.searchConfig.conditionPanel = Class.create({
             helper.populateConditionsContainerInner(this.data.filters);
         }
 
-        return Ext.create('Ext.panel.Panel',{
+        this.panel = Ext.create('Ext.panel.Panel',{
             border: false,
             items: [
                 this.termField,
                 this.conditionsContainerInner
             ]
         });
+
+        return this.panel;
     },
 
     getSaveData: function() {

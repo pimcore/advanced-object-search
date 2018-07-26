@@ -84,6 +84,9 @@ pimcore.bundle.advancedObjectSearch.searchConfig.conditionEntryPanel = Class.cre
 
                             //after first change, reset data
                             data = {};
+
+                            // fire event that this condition is loaded fully
+                            panel.getPanel().fireEvent("condition:loaded");
                         }
 
                     }.bind(this)

@@ -16,6 +16,8 @@ pimcore.registerNS("pimcore.bundle.advancedObjectSearch.searchConfig.conditionGr
 pimcore.bundle.advancedObjectSearch.searchConfig.conditionGroupPanel = Class.create(pimcore.bundle.advancedObjectSearch.searchConfig.conditionAbstractPanel, {
 
     getConditionPanel: function(panel, data) {
+        this.panel = panel;
+
         var niceName = t("bundle_advancedObjectSearch_group");
 
         var myId = Ext.id();
@@ -33,6 +35,14 @@ pimcore.bundle.advancedObjectSearch.searchConfig.conditionGroupPanel = Class.cre
             ]
         });
 
+    },
+
+    /**
+     * legacy method since the parent panel of a condition entry panel can
+     * either be a condition group panel or the condition panel itself
+     */
+    getPanel: function () {
+        return this.panel.getPanel();
     },
 
     getInnerConditionPanel: function(myId, data) {

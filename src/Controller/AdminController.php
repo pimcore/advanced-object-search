@@ -17,6 +17,7 @@ namespace AdvancedObjectSearchBundle\Controller;
 
 use AdvancedObjectSearchBundle\Model\SavedSearch;
 use Pimcore\Model\DataObject;
+use Pimcore\Tool;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
 
@@ -355,6 +356,27 @@ class AdminController extends \Pimcore\Bundle\AdminBundle\Controller\AdminContro
         $savedSearch = SavedSearch::getById($id);
         if($savedSearch) {
             $config = json_decode($savedSearch->getConfig(), true);
+
+            if(!empty($config["gridConfig"]["columns"])) {
+                $helperColumns = [];
+
+                foreach ($config["gridConfig"]["columns"] as $column) {
+                    if (!DataObject\Service::isHelperGridColumnConfig($column["key"])) {
+                        continue;
+                    }
+
+                    // columnconfig has to be a stdclass
+                    $helperColumns[$column["key"]] = json_decode(json_encode($column));
+                }
+
+                // store the saved search columns in the session, otherwise they won't work
+                Tool\Session::useSession(function (AttributeBagInterface $session) use ($helperColumns) {
+                    $existingColumns = $session->get('helpercolumns', []);
+                    $helperColumns = array_merge($existingColumns, $helperColumns);
+                    $session->set('helpercolumns', $helperColumns);
+                }, 'pimcore_gridconfig');
+            }
+
             return $this->adminJson([
                 'id' => $savedSearch->getId(),
                 'classId' => $config['classId'],
