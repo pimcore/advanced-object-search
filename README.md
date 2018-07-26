@@ -189,3 +189,12 @@ advanced_object_search:
     field_definition_adapters:
         newDataTypeName: SERVICE_ID_OF_FIELD_DEFINITION_ADAPTER
 ``` 
+
+
+## Running with Pimcore < 5.4
+With Pimcore 5.4 the location of static Pimcore files like icons has changed. In order to make this bundle work 
+with Pimcore < 5.4, please add following rewrite rule to your `.htaccess`.
+```
+    # rewrite rule for pre pimcore 5.4 core static files
+    RewriteRule ^bundles/pimcoreadmin/(.*) /pimcore/static6/$1 [PT,L]
+``` 
