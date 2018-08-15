@@ -19,7 +19,7 @@ pimcore.bundle.advancedObjectSearch.searchConfig.fieldConditionPanel.numeric = C
 
         var termFieldValue = "";
         var operatorValue = "";
-        if(isNaN(this.data.filterEntryData)) {
+        if(!isNaN(this.data.filterEntryData)) {
 
             var key = Object.keys(this.data.filterEntryData)[0];
             if(key) {
