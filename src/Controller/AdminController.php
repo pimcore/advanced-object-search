@@ -19,6 +19,7 @@ use AdvancedObjectSearchBundle\Model\SavedSearch;
 use Pimcore\Model\DataObject;
 use Pimcore\Tool;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Session\Attribute\AttributeBagInterface;
 use Symfony\Component\Routing\Annotation\Route;
 
 /**
