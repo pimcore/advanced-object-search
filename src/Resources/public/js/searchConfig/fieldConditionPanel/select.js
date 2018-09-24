@@ -31,7 +31,12 @@ pimcore.bundle.advancedObjectSearch.searchConfig.fieldConditionPanel.select = Cl
                 style: "padding-left: 20px",
                 valueField: 'value',
                 displayField: 'key',
-                value: this.data.filterEntryData
+                value: this.data.filterEntryData,
+                displayTpl: Ext.create('Ext.XTemplate',
+                    '<tpl for=".">',
+                    '{[Ext.util.Format.stripTags(values.key)]}',
+                    '</tpl>'
+                )
             }
         );
 
