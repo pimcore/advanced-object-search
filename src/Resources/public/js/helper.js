@@ -51,7 +51,7 @@ pimcore.bundle.advancedObjectSearch.helper = {
             text: t("bundle_advancedObjectSearch_search"),
             iconCls: "pimcore_bundle_advancedObjectSearch",
             handler: function () {
-                new pimcore.bundle.advancedObjectSearch.selector();
+                new pimcore.bundle.advancedObjectSearch.selector(pimcore.bundle.advancedObjectSearch.helper.openEsSearch);
             }
         });
 

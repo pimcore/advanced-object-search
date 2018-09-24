@@ -18,35 +18,42 @@ pimcore.bundle.advancedObjectSearch.searchConfig.resultPanel = Class.create(pimc
     noBatchColumns: [],
     batchAppendColumns: [],
 
-    parent: null,
+    getSaveDataCallback: null,
     gridConfigData: {},
 
+    portletMode: false,
+
     fieldObject: {},
-    initialize: function (parent, gridConfigData) {
-        this.parent = parent;
+    initialize: function (getSaveDataCallback, gridConfigData, portletMode) {
+        this.getSaveDataCallback = getSaveDataCallback;
         this.settings = {};
         if (gridConfigData) {
             this.gridConfigData = gridConfigData;
         }
+
+        this.portletMode = portletMode;
     },
 
     getLayout: function () {
 
         if (this.layout == null) {
             this.layout = new Ext.Panel({
-                title: t('bundle_advancedObjectSearch_results'),
                 border: false,
-                iconCls: "pimcore_bundle_advancedObjectSearch_grid",
                 layout: "fit",
                 listeners: {
                     activate: function () {
-                        if (this.parent) {
-                            var saveData = this.parent.getSaveData(true);
+                        if (this.getSaveDataCallback) {
+                            var saveData = this.getSaveDataCallback(true);
                             this.updateGrid(saveData.classId);
                         }
                     }.bind(this)
                 }
             });
+
+            if(!this.portletMode) {
+                this.layout.setTitle(t('bundle_advancedObjectSearch_results'));
+                this.layout.setIconCls('pimcore_bundle_advancedObjectSearch_grid');
+            }
 
             //this is needed
             this.sqlButton = {};
@@ -95,8 +102,6 @@ pimcore.bundle.advancedObjectSearch.searchConfig.resultPanel = Class.create(pimc
             url: "/admin/object-helper/grid-get-column-config",
             params: {
                 id: this.classId,
-                // objectId:
-                // this.object.id,
                 gridtype: "grid",
                 gridConfigId: this.settings ? this.settings.gridConfigId : null,
                 searchType: this.searchType
@@ -148,7 +153,7 @@ pimcore.bundle.advancedObjectSearch.searchConfig.resultPanel = Class.create(pimc
 
         gridHelper.showSubtype = false;
         gridHelper.showKey = true;
-        gridHelper.enableEditor = true;
+        gridHelper.enableEditor = !this.portletMode;
         gridHelper.limit = itemsPerPage;
 
         this.store = gridHelper.getStore(this.noBatchColumns, this.batchAppendColumns);
@@ -196,11 +201,7 @@ pimcore.bundle.advancedObjectSearch.searchConfig.resultPanel = Class.create(pimc
             }.bind(this)
         });
 
-        this.cellEditing = Ext.create('Ext.grid.plugin.CellEditing', {
-            clicksToEdit: 1
-        });
 
-        var plugins = [this.cellEditing];
 
         this.columnConfigButton = new Ext.SplitButton({
             text: t('grid_options'),
@@ -213,25 +214,16 @@ pimcore.bundle.advancedObjectSearch.searchConfig.resultPanel = Class.create(pimc
 
         this.buildColumnConfigMenu(true);
 
-        this.grid = Ext.create('Ext.grid.Panel', {
-            frame: false,
-            store: this.store,
-            border: true,
-            columns: gridColumns,
-            columnLines: true,
-            plugins: plugins,
-            stripeRows: true,
-            cls: 'pimcore_object_grid_panel',
-            bodyCls: "pimcore_editable_grid",
-            trackMouseOver: true,
-            viewConfig: {
-                forceFit: false,
-                xtype: 'patchedgridview'
-            },
-            sortableColumns: false,
-            selModel: gridHelper.getSelectionColumn(),
-            bbar: this.pagingtoolbar,
-            tbar: [
+        var tbar = null;
+        var plugins = [];
+
+        if(!this.portletMode) {
+            this.cellEditing = Ext.create('Ext.grid.plugin.CellEditing', {
+                clicksToEdit: 1
+            });
+            plugins.push(this.cellEditing);
+
+            tbar = [
                 this.languageInfo, '-', this.toolbarFilterInfo, '->'
                 , "-", {
                     text: t("export_csv"),
@@ -253,18 +245,36 @@ pimcore.bundle.advancedObjectSearch.searchConfig.resultPanel = Class.create(pimc
 
                     }.bind(this)
                 }, "-", this.columnConfigButton
-            ],
-            listeners: {
-                rowdblclick: function (grid, record, tr, rowIndex, e, eOpts) {
+            ];
+        }
 
-                }.bind(this)
-            }
+        this.grid = Ext.create('Ext.grid.Panel', {
+            frame: false,
+            store: this.store,
+            border: true,
+            columns: gridColumns,
+            columnLines: true,
+            plugins: plugins,
+            stripeRows: true,
+            cls: 'pimcore_object_grid_panel',
+            bodyCls: "pimcore_editable_grid",
+            trackMouseOver: true,
+            viewConfig: {
+                forceFit: false,
+                xtype: 'patchedgridview'
+            },
+            sortableColumns: false,
+            selModel: gridHelper.getSelectionColumn(),
+            bbar: this.pagingtoolbar,
+            tbar: tbar
         });
         this.grid.on("rowcontextmenu", this.onRowContextmenu.bind(this));
 
-        this.grid.on("afterrender", function (grid) {
-            this.updateGridHeaderContextMenu(grid);
-        }.bind(this));
+        if(!this.portletMode) {
+            this.grid.on("afterrender", function (grid) {
+                this.updateGridHeaderContextMenu(grid);
+            }.bind(this));
+        }
 
         this.grid.on("sortchange", function (grid, sortinfo) {
             this.sortinfo = sortinfo;
@@ -279,7 +289,7 @@ pimcore.bundle.advancedObjectSearch.searchConfig.resultPanel = Class.create(pimc
 
         var proxy = this.store.getProxy();
 
-        proxy.extraParams.filter = this.parent.getSaveData();
+        proxy.extraParams.filter = this.getSaveDataCallback();
 
         this.store.load();
 
@@ -366,7 +376,7 @@ pimcore.bundle.advancedObjectSearch.searchConfig.resultPanel = Class.create(pimc
             }
 
             var params = {
-                filter: this.parent.getSaveData(),
+                filter: this.getSaveDataCallback(),
                 classId: this.classId,
                 objecttype: this.objecttype,
                 language: this.gridLanguage
@@ -403,7 +413,7 @@ pimcore.bundle.advancedObjectSearch.searchConfig.resultPanel = Class.create(pimc
         }
 
         var params = {
-            filter: this.parent.getSaveData(),
+            filter: this.getSaveDataCallback(),
             classId: this.classId,
             objecttype: this.objecttype,
             language: this.gridLanguage,

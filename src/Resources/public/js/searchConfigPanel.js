@@ -149,7 +149,7 @@ pimcore.bundle.advancedObjectSearch.searchConfigPanel = Class.create(pimcore.ele
     },
 
     getResults: function() {
-        this.resultPanel = new pimcore.bundle.advancedObjectSearch.searchConfig.resultPanel(this, this.data.gridConfig);
+        this.resultPanel = new pimcore.bundle.advancedObjectSearch.searchConfig.resultPanel(this.getSaveData.bind(this), this.data.gridConfig);
         return this.resultPanel.getLayout();
     },
 

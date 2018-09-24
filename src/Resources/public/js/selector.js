@@ -15,7 +15,9 @@
 pimcore.registerNS("pimcore.bundle.advancedObjectSearch.selector");
 pimcore.bundle.advancedObjectSearch.selector = Class.create({
 
-    initialize: function () {
+    openCallback: null,
+
+    initialize: function (openCallback) {
         this.panel = new Ext.Panel({
             layout: "border",
             border: false,
@@ -38,6 +40,9 @@ pimcore.bundle.advancedObjectSearch.selector = Class.create({
         this.window = new Ext.Window(windowConfig);
         
         this.window.show();
+
+        this.openCallback = openCallback;
+
     },
     
     moveToTab: function () {
@@ -66,7 +71,7 @@ pimcore.bundle.advancedObjectSearch.selector = Class.create({
 
     openSearch: function (data) {
 
-        pimcore.bundle.advancedObjectSearch.helper.openEsSearch(data.id, function() {
+        this.openCallback(data.id, function() {
             this.window.close();
         }.bind(this));
 
