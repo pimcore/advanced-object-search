@@ -27,6 +27,8 @@ pimcore.bundle.advancedObjectSearch.searchConfig.resultPanel = Class.create(pimc
     initialize: function (getSaveDataCallback, gridConfigData, portletMode) {
         this.getSaveDataCallback = getSaveDataCallback;
         this.settings = {};
+        this.gridPageSize = 25;
+
         if (gridConfigData) {
             this.gridConfigData = gridConfigData;
         }
@@ -113,12 +115,13 @@ pimcore.bundle.advancedObjectSearch.searchConfig.resultPanel = Class.create(pimc
     createGrid: function (fromConfig, response, settings, save) {
         var fields = [];
 
-        var itemsPerPage = 20;
+        var itemsPerPage = this.gridPageSize;
 
         if (response.responseText) {
             response = Ext.decode(response.responseText);
 
             if (response.pageSize) {
+                this.gridPageSize = response.pageSize;
                 itemsPerPage = response.pageSize;
             }
 
@@ -479,10 +482,12 @@ pimcore.bundle.advancedObjectSearch.searchConfig.resultPanel = Class.create(pimc
             language: this.gridLanguage,
             classid: this.classId,
             objectId: objectId,
-            selectedGridColumns: visibleColumns
+            selectedGridColumns: visibleColumns,
+            pageSize: this.gridPageSize
         };
         var dialog = new pimcore.object.helpers.gridConfigDialog(columnConfig, function (data) {
                 this.gridLanguage = data.language;
+                this.gridPageSize = data.pageSize;
                 this.createGrid(true, data.columns, this.settings);
             }.bind(this), function (data) {
                 Ext.Ajax.request({
