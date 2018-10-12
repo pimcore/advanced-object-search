@@ -1,6 +1,12 @@
 
 services:
 
+    # auto-register all controllers as services
+    AdvancedObjectSearchBundle\Controller\:
+        resource: '../../Controller'
+        public: true
+        tags: ['controller.service_arguments']
+
     bundle.advanced_object_search.es_client:
         class: Elasticsearch\Client
         factory: ['AdvancedObjectSearchBundle\Tools\EsClientFactory', getESClient]
