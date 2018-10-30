@@ -347,7 +347,7 @@ pimcore.bundle.advancedObjectSearch.searchConfig.resultPanel = Class.create(pimc
         menu.showAt(e.pageX, e.pageY);
     },
 
-    batchPrepare: function (columnIndex, onlySelected) {
+    batchPrepare: function (columnIndex, onlySelected, append) {
         // no batch for system properties
         if (this.systemColumns.indexOf(this.grid.getColumns()[columnIndex].dataIndex) > -1) {
             return;
@@ -359,7 +359,7 @@ pimcore.bundle.advancedObjectSearch.searchConfig.resultPanel = Class.create(pimc
             for (var i = 0; i < selectedRows.length; i++) {
                 jobs.push(selectedRows[i].get("id"));
             }
-            this.batchOpen(columnIndex, jobs);
+            this.batchOpen(columnIndex, jobs, append);
 
         } else {
 
@@ -390,7 +390,7 @@ pimcore.bundle.advancedObjectSearch.searchConfig.resultPanel = Class.create(pimc
                 success: function (columnIndex, response) {
                     var rdata = Ext.decode(response.responseText);
                     if (rdata.success && rdata.jobs) {
-                        this.batchOpen(columnIndex, rdata.jobs);
+                        this.batchOpen(columnIndex, rdata.jobs, append);
                     }
 
                 }.bind(this, columnIndex)
@@ -512,7 +512,7 @@ pimcore.bundle.advancedObjectSearch.searchConfig.resultPanel = Class.create(pimc
                         for (var j = 0; j < gridColumns.length; j++) {
                             var column = gridColumns[j];
 
-                            if (column.dataIndex === entry.key) {
+                            if (column.dataIndex === entry.key && column.width != 100) {
                                 if (entry.isOperator) {
                                     // operator columns need the width directly on the entry
                                     entry.width = column.width;
