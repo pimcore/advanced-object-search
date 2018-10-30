@@ -180,7 +180,7 @@ class AdminController extends \Pimcore\Bundle\AdminBundle\Controller\AdminContro
 
         //get ID list from ES Service
         $data = json_decode($request->get("filter"), true);
-        $results = $service->doFilter($data['classId'], $data['conditions']['filters'], $data['conditions']['fulltextSearchTerm']);
+        $results = $service->doFilter($data['classId'], $data['conditions']['filters'], $data['conditions']['fulltextSearchTerm'], null, 9999);
 
         $ids = $service->extractIdsFromResult($results);
 
