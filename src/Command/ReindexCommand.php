@@ -58,6 +58,7 @@ class ReindexCommand extends AbstractCommand
         foreach ($classes as $class) {
             $listClassName = "\\Pimcore\\Model\\DataObject\\" . ucfirst($class->getName()) . "\\Listing";
             $list = new $listClassName();
+            $list->setObjectTypes([DataObject\AbstractObject::OBJECT_TYPE_OBJECT,DataObject\AbstractObject::OBJECT_TYPE_VARIANT]);
             $list->setUnpublished(true);
 
             $elementsTotal = $list->getTotalCount();
