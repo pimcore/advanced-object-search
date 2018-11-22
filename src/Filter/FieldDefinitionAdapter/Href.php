@@ -136,11 +136,13 @@ class Href extends DefaultAdapter implements IFieldDefinitionAdapter {
                     $innerBoolQuery->add(new TermQuery($path . ".type", $fieldFilter['type']));
                     $innerBoolQuery->add(new TermQuery($path . ".id", $id));
 
-                    $boolQuery->add(new NestedQuery($path, $innerBoolQuery));
+                    $boolQuery->add(new NestedQuery($path, $innerBoolQuery), BoolQuery::SHOULD);
                 }
+                $boolQuery->addParameter("minimum_should_match", 1);
             } else {
                 $boolQuery->add(new ExistsQuery($path . ".notavailablefield"));
             }
+
 
             return $boolQuery;
         } else {

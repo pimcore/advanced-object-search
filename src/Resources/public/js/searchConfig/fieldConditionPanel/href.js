@@ -158,7 +158,7 @@ pimcore.bundle.advancedObjectSearch.searchConfig.fieldConditionPanel.href = Clas
 
         } else {
 
-            subValue.type = this.typeField.getValue();
+            subValue.type = "object";
             if(this.idsField) {
                 subValue.id = this.idsField.getValue().split(",");
             }
