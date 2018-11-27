@@ -12,8 +12,8 @@
  */
 
 
-pimcore.registerNS("pimcore.bundle.advancedObjectSearch.searchConfig.fieldConditionPanel.href");
-pimcore.bundle.advancedObjectSearch.searchConfig.fieldConditionPanel.href = Class.create(pimcore.bundle.advancedObjectSearch.searchConfig.fieldConditionPanel.default, {
+pimcore.registerNS("pimcore.bundle.advancedObjectSearch.searchConfig.fieldConditionPanel.manyToOneRelation");
+pimcore.bundle.advancedObjectSearch.searchConfig.fieldConditionPanel.manyToOneRelation = Class.create(pimcore.bundle.advancedObjectSearch.searchConfig.fieldConditionPanel.default, {
 
     inheritanceField: null,
 
