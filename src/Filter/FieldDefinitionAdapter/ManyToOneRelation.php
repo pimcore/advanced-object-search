@@ -25,14 +25,14 @@ use ONGR\ElasticsearchDSL\Query\TermLevel\TermQuery;
 use Pimcore\Model\DataObject\AbstractObject;
 use Pimcore\Model\DataObject\Concrete;
 
-class Href extends DefaultAdapter implements IFieldDefinitionAdapter {
+class ManyToOneRelation extends DefaultAdapter implements IFieldDefinitionAdapter {
 
     /**
      * field type for search frontend
      *
      * @var string
      */
-    protected $fieldType = "href";
+    protected $fieldType = "manyToOneRelation";
 
     /**
      * @return array

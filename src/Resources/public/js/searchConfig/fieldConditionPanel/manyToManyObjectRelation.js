@@ -12,7 +12,7 @@
  */
 
 
-pimcore.registerNS("pimcore.bundle.advancedObjectSearch.searchConfig.fieldConditionPanel.multihrefMetadata");
-pimcore.bundle.advancedObjectSearch.searchConfig.fieldConditionPanel.multihrefMetadata = Class.create(pimcore.bundle.advancedObjectSearch.searchConfig.fieldConditionPanel.href, {
+pimcore.registerNS("pimcore.bundle.advancedObjectSearch.searchConfig.fieldConditionPanel.manyToManyObjectRelation");
+pimcore.bundle.advancedObjectSearch.searchConfig.fieldConditionPanel.manyToManyObjectRelation = Class.create(pimcore.bundle.advancedObjectSearch.searchConfig.fieldConditionPanel.manyToOneRelation, {
 
 });

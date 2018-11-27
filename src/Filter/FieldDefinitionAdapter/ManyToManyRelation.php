@@ -1,3 +1,4 @@
+<?php
 /**
  * Pimcore
  *
@@ -12,7 +13,15 @@
  */
 
 
-pimcore.registerNS("pimcore.bundle.advancedObjectSearch.searchConfig.fieldConditionPanel.objectsMetadata");
-pimcore.bundle.advancedObjectSearch.searchConfig.fieldConditionPanel.objectsMetadata = Class.create(pimcore.bundle.advancedObjectSearch.searchConfig.fieldConditionPanel.href, {
+namespace AdvancedObjectSearchBundle\Filter\FieldDefinitionAdapter;
 
-});
+class ManyToManyRelation extends ManyToOneRelation implements IFieldDefinitionAdapter {
+
+    /**
+     * field type for search frontend
+     *
+     * @var string
+     */
+    protected $fieldType = "manyToManyRelation";
+
+}

@@ -86,8 +86,8 @@ services:
         arguments:
             - '@bundle.advanced_object_search.service'
 
-    bundle.advanced_object_search.filter.href:
-        class: AdvancedObjectSearchBundle\Filter\FieldDefinitionAdapter\Href
+    AdvancedObjectSearchBundle\Filter\FieldDefinitionAdapter\ManyToOneRelation:
+        class: AdvancedObjectSearchBundle\Filter\FieldDefinitionAdapter\ManyToOneRelation
         shared: false
         arguments:
             - '@bundle.advanced_object_search.service'
@@ -111,14 +111,14 @@ services:
             - '@bundle.advanced_object_search.service'
             - '@pimcore.locale'
 
-    bundle.advanced_object_search.filter.multihref:
-        class: AdvancedObjectSearchBundle\Filter\FieldDefinitionAdapter\Multihref
+    AdvancedObjectSearchBundle\Filter\FieldDefinitionAdapter\ManyToManyRelation:
+        class: AdvancedObjectSearchBundle\Filter\FieldDefinitionAdapter\ManyToManyRelation
         shared: false
         arguments:
             - '@bundle.advanced_object_search.service'
 
-    bundle.advanced_object_search.filter.multihrefMetadata:
-        class: AdvancedObjectSearchBundle\Filter\FieldDefinitionAdapter\MultihrefMetadata
+    AdvancedObjectSearchBundle\Filter\FieldDefinitionAdapter\AdvancedManyToManyRelation:
+        class: AdvancedObjectSearchBundle\Filter\FieldDefinitionAdapter\AdvancedManyToManyRelation
         shared: false
         arguments:
             - '@bundle.advanced_object_search.service'
@@ -141,14 +141,14 @@ services:
         arguments:
             - '@bundle.advanced_object_search.service'
 
-    bundle.advanced_object_search.filter.objects:
-        class: AdvancedObjectSearchBundle\Filter\FieldDefinitionAdapter\Objects
+    AdvancedObjectSearchBundle\Filter\FieldDefinitionAdapter\ManyToManyObjectRelation:
+        class: AdvancedObjectSearchBundle\Filter\FieldDefinitionAdapter\ManyToManyObjectRelation
         shared: false
         arguments:
             - '@bundle.advanced_object_search.service'
 
-    bundle.advanced_object_search.filter.objectsMetadata:
-        class: AdvancedObjectSearchBundle\Filter\FieldDefinitionAdapter\ObjectsMetadata
+    AdvancedObjectSearchBundle\Filter\FieldDefinitionAdapter\AdvancedManyToManyObjectRelation:
+        class: AdvancedObjectSearchBundle\Filter\FieldDefinitionAdapter\AdvancedManyToManyObjectRelation
         shared: false
         arguments:
             - '@bundle.advanced_object_search.service'

@@ -1,4 +1,3 @@
-<?php
 /**
  * Pimcore
  *
@@ -13,15 +12,7 @@
  */
 
 
-namespace AdvancedObjectSearchBundle\Filter\FieldDefinitionAdapter;
+pimcore.registerNS("pimcore.bundle.advancedObjectSearch.searchConfig.fieldConditionPanel.advancedManyToManyRelation");
+pimcore.bundle.advancedObjectSearch.searchConfig.fieldConditionPanel.advancedManyToManyRelation = Class.create(pimcore.bundle.advancedObjectSearch.searchConfig.fieldConditionPanel.manyToOneRelation, {
 
-class Multihref extends Href implements IFieldDefinitionAdapter {
-
-    /**
-     * field type for search frontend
-     *
-     * @var string
-     */
-    protected $fieldType = "multihref";
-
-}
+});
