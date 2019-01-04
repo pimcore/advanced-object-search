@@ -17,6 +17,7 @@ namespace AdvancedObjectSearchBundle\Command;
 
 use AdvancedObjectSearchBundle\Service;
 use Pimcore\Console\AbstractCommand;
+use Pimcore\Model\DataObject\AbstractObject;
 use Pimcore\Model\DataObject\ClassDefinition;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
@@ -58,7 +59,7 @@ class ReindexCommand extends AbstractCommand
         foreach ($classes as $class) {
             $listClassName = "\\Pimcore\\Model\\DataObject\\" . ucfirst($class->getName()) . "\\Listing";
             $list = new $listClassName();
-            $list->setObjectTypes([DataObject\AbstractObject::OBJECT_TYPE_OBJECT,DataObject\AbstractObject::OBJECT_TYPE_VARIANT]);
+            $list->setObjectTypes([AbstractObject::OBJECT_TYPE_OBJECT, AbstractObject::OBJECT_TYPE_VARIANT]);
             $list->setUnpublished(true);
 
             $elementsTotal = $list->getTotalCount();
