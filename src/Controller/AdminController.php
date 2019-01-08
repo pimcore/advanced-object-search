@@ -371,11 +371,19 @@ class AdminController extends \Pimcore\Bundle\AdminBundle\Controller\AdminContro
         $savedSearch = SavedSearch::getById($id);
         if($savedSearch) {
             $config = json_decode($savedSearch->getConfig(), true);
+            $classDefinition = DataObject\ClassDefinition::getById($config['classId']);
 
             if(!empty($config["gridConfig"]["columns"])) {
                 $helperColumns = [];
 
                 foreach ($config["gridConfig"]["columns"] as $column) {
+                    if(!$column["isOperator"]) {
+                        $fieldDefinition = $classDefinition->getFieldDefinition($column['key']);
+                        if($fieldDefinition) {
+                            $column["layout"] = json_decode(json_encode($fieldDefinition), true);
+                        }
+                    }
+
                     if (!DataObject\Service::isHelperGridColumnConfig($column["key"])) {
                         continue;
                     }
