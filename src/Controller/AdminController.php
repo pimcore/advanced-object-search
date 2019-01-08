@@ -380,7 +380,11 @@ class AdminController extends \Pimcore\Bundle\AdminBundle\Controller\AdminContro
                     if(!$column["isOperator"]) {
                         $fieldDefinition = $classDefinition->getFieldDefinition($column['key']);
                         if($fieldDefinition) {
+                            $width = isset($column["layout"]["width"]) ? $column["layout"]["width"] : null;
                             $column["layout"] = json_decode(json_encode($fieldDefinition), true);
+                            if($width) {
+                                $column["layout"]["width"] = $width;
+                            }
                         }
                     }
 
