@@ -41,7 +41,7 @@ class AdminController extends \Pimcore\Bundle\AdminBundle\Controller\AdminContro
 
         switch ($type) {
             case "class":
-                $classId = intval($request->get("class_id"));
+                $classId = strip_tags($request->get("class_id"));
                 $definition = DataObject\ClassDefinition::getById($classId);
                 $allowInheritance = $definition->getAllowInherit();
                 break;
@@ -56,7 +56,7 @@ class AdminController extends \Pimcore\Bundle\AdminBundle\Controller\AdminContro
                 $key = strip_tags($request->get("key"));
                 $definition = DataObject\Objectbrick\Definition::getByKey($key);
 
-                $classId = intval($request->get("class_id"));
+                $classId = strip_tags($request->get("class_id"));
                 $classDefinition = DataObject\ClassDefinition::getById($classId);
                 $allowInheritance = $classDefinition->getAllowInherit();
 
