@@ -96,7 +96,7 @@ pimcore.bundle.advancedObjectSearch.searchConfig.fieldConditionPanel.fieldcollec
             fields: ['fieldName','fieldLabel', 'fieldType', 'context'],
             listeners: {
                 load: function (store) {
-                    if(data.fieldname) {
+                    if(data && data.fieldname) {
 
                         if(data.fieldname == "localizedfields") {
                             //need to get real fieldname of localized fields
