@@ -21,7 +21,7 @@ use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 
-class UpdateMappingCommand extends AbstractCommand
+class UpdateMappingCommand extends ServiceAwareCommand
 {
     protected function configure()
     {
@@ -34,8 +34,6 @@ class UpdateMappingCommand extends AbstractCommand
 
     protected function execute(InputInterface $input, OutputInterface $output)
     {
-        $service = $this->getContainer()->get("bundle.advanced_object_search.service");
-
         $classes = [];
 
         if ($input->getOption("classes")) {
@@ -53,11 +51,11 @@ class UpdateMappingCommand extends AbstractCommand
 
         foreach ($classes as $class) {
 
-            $indexName = $service->getIndexName($class->getName());
+            $indexName = $this->service->getIndexName($class->getName());
 
             $this->output->writeln("Processing " . $class->getName() . " -> index $indexName");
 
-            $service->updateMapping($class);
+            $this->service->updateMapping($class);
 
         }
     }

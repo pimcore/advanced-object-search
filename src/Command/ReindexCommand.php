@@ -15,15 +15,13 @@
 
 namespace AdvancedObjectSearchBundle\Command;
 
-use AdvancedObjectSearchBundle\Service;
-use Pimcore\Console\AbstractCommand;
 use Pimcore\Model\DataObject\AbstractObject;
 use Pimcore\Model\DataObject\ClassDefinition;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 
-class ReindexCommand extends AbstractCommand
+class ReindexCommand extends ServiceAwareCommand
 {
     protected function configure()
     {
@@ -36,11 +34,6 @@ class ReindexCommand extends AbstractCommand
 
     protected function execute(InputInterface $input, OutputInterface $output)
     {
-        /**
-         * @var $service Service
-         */
-        $service = $this->getContainer()->get("bundle.advanced_object_search.service");
-
         $classes = [];
         if ($input->getOption("classes")) {
             $classNames = explode(",", $input->getOption("classes"));
@@ -73,7 +66,7 @@ class ReindexCommand extends AbstractCommand
                 $objects = $list->load();
                 foreach ($objects as $object) {
                     try {
-                        $service->doUpdateIndexData($object, true);
+                        $this->service->doUpdateIndexData($object, true);
                     } catch (\Exception $e) {
                         $this->writeError($e);
                     }

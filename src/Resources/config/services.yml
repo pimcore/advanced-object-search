@@ -137,5 +137,6 @@ services:
         shared: false
 
     # auto-register all commands as services
-    AdvancedObjectSearchBundle\Command\:
-        resource: '../../Command'
+    AdvancedObjectSearchBundle\Command\ProcessUpdateQueueCommand: ~
+    AdvancedObjectSearchBundle\Command\ReindexCommand: ~
+    AdvancedObjectSearchBundle\Command\UpdateMappingCommand: ~
