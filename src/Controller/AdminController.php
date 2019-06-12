@@ -17,6 +17,7 @@ namespace AdvancedObjectSearchBundle\Controller;
 
 use AdvancedObjectSearchBundle\Model\SavedSearch;
 use AdvancedObjectSearchBundle\Service;
+use Pimcore\Bundle\AdminBundle\Helper\QueryParams;
 use Pimcore\Model\DataObject;
 use Pimcore\Tool;
 use Symfony\Component\HttpFoundation\Request;
@@ -330,7 +331,7 @@ class AdminController extends \Pimcore\Bundle\AdminBundle\Controller\AdminContro
         $searcherList->setOffset($offset);
         $searcherList->setLimit($limit);
 
-        $sortingSettings = \Pimcore\Admin\Helper\QueryParams::extractSortingSettings(array_merge($request->request->all(), $request->query->all()));
+        $sortingSettings = QueryParams::extractSortingSettings(array_merge($request->request->all(), $request->query->all()));
         if ($sortingSettings['orderKey']) {
             $searcherList->setOrderKey($sortingSettings['orderKey']);
         }
