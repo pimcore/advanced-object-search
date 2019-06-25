@@ -10,6 +10,8 @@ Pimcore backend powered by Elasticsearch.
 - Before starting, the configuration file has to be set up correctly: 
   - add Elasticsearch host(s)
   - configure index prefix
+- call Pimcore command `advanced-object-search:update-mapping` for creating mappings and `advanced-object-search:re-index` for indexing data for the first time. 
+
 
 ### GUI
 GUI for creating searches against ES index with
