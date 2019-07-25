@@ -18,13 +18,20 @@ namespace AdvancedObjectSearchBundle;
 use AdvancedObjectSearchBundle\Tools\Installer;
 use Elasticsearch\Client;
 use Pimcore\Extension\Bundle\AbstractPimcoreBundle;
+use Pimcore\Extension\Bundle\Traits\PackageVersionTrait;
 
 class AdvancedObjectSearchBundle extends AbstractPimcoreBundle
 {
+    use PackageVersionTrait;
+
     /**
      * @var array
      */
     protected static $config;
+
+    /**
+     * @return array
+     */
     public static function getConfig() {
         if(empty(self::$config)) {
             $file = PIMCORE_CUSTOM_CONFIGURATION_DIRECTORY . "/advancedobjectsearch/config.php";
@@ -42,6 +49,14 @@ class AdvancedObjectSearchBundle extends AbstractPimcoreBundle
     /**
      * @inheritDoc
      */
+    protected function getComposerPackageName()
+    {
+        return 'pimcore/advanced-object-search';
+    }
+
+    /**
+     * @inheritDoc
+     */
     public function getCssPaths()
     {
         return [
@@ -49,6 +64,9 @@ class AdvancedObjectSearchBundle extends AbstractPimcoreBundle
         ];
     }
 
+    /**
+     * @inheritDoc
+     */
     public function getJsPaths()
     {
         return [
@@ -87,8 +105,6 @@ class AdvancedObjectSearchBundle extends AbstractPimcoreBundle
             '/bundles/advancedobjectsearch/js/portlet/advancedObjectSearch.js'
         ];
     }
-
-
 
     /**
      * @return Installer
