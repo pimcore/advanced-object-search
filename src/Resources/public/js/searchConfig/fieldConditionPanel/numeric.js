@@ -17,16 +17,16 @@ pimcore.bundle.advancedObjectSearch.searchConfig.fieldConditionPanel.numeric = C
 
     getConditionPanel: function() {
 
-        var termFieldValue = "";
-        var operatorValue = "";
-        if(!isNaN(this.data.filterEntryData)) {
+        var termFieldValue = "",
+            operatorValue = "";
+
+        if(this.data.filterEntryData && isNaN(this.data.filterEntryData)) {
 
             var key = Object.keys(this.data.filterEntryData)[0];
             if(key) {
                 termFieldValue = this.data.filterEntryData[key];
                 operatorValue = key;
             }
-
         } else {
             termFieldValue = this.data.filterEntryData;
             operatorValue = "eq";
@@ -62,8 +62,9 @@ pimcore.bundle.advancedObjectSearch.searchConfig.fieldConditionPanel.numeric = C
 
     getFilterValues: function() {
 
-        var filterEntryData = {};
-        var operatorFieldValue = this.operatorField.getValue();
+        var filterEntryData = {},
+            operator = "must",
+            operatorFieldValue = this.operatorField.getValue();
 
         if(operatorFieldValue == "eq") {
             filterEntryData = this.termField.getValue()
@@ -71,8 +72,6 @@ pimcore.bundle.advancedObjectSearch.searchConfig.fieldConditionPanel.numeric = C
             filterEntryData[operatorFieldValue] = this.termField.getValue();
         }
 
-
-        var operator = "must";
         if(operatorFieldValue == "exists" || operatorFieldValue == "not_exists") {
             operator = operatorFieldValue;
         }
