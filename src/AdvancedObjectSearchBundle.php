@@ -18,13 +18,20 @@ namespace AdvancedObjectSearchBundle;
 use AdvancedObjectSearchBundle\Tools\Installer;
 use Elasticsearch\Client;
 use Pimcore\Extension\Bundle\AbstractPimcoreBundle;
+use Pimcore\Extension\Bundle\Traits\PackageVersionTrait;
 
 class AdvancedObjectSearchBundle extends AbstractPimcoreBundle
 {
+    use PackageVersionTrait;
+
     /**
      * @var array
      */
     protected static $config;
+
+    /**
+     * @return array
+     */
     public static function getConfig() {
         if(empty(self::$config)) {
             $file = PIMCORE_CUSTOM_CONFIGURATION_DIRECTORY . "/advancedobjectsearch/config.php";
@@ -42,6 +49,14 @@ class AdvancedObjectSearchBundle extends AbstractPimcoreBundle
     /**
      * @inheritDoc
      */
+    protected function getComposerPackageName()
+    {
+        return 'pimcore/advanced-object-search';
+    }
+
+    /**
+     * @inheritDoc
+     */
     public function getCssPaths()
     {
         return [
@@ -49,6 +64,9 @@ class AdvancedObjectSearchBundle extends AbstractPimcoreBundle
         ];
     }
 
+    /**
+     * @inheritDoc
+     */
     public function getJsPaths()
     {
         return [
@@ -65,13 +83,13 @@ class AdvancedObjectSearchBundle extends AbstractPimcoreBundle
 			'/bundles/advancedobjectsearch/js/searchConfig/fieldConditionPanel/default.js',
 			'/bundles/advancedobjectsearch/js/searchConfig/fieldConditionPanel/localizedfields.js',
 			'/bundles/advancedobjectsearch/js/searchConfig/fieldConditionPanel/numeric.js',
-			'/bundles/advancedobjectsearch/js/searchConfig/fieldConditionPanel/href.js',
-			'/bundles/advancedobjectsearch/js/searchConfig/fieldConditionPanel/objects.js',
-            '/bundles/advancedobjectsearch/js/searchConfig/fieldConditionPanel/multihref.js',
+			'/bundles/advancedobjectsearch/js/searchConfig/fieldConditionPanel/manyToManyOne.js',
+			'/bundles/advancedobjectsearch/js/searchConfig/fieldConditionPanel/manyToManyObjectRelation.js',
+            '/bundles/advancedobjectsearch/js/searchConfig/fieldConditionPanel/manyToManyRelation.js',
             '/bundles/advancedobjectsearch/js/searchConfig/fieldConditionPanel/fieldcollections.js',
             '/bundles/advancedobjectsearch/js/searchConfig/fieldConditionPanel/objectbricks.js',
-            '/bundles/advancedobjectsearch/js/searchConfig/fieldConditionPanel/objectsMetadata.js',
-            '/bundles/advancedobjectsearch/js/searchConfig/fieldConditionPanel/multihrefMetadata.js',
+            '/bundles/advancedobjectsearch/js/searchConfig/fieldConditionPanel/advancedManyToManyObjectRelation.js',
+            '/bundles/advancedobjectsearch/js/searchConfig/fieldConditionPanel/advancedManyToManyRelation.js',
             '/bundles/advancedobjectsearch/js/searchConfig/fieldConditionPanel/checkbox.js',
             '/bundles/advancedobjectsearch/js/searchConfig/fieldConditionPanel/select.js',
             '/bundles/advancedobjectsearch/js/searchConfig/fieldConditionPanel/language.js',
@@ -87,8 +105,6 @@ class AdvancedObjectSearchBundle extends AbstractPimcoreBundle
             '/bundles/advancedobjectsearch/js/portlet/advancedObjectSearch.js'
         ];
     }
-
-
 
     /**
      * @return Installer

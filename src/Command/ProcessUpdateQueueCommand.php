@@ -20,8 +20,9 @@ use Pimcore\Console\AbstractCommand;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 
-class ProcessUpdateQueueCommand extends AbstractCommand
+class ProcessUpdateQueueCommand extends ServiceAwareCommand
 {
+
     protected function configure()
     {
         $this
@@ -32,11 +33,10 @@ class ProcessUpdateQueueCommand extends AbstractCommand
 
     protected function execute(InputInterface $input, OutputInterface $output)
     {
-        $service = $this->getContainer()->get("bundle.advanced_object_search.service");
         $count = 1;
 
         while($count) {
-            $count = $service->processUpdateQueue();
+            $count = $this->service->processUpdateQueue();
         }
 
     }

@@ -20,19 +20,24 @@ pimcore.bundle.advancedObjectSearch.searchConfig.fieldConditionPanel.quantityVal
         var termFieldValue = "";
         var unitFieldValue = "";
         var operatorValue = "";
-        if(isNaN(this.data.filterEntryData)) {
 
-            var key = Object.keys(this.data.filterEntryData)[0];
-            if(key) {
-                termFieldValue = this.data.filterEntryData[key]['value'];
-                unitFieldValue = this.data.filterEntryData[key]['unit'];
-                operatorValue = key;
+        if(this.data.filterEntryData) {
+
+            if(isNaN(this.data.filterEntryData)) {
+
+                var key = Object.keys(this.data.filterEntryData)[0];
+                if(key) {
+                    termFieldValue = this.data.filterEntryData[key]['value'];
+                    unitFieldValue = this.data.filterEntryData[key]['unit'];
+                    operatorValue = key;
+                }
+
+            } else {
+                termFieldValue = this.data.filterEntryData['value'];
+                unitFieldValue = this.data.filterEntryData['unit'];
+                operatorValue = "eq";
             }
 
-        } else {
-            termFieldValue = this.data.filterEntryData['value'];
-            unitFieldValue = this.data.filterEntryData['unit'];
-            operatorValue = "eq";
         }
 
         this.unitStore = new Ext.data.JsonStore({

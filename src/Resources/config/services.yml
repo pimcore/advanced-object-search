@@ -1,12 +1,24 @@
 
 services:
 
+    _defaults:
+        autowire: true
+        autoconfigure: true
+
+    # auto-register all controllers as services
+    AdvancedObjectSearchBundle\Controller\:
+        resource: '../../Controller'
+        public: true
+        tags: ['controller.service_arguments']
+
     bundle.advanced_object_search.es_client:
         class: Elasticsearch\Client
         factory: ['AdvancedObjectSearchBundle\Tools\EsClientFactory', getESClient]
 
     bundle.advanced_object_search.service:
-        class: AdvancedObjectSearchBundle\Service
+        alias: AdvancedObjectSearchBundle\Service
+
+    AdvancedObjectSearchBundle\Service:
         arguments:
             - '@logger'
             - '@pimcore_admin.security.token_storage_user_resolver'
@@ -19,7 +31,7 @@ services:
     bundle.advanced_object_search.eventlisteners:
         class: AdvancedObjectSearchBundle\EventListener\IndexUpdateListener
         arguments:
-            - '@bundle.advanced_object_search.service'
+            - '@AdvancedObjectSearchBundle\Service'
         tags:
             - { name: kernel.event_listener, event: pimcore.dataobject.postUpdate, method: updateObject }
             - { name: kernel.event_listener, event: pimcore.dataobject.postAdd, method: updateObject }
@@ -35,151 +47,96 @@ services:
     bundle.advanced_object_search.filter.default:
         class: AdvancedObjectSearchBundle\Filter\FieldDefinitionAdapter\DefaultAdapter
         shared: false
-        arguments:
-            - '@bundle.advanced_object_search.service'
 
     bundle.advanced_object_search.filter.calculatedValue:
         class: AdvancedObjectSearchBundle\Filter\FieldDefinitionAdapter\CalculatedValue
         shared: false
-        arguments:
-            - '@bundle.advanced_object_search.service'
 
     bundle.advanced_object_search.filter.checkbox:
         class: AdvancedObjectSearchBundle\Filter\FieldDefinitionAdapter\Checkbox
         shared: false
-        arguments:
-            - '@bundle.advanced_object_search.service'
 
     bundle.advanced_object_search.filter.country:
         class: AdvancedObjectSearchBundle\Filter\FieldDefinitionAdapter\Country
         shared: false
-        arguments:
-            - '@bundle.advanced_object_search.service'
 
     bundle.advanced_object_search.filter.countrymultiselect:
         class: AdvancedObjectSearchBundle\Filter\FieldDefinitionAdapter\Countrymultiselect
         shared: false
-        arguments:
-            - '@bundle.advanced_object_search.service'
 
     bundle.advanced_object_search.filter.date:
         class: AdvancedObjectSearchBundle\Filter\FieldDefinitionAdapter\Date
         shared: false
-        arguments:
-            - '@bundle.advanced_object_search.service'
 
     bundle.advanced_object_search.filter.datetime:
         class: AdvancedObjectSearchBundle\Filter\FieldDefinitionAdapter\Datetime
         shared: false
-        arguments:
-            - '@bundle.advanced_object_search.service'
 
     bundle.advanced_object_search.filter.fieldcollections:
         class: AdvancedObjectSearchBundle\Filter\FieldDefinitionAdapter\Fieldcollections
         shared: false
-        arguments:
-            - '@bundle.advanced_object_search.service'
 
-    bundle.advanced_object_search.filter.href:
-        class: AdvancedObjectSearchBundle\Filter\FieldDefinitionAdapter\Href
+    AdvancedObjectSearchBundle\Filter\FieldDefinitionAdapter\ManyToOneRelation:
+        class: AdvancedObjectSearchBundle\Filter\FieldDefinitionAdapter\ManyToOneRelation
         shared: false
-        arguments:
-            - '@bundle.advanced_object_search.service'
 
     bundle.advanced_object_search.filter.language:
         class: AdvancedObjectSearchBundle\Filter\FieldDefinitionAdapter\Language
         shared: false
-        arguments:
-            - '@bundle.advanced_object_search.service'
 
     bundle.advanced_object_search.filter.languagemultiselect:
         class: AdvancedObjectSearchBundle\Filter\FieldDefinitionAdapter\Languagemultiselect
         shared: false
-        arguments:
-            - '@bundle.advanced_object_search.service'
 
     bundle.advanced_object_search.filter.localizedfields:
         class: AdvancedObjectSearchBundle\Filter\FieldDefinitionAdapter\Localizedfields
         shared: false
-        arguments:
-            - '@bundle.advanced_object_search.service'
-            - '@pimcore.locale'
 
-    bundle.advanced_object_search.filter.multihref:
-        class: AdvancedObjectSearchBundle\Filter\FieldDefinitionAdapter\Multihref
+    AdvancedObjectSearchBundle\Filter\FieldDefinitionAdapter\ManyToManyRelation:
+        class: AdvancedObjectSearchBundle\Filter\FieldDefinitionAdapter\ManyToManyRelation
         shared: false
-        arguments:
-            - '@bundle.advanced_object_search.service'
 
-    bundle.advanced_object_search.filter.multihrefMetadata:
-        class: AdvancedObjectSearchBundle\Filter\FieldDefinitionAdapter\MultihrefMetadata
+    AdvancedObjectSearchBundle\Filter\FieldDefinitionAdapter\AdvancedManyToManyRelation:
+        class: AdvancedObjectSearchBundle\Filter\FieldDefinitionAdapter\AdvancedManyToManyRelation
         shared: false
-        arguments:
-            - '@bundle.advanced_object_search.service'
 
     bundle.advanced_object_search.filter.multiselect:
         class: AdvancedObjectSearchBundle\Filter\FieldDefinitionAdapter\Multiselect
         shared: false
-        arguments:
-            - '@bundle.advanced_object_search.service'
 
     bundle.advanced_object_search.filter.numeric:
         class: AdvancedObjectSearchBundle\Filter\FieldDefinitionAdapter\Numeric
         shared: false
-        arguments:
-            - '@bundle.advanced_object_search.service'
 
     bundle.advanced_object_search.filter.objectbricks:
         class: AdvancedObjectSearchBundle\Filter\FieldDefinitionAdapter\Objectbricks
         shared: false
-        arguments:
-            - '@bundle.advanced_object_search.service'
 
-    bundle.advanced_object_search.filter.objects:
-        class: AdvancedObjectSearchBundle\Filter\FieldDefinitionAdapter\Objects
+    AdvancedObjectSearchBundle\Filter\FieldDefinitionAdapter\ManyToManyObjectRelation:
+        class: AdvancedObjectSearchBundle\Filter\FieldDefinitionAdapter\ManyToManyObjectRelation
         shared: false
-        arguments:
-            - '@bundle.advanced_object_search.service'
 
-    bundle.advanced_object_search.filter.objectsMetadata:
-        class: AdvancedObjectSearchBundle\Filter\FieldDefinitionAdapter\ObjectsMetadata
+    AdvancedObjectSearchBundle\Filter\FieldDefinitionAdapter\AdvancedManyToManyObjectRelation:
+        class: AdvancedObjectSearchBundle\Filter\FieldDefinitionAdapter\AdvancedManyToManyObjectRelation
         shared: false
-        arguments:
-            - '@bundle.advanced_object_search.service'
 
     bundle.advanced_object_search.filter.quantityValue:
         class: AdvancedObjectSearchBundle\Filter\FieldDefinitionAdapter\QuantityValue
         shared: false
-        arguments:
-            - '@bundle.advanced_object_search.service'
 
     bundle.advanced_object_search.filter.select:
         class: AdvancedObjectSearchBundle\Filter\FieldDefinitionAdapter\Select
         shared: false
-        arguments:
-            - '@bundle.advanced_object_search.service'
 
     bundle.advanced_object_search.filter.time:
         class: AdvancedObjectSearchBundle\Filter\FieldDefinitionAdapter\Time
         shared: false
-        arguments:
-            - '@bundle.advanced_object_search.service'
 
     bundle.advanced_object_search.filter.user:
         class: AdvancedObjectSearchBundle\Filter\FieldDefinitionAdapter\User
         shared: false
-        arguments:
-            - '@bundle.advanced_object_search.service'
 
-
-
-
-
-
-
-
-
-
-
-
-
+    # auto-register all commands as services
+    AdvancedObjectSearchBundle\Command\ProcessUpdateQueueCommand: ~
+    AdvancedObjectSearchBundle\Command\ReindexCommand: ~
+    AdvancedObjectSearchBundle\Command\UpdateMappingCommand: ~

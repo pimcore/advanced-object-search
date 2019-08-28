@@ -28,6 +28,14 @@
     background: url("/bundles/pimcoreadmin/img/flat-color-icons/binoculars.svg") center center no-repeat !important;
 }
 
+.pimcore_bundle_nav_icon_advancedObjectSearch {
+    background: url("/bundles/pimcoreadmin/img/flat-color-icons/binoculars.svg") center center no-repeat !important;
+}
+
+.pimcore_version_6 .pimcore_bundle_nav_icon_advancedObjectSearch {
+    background: url("/bundles/pimcoreadmin/img/flat-white-icons/binoculars.svg") center center no-repeat !important;
+}
+
 #pimcore_bundle_advancedObjectSearch_toolbar {
     background-image: url(/bundles/pimcoreadmin/img/flat-color-icons/binoculars.svg) !important;
     filter: grayscale(0%) !important;

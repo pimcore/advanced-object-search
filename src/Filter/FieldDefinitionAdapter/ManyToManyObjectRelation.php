@@ -19,14 +19,14 @@ use AdvancedObjectSearchBundle\Filter\FieldSelectionInformation;
 use AdvancedObjectSearchBundle\Filter\FilterEntry;
 use ONGR\ElasticsearchDSL\Query\Compound\BoolQuery;
 
-class Objects extends Href implements IFieldDefinitionAdapter {
+class ManyToManyObjectRelation extends ManyToOneRelation implements IFieldDefinitionAdapter {
 
     /**
      * field type for search frontend
      *
      * @var string
      */
-    protected $fieldType = "objects";
+    protected $fieldType = "manyToManyObjectRelation";
 
 
     /**

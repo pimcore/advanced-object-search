@@ -12,8 +12,8 @@
  */
 
 
-pimcore.registerNS("pimcore.bundle.advancedObjectSearch.searchConfig.fieldConditionPanel.href");
-pimcore.bundle.advancedObjectSearch.searchConfig.fieldConditionPanel.href = Class.create(pimcore.bundle.advancedObjectSearch.searchConfig.fieldConditionPanel.default, {
+pimcore.registerNS("pimcore.bundle.advancedObjectSearch.searchConfig.fieldConditionPanel.manyToOneRelation");
+pimcore.bundle.advancedObjectSearch.searchConfig.fieldConditionPanel.manyToOneRelation = Class.create(pimcore.bundle.advancedObjectSearch.searchConfig.fieldConditionPanel.default, {
 
     inheritanceField: null,
 
@@ -158,7 +158,7 @@ pimcore.bundle.advancedObjectSearch.searchConfig.fieldConditionPanel.href = Clas
 
         } else {
 
-            subValue.type = this.typeField.getValue();
+            subValue.type = "object";
             if(this.idsField) {
                 subValue.id = this.idsField.getValue().split(",");
             }

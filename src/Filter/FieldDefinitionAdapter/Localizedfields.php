@@ -23,7 +23,7 @@ use ONGR\ElasticsearchDSL\Query\Compound\BoolQuery;
 use ONGR\ElasticsearchDSL\Query\Joining\NestedQuery;
 use Pimcore\Model\DataObject\ClassDefinition\Data;
 use Pimcore\Model\DataObject\Concrete;
-use Pimcore\Service\Locale;
+use Pimcore\Localization\LocaleServiceInterface;
 use Pimcore\Tool;
 
 class Localizedfields extends DefaultAdapter implements IFieldDefinitionAdapter {
@@ -38,7 +38,7 @@ class Localizedfields extends DefaultAdapter implements IFieldDefinitionAdapter 
      */
     protected $localeService;
 
-    public function __construct(Service $service, Locale $locale = null)
+    public function __construct(Service $service, LocaleServiceInterface $locale = null)
     {
         parent::__construct($service);
 

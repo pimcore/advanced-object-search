@@ -16,6 +16,8 @@
 namespace AdvancedObjectSearchBundle\Controller;
 
 use AdvancedObjectSearchBundle\Model\SavedSearch;
+use AdvancedObjectSearchBundle\Service;
+use Pimcore\Bundle\AdminBundle\Helper\QueryParams;
 use Pimcore\Model\DataObject;
 use Pimcore\Tool;
 use Symfony\Component\HttpFoundation\Request;
@@ -32,7 +34,7 @@ class AdminController extends \Pimcore\Bundle\AdminBundle\Controller\AdminContro
      * @param Request $request
      * @Route("/get-fields")
      */
-    public function getFieldsAction(Request $request) {
+    public function getFieldsAction(Request $request, Service $service) {
 
         $type = strip_tags($request->get("type"));
 
@@ -40,7 +42,7 @@ class AdminController extends \Pimcore\Bundle\AdminBundle\Controller\AdminContro
 
         switch ($type) {
             case "class":
-                $classId = intval($request->get("class_id"));
+                $classId = strip_tags($request->get("class_id"));
                 $definition = DataObject\ClassDefinition::getById($classId);
                 $allowInheritance = $definition->getAllowInherit();
                 break;
@@ -55,7 +57,7 @@ class AdminController extends \Pimcore\Bundle\AdminBundle\Controller\AdminContro
                 $key = strip_tags($request->get("key"));
                 $definition = DataObject\Objectbrick\Definition::getByKey($key);
 
-                $classId = intval($request->get("class_id"));
+                $classId = strip_tags($request->get("class_id"));
                 $classDefinition = DataObject\ClassDefinition::getById($classId);
                 $allowInheritance = $classDefinition->getAllowInherit();
 
@@ -67,7 +69,6 @@ class AdminController extends \Pimcore\Bundle\AdminBundle\Controller\AdminContro
 
         }
 
-        $service = $this->get('bundle.advanced_object_search.service');
         $fieldSelectionInformationEntries = $service->getFieldSelectionInformationForClassDefinition($definition, $allowInheritance);
 
         $fields = [];
@@ -82,7 +83,7 @@ class AdminController extends \Pimcore\Bundle\AdminBundle\Controller\AdminContro
      * @param Request $request
      * @Route("/grid-proxy")
      */
-    public function gridProxyAction(Request $request) {
+    public function gridProxyAction(Request $request, Service $service) {
         $requestedLanguage = $request->get("language");
         if ($requestedLanguage) {
             if ($requestedLanguage != "default") {
@@ -93,7 +94,7 @@ class AdminController extends \Pimcore\Bundle\AdminBundle\Controller\AdminContro
         }
 
         if ($request->get("data")) {
-            return $this->forward("PimcoreAdminBundle:Admin/DataObject:gridProxy", [], $request->query->all());
+            return $this->forward("PimcoreAdminBundle:Admin/DataObject/DataObject:gridProxy", [], $request->query->all());
         } else {
 
             // get list of objects
@@ -118,7 +119,6 @@ class AdminController extends \Pimcore\Bundle\AdminBundle\Controller\AdminContro
 
 
             //get ID list from ES Service
-            $service = $this->get('bundle.advanced_object_search.service');
             $data = json_decode($request->get("filter"), true);
             $results = $service->doFilter($data['classId'], $data['conditions']['filters'], $data['conditions']['fulltextSearchTerm'], $start, $limit);
 
@@ -131,12 +131,29 @@ class AdminController extends \Pimcore\Bundle\AdminBundle\Controller\AdminContro
             $list = new $listClass();
             $list->setObjectTypes(["object", "folder", "variant"]);
 
+            $conditionFilters = [];
+            if (!$this->getAdminUser()->isAdmin()) {
+                $userIds = $this->getAdminUser()->getRoles();
+                $userIds[] = $this->getAdminUser()->getId();
+                $conditionFilters[] .= ' (
+                                                    (select list from users_workspaces_object where userId in (' . implode(',', $userIds) . ') and LOCATE(CONCAT(o_path,o_key),cpath)=1  ORDER BY LENGTH(cpath) DESC LIMIT 1)=1
+                                                    OR
+                                                    (select list from users_workspaces_object where userId in (' . implode(',', $userIds) . ') and LOCATE(cpath,CONCAT(o_path,o_key))=1  ORDER BY LENGTH(cpath) DESC LIMIT 1)=1
+                                                 )';
+            }
+
+
+
             if(!empty($ids)) {
-                $list->setCondition("o_id IN (" . implode(",", $ids) . ")");
+                $conditionFilters[] = "o_id IN (" . implode(",", $ids) . ")";
+                //$list->setCondition("o_id IN (" . implode(",", $ids) . ")");
                 $list->setOrderKey(" FIELD(o_id, " . implode(",", $ids) . ")", false);
             } else {
-                $list->setCondition("1=2");
+                $conditionFilters[] = "1=2";
+                //$list->setCondition("1=2");
             }
+
+            $list->setCondition(implode(" AND ", $conditionFilters));
 
             $list->load();
 
@@ -154,7 +171,7 @@ class AdminController extends \Pimcore\Bundle\AdminBundle\Controller\AdminContro
      * @param Request $request
      * @Route("/get-batch-jobs")
      */
-    public function getBatchJobsAction(Request $request)
+    public function getBatchJobsAction(Request $request, Service $service)
     {
         if ($request->get("language")) {
             $request->setLocale($request->get("language"));
@@ -163,9 +180,8 @@ class AdminController extends \Pimcore\Bundle\AdminBundle\Controller\AdminContro
         $class = DataObject\ClassDefinition::getById($request->get("classId"));
 
         //get ID list from ES Service
-        $service = $this->get('bundle.advanced_object_search.service');
         $data = json_decode($request->get("filter"), true);
-        $results = $service->doFilter($data['classId'], $data['conditions']['filters'], $data['conditions']['fulltextSearchTerm']);
+        $results = $service->doFilter($data['classId'], $data['conditions']['filters'], $data['conditions']['fulltextSearchTerm'], null, 9999);
 
         $ids = $service->extractIdsFromResult($results);
 
@@ -194,13 +210,12 @@ class AdminController extends \Pimcore\Bundle\AdminBundle\Controller\AdminContro
      * @param Request $request
      * @Route("/get-export-jobs")
      */
-    public function getExportJobsAction(Request $request) {
+    public function getExportJobsAction(Request $request, Service $service) {
         if ($request->get("language")) {
             $request->setLocale($request->get("language"));
         }
 
         //get ID list from ES Service
-        $service = $this->get('bundle.advanced_object_search.service');
         $data = json_decode($request->get("filter"), true);
 
         //TODO eventually add ID filter for preselected export
@@ -316,7 +331,7 @@ class AdminController extends \Pimcore\Bundle\AdminBundle\Controller\AdminContro
         $searcherList->setOffset($offset);
         $searcherList->setLimit($limit);
 
-        $sortingSettings = \Pimcore\Admin\Helper\QueryParams::extractSortingSettings(array_merge($request->request->all(), $request->query->all()));
+        $sortingSettings = QueryParams::extractSortingSettings(array_merge($request->request->all(), $request->query->all()));
         if ($sortingSettings['orderKey']) {
             $searcherList->setOrderKey($sortingSettings['orderKey']);
         }
@@ -357,11 +372,23 @@ class AdminController extends \Pimcore\Bundle\AdminBundle\Controller\AdminContro
         $savedSearch = SavedSearch::getById($id);
         if($savedSearch) {
             $config = json_decode($savedSearch->getConfig(), true);
+            $classDefinition = DataObject\ClassDefinition::getById($config['classId']);
 
             if(!empty($config["gridConfig"]["columns"])) {
                 $helperColumns = [];
 
                 foreach ($config["gridConfig"]["columns"] as $column) {
+                    if(!$column["isOperator"]) {
+                        $fieldDefinition = $classDefinition->getFieldDefinition($column['key']);
+                        if($fieldDefinition) {
+                            $width = isset($column["layout"]["width"]) ? $column["layout"]["width"] : null;
+                            $column["layout"] = json_decode(json_encode($fieldDefinition), true);
+                            if($width) {
+                                $column["layout"]["width"] = $width;
+                            }
+                        }
+                    }
+
                     if (!DataObject\Service::isHelperGridColumnConfig($column["key"])) {
                         continue;
                     }
@@ -484,12 +511,9 @@ class AdminController extends \Pimcore\Bundle\AdminBundle\Controller\AdminContro
      * @param Request $request
      * @Route("/check-index-status")
      */
-    public function checkIndexStatusAction(Request $request)
+    public function checkIndexStatusAction(Request $request, Service $service)
     {
-
-        $service = $this->get('bundle.advanced_object_search.service');
         return $this->adminJson(['indexUptodate' => $service->updateQueueEmpty()]);
-
     }
 
 }

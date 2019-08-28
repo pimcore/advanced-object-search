@@ -24,7 +24,7 @@ pimcore.bundle.advancedObjectSearch.helper = {
         if(!esSearchMenu) {
             esSearchMenu = Ext.create('Ext.menu.Item', {
                 text: t("bundle_advancedObjectSearch"),
-                iconCls: "pimcore_bundle_advancedObjectSearch",
+                iconCls: "pimcore_bundle_nav_icon_advancedObjectSearch",
                 hideOnClick: false,
                 menu: {
                     cls: "pimcore_navigation_flyout",
@@ -41,7 +41,7 @@ pimcore.bundle.advancedObjectSearch.helper = {
         
         esSearchMenu.getMenu().add({
             text: t("bundle_advancedObjectSearch_new"),
-            iconCls: "pimcore_bundle_advancedObjectSearch",
+            iconCls: "pimcore_bundle_nav_icon_advancedObjectSearch",
             handler: function () {
                 var esSearch = new pimcore.bundle.advancedObjectSearch.searchConfigPanel();
                 pimcore.globalmanager.add(esSearch.getTabId(), esSearch);
@@ -49,7 +49,7 @@ pimcore.bundle.advancedObjectSearch.helper = {
         });
         esSearchMenu.getMenu().add({
             text: t("bundle_advancedObjectSearch_search"),
-            iconCls: "pimcore_bundle_advancedObjectSearch",
+            iconCls: "pimcore_bundle_nav_icon_advancedObjectSearch",
             handler: function () {
                 new pimcore.bundle.advancedObjectSearch.selector(pimcore.bundle.advancedObjectSearch.helper.openEsSearch);
             }
@@ -68,7 +68,7 @@ pimcore.bundle.advancedObjectSearch.helper = {
                         var id = rdata.entries[i].id;
                         esSearchMenu.getMenu().add({
                             text: rdata.entries[i].name,
-                            iconCls: "pimcore_bundle_advancedObjectSearch",
+                            iconCls: "pimcore_bundle_nav_icon_advancedObjectSearch",
                             handler: function (id) {
                                 pimcore.bundle.advancedObjectSearch.helper.openEsSearch(id);
                             }.bind(this, id)
@@ -81,14 +81,25 @@ pimcore.bundle.advancedObjectSearch.helper = {
     },
 
     initializeStatusIcon: function() {
-        //adding status icon
-        var statusBar = Ext.get("pimcore_status");
 
-        var statusIcon = Ext.get(statusBar.insertHtml('afterBegin',
-            '<div id="pimcore_bundle_advancedObjectSearch_toolbar" data-menu-tooltip="'
-            + t("bundle_advancedObjectSearch_updating_index") + '"></div>'));
+        var notificationMenu = pimcore.globalmanager.get("layout_toolbar")["notificationMenu"];
 
-        pimcore.helpers.initMenuTooltips();
+        if(notificationMenu) {
+            // Pimcore 6
+            var statusIcon = new Ext.menu.Item({
+                text: t("bundle_advancedObjectSearch_updating_index"),
+                iconCls: 'pimcore_bundle_nav_icon_advancedObjectSearch'
+            });
+            notificationMenu.add(statusIcon);
+        } else {
+            // Pimcore 5
+            var statusBar = Ext.get("pimcore_status");
+            var statusIcon = Ext.get(statusBar.insertHtml('afterBegin',
+                '<div id="pimcore_bundle_advancedObjectSearch_toolbar" data-menu-tooltip="'
+                + t("bundle_advancedObjectSearch_updating_index") + '"></div>'));
+
+            pimcore.helpers.initMenuTooltips();
+        }
 
         this.checkIndexStatus(statusIcon);
     },

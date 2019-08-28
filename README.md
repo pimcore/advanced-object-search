@@ -10,6 +10,8 @@ Pimcore backend powered by Elasticsearch.
 - Before starting, the configuration file has to be set up correctly: 
   - add Elasticsearch host(s)
   - configure index prefix
+- call Pimcore command `advanced-object-search:update-mapping` for creating mappings and `advanced-object-search:re-index` for indexing data for the first time. 
+
 
 ### GUI
 GUI for creating searches against ES index with
@@ -48,7 +50,7 @@ Per data object class one index with one document type is created.
 /**
 * @var \AdvancedObjectSearchBundle\Service $service
  */
-$service = $this->get("bundle.advanced_object_search.service");
+$service = $this->get("AdvancedObjectSearchBundle\Service");
 $service->updateMapping(ClassDefinition::getByName("Product"));
 ```
 
@@ -61,7 +63,7 @@ On data object save or via script:
 /**
 * @var \AdvancedObjectSearchBundle\Service $service
  */
-$service = $this->get("bundle.advanced_object_search.service");
+$service = $this->get("AdvancedObjectSearchBundle\Service");
 
 $objects = Product::getList();
 foreach($objects as $object) {
@@ -77,7 +79,7 @@ foreach($objects as $object) {
 /**
 * @var \AdvancedObjectSearchBundle\Service $service
  */
-$service = $this->get("bundle.advanced_object_search.service");
+$service = $this->get("AdvancedObjectSearchBundle\Service");
 
 //filter for relations via ID
 $results = $service->doFilter(3,
