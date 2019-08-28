@@ -34,6 +34,11 @@ pimcore.bundle.advancedObjectSearch.searchConfig.resultPanel = Class.create(pimc
         }
 
         this.portletMode = portletMode;
+
+        if(!this.portletMode) {
+            this.extensionBag = new pimcore.bundle.advancedObjectSearch.searchConfig.ResultPanelExtensionBag(this, typeof gridConfigData != 'undefined' ? gridConfigData.predefinedFilter : null);
+            pimcore.plugin.broker.fireEvent("onAdvancedObjectSearchResult", this.extensionBag);
+        }
     },
 
     getLayout: function () {
@@ -55,6 +60,11 @@ pimcore.bundle.advancedObjectSearch.searchConfig.resultPanel = Class.create(pimc
             if(!this.portletMode) {
                 this.layout.setTitle(t('bundle_advancedObjectSearch_results'));
                 this.layout.setIconCls('pimcore_bundle_advancedObjectSearch_grid');
+
+                this.layout.on("destroy", function () {
+                    this.extensionBag.destroy();
+                    this.extensionBag = null;
+                }.bind(this));
             }
 
             //this is needed
@@ -217,38 +227,65 @@ pimcore.bundle.advancedObjectSearch.searchConfig.resultPanel = Class.create(pimc
 
         this.buildColumnConfigMenu(true);
 
-        var tbar = null;
+        var tbars = [];
         var plugins = [];
 
         if(!this.portletMode) {
+            var tbar = [this.languageInfo, '-', this.toolbarFilterInfo];
+            var secondaryTbar = [];
+
+            if (this.extensionBag.getExtensions().length) {
+                this.extensionBag.getExtensions().forEach(function (extension) {
+                    if(extension.isInSecondaryTbar()) {
+                        secondaryTbar.push(extension.getLayout());
+                    } else {
+                        tbar.push(extension.getLayout());
+                    }
+                }.bind(this));
+            }
+
             this.cellEditing = Ext.create('Ext.grid.plugin.CellEditing', {
                 clicksToEdit: 1
             });
             plugins.push(this.cellEditing);
 
-            tbar = [
-                this.languageInfo, '-', this.toolbarFilterInfo, '->'
-                , "-", {
-                    text: t("export_csv"),
-                    iconCls: "pimcore_icon_export",
-                    handler: function () {
+            tbar = tbar.concat(['->', "-", {
+                text: t("export_csv"),
+                iconCls: "pimcore_icon_export",
+                handler: function () {
 
-                        Ext.MessageBox.show({
-                            title: t('warning'),
-                            msg: t('csv_object_export_warning'),
-                            buttons: Ext.Msg.OKCANCEL,
-                            fn: function (btn) {
-                                if (btn == 'ok') {
-                                    this.exportPrepare();
-                                }
-                            }.bind(this),
-                            icon: Ext.MessageBox.WARNING
-                        });
+                    Ext.MessageBox.show({
+                        title: t('warning'),
+                        msg: t('csv_object_export_warning'),
+                        buttons: Ext.Msg.OKCANCEL,
+                        fn: function (btn) {
+                            if (btn == 'ok') {
+                                this.exportPrepare();
+                            }
+                        }.bind(this),
+                        icon: Ext.MessageBox.WARNING
+                    });
 
 
-                    }.bind(this)
-                }, "-", this.columnConfigButton
-            ];
+                }.bind(this)
+            }, "-", this.columnConfigButton
+            ]);
+
+            tbars = [{
+                xtype: 'toolbar',
+                dock: 'top',
+                items: tbar
+            }];
+
+            if(secondaryTbar.length) {
+                tbars.unshift(
+                    {
+                        xtype: 'toolbar',
+                        dock: 'top',
+                        items: secondaryTbar
+                    }
+                );
+            }
         }
 
         this.grid = Ext.create('Ext.grid.Panel', {
@@ -269,7 +306,7 @@ pimcore.bundle.advancedObjectSearch.searchConfig.resultPanel = Class.create(pimc
             sortableColumns: false,
             selModel: gridHelper.getSelectionColumn(),
             bbar: this.pagingtoolbar,
-            tbar: tbar
+            dockedItems: tbars
         });
         this.grid.on("rowcontextmenu", this.onRowContextmenu.bind(this));
 
@@ -293,6 +330,10 @@ pimcore.bundle.advancedObjectSearch.searchConfig.resultPanel = Class.create(pimc
         var proxy = this.store.getProxy();
 
         proxy.extraParams.filter = this.getSaveDataCallback();
+
+        if(this.extensionBag) {
+            this.extensionBag.addCustomFilter();
+        }
 
         this.store.load();
 
@@ -382,7 +423,8 @@ pimcore.bundle.advancedObjectSearch.searchConfig.resultPanel = Class.create(pimc
                 filter: this.getSaveDataCallback(),
                 classId: this.classId,
                 objecttype: this.objecttype,
-                language: this.gridLanguage
+                language: this.gridLanguage,
+                customFilter: Ext.encode(this.extensionBag.getFilterData())
             };
 
 
@@ -421,7 +463,8 @@ pimcore.bundle.advancedObjectSearch.searchConfig.resultPanel = Class.create(pimc
             objecttype: this.objecttype,
             language: this.gridLanguage,
             "ids[]": ids,
-            "fields[]": fieldKeys
+            "fields[]": fieldKeys,
+            customFilter: Ext.encode(this.extensionBag.getFilterData())
         };
 
         Ext.Ajax.request({

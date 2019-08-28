@@ -15,11 +15,14 @@
 
 namespace AdvancedObjectSearchBundle\Controller;
 
+use AdvancedObjectSearchBundle\Event\AdvancedObjectSearchEvents;
+use AdvancedObjectSearchBundle\Event\FilterListingEvent;
 use AdvancedObjectSearchBundle\Model\SavedSearch;
 use AdvancedObjectSearchBundle\Service;
 use Pimcore\Bundle\AdminBundle\Helper\QueryParams;
 use Pimcore\Model\DataObject;
 use Pimcore\Tool;
+use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Session\Attribute\AttributeBagInterface;
 use Symfony\Component\Routing\Annotation\Route;
@@ -83,7 +86,7 @@ class AdminController extends \Pimcore\Bundle\AdminBundle\Controller\AdminContro
      * @param Request $request
      * @Route("/grid-proxy")
      */
-    public function gridProxyAction(Request $request, Service $service) {
+    public function gridProxyAction(Request $request, Service $service, EventDispatcherInterface $eventDispatcher) {
         $requestedLanguage = $request->get("language");
         if ($requestedLanguage) {
             if ($requestedLanguage != "default") {
@@ -154,6 +157,7 @@ class AdminController extends \Pimcore\Bundle\AdminBundle\Controller\AdminContro
             }
 
             $list->setCondition(implode(" AND ", $conditionFilters));
+            $eventDispatcher->dispatch(AdvancedObjectSearchEvents::LISTING_FILER, new FilterListingEvent($list));
 
             $list->load();
 

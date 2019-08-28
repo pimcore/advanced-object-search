@@ -192,6 +192,10 @@ advanced_object_search:
         newDataTypeName: SERVICE_ID_OF_FIELD_DEFINITION_ADAPTER
 ``` 
 
+## Extend Filters in the Result Tab
+
+If you want custom filters in the result tab directly without having to create a new advanced object search every time
+read [here on how to extend the result tab with custom filters.](./doc/01_Extending_Filters.md).
 
 ## Running with Pimcore < 5.4
 With Pimcore 5.4 the location of static Pimcore files like icons has changed. In order to make this bundle work 
