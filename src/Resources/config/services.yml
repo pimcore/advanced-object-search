@@ -24,6 +24,7 @@ services:
             - '@pimcore_admin.security.token_storage_user_resolver'
             - '@bundle.advanced_object_search.es_client'
             - '@bundle.advanced_object_search.filter_locator'
+            - '@event_dispatcher'
 
         tags:
             - { name: monolog.logger, channel: pimcore_advanced_object_search }

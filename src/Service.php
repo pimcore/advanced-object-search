@@ -15,6 +15,8 @@
 
 namespace AdvancedObjectSearchBundle;
 
+use AdvancedObjectSearchBundle\Event\AdvancedObjectSearchEvents;
+use AdvancedObjectSearchBundle\Event\FilterSearchEvent;
 use AdvancedObjectSearchBundle\Filter\FieldDefinitionAdapter\DefaultAdapter;
 use AdvancedObjectSearchBundle\Filter\FieldDefinitionAdapter\IFieldDefinitionAdapter;
 use AdvancedObjectSearchBundle\Filter\FieldSelectionInformation;
@@ -34,6 +36,7 @@ use Pimcore\Model\DataObject\Fieldcollection\Definition;
 use Pimcore\Model\User;
 use Psr\Container\ContainerInterface;
 use Psr\Log\LoggerInterface;
+use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
 class Service {
 
@@ -58,18 +61,24 @@ class Service {
     protected $filterLocator;
 
     /**
+     * @var EventDispatcherInterface
+     */
+    protected $eventDispatcher;
+
+    /**
      * Service constructor.
      * @param LoggerInterface $logger
      * @param TokenStorageUserResolver $userResolver
      * @param Client $esClient
      * @param ContainerInterface $container
      */
-    public function __construct(LoggerInterface $logger, TokenStorageUserResolver $userResolver, Client $esClient, ContainerInterface $filterLocator)
+    public function __construct(LoggerInterface $logger, TokenStorageUserResolver $userResolver, Client $esClient, ContainerInterface $filterLocator, EventDispatcherInterface $eventDispatcher)
     {
         $this->user = $userResolver->getUser();
         $this->logger = $logger;
         $this->esClient = $esClient;
         $this->filterLocator = $filterLocator;
+        $this->eventDispatcher = $eventDispatcher;
     }
 
     /**
@@ -554,6 +563,8 @@ class Service {
         } else if(!empty($fullTextQuery)) {
             $search->addQuery(new QueryStringQuery($fullTextQuery));
         }
+
+        $this->eventDispatcher->dispatch(AdvancedObjectSearchEvents::ELASITIC_FILTER, new FilterSearchEvent($search));
 
         if($size) {
             $search->setSize($size);
