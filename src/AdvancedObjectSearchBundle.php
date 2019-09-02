@@ -16,13 +16,15 @@
 namespace AdvancedObjectSearchBundle;
 
 use AdvancedObjectSearchBundle\Tools\Installer;
-use Elasticsearch\Client;
 use Pimcore\Extension\Bundle\AbstractPimcoreBundle;
 use Pimcore\Extension\Bundle\Traits\PackageVersionTrait;
 
 class AdvancedObjectSearchBundle extends AbstractPimcoreBundle
 {
     use PackageVersionTrait;
+
+    const CONFIG_PATH = 'advancedobjectsearch';
+    const CONFIG_FILENAME = 'config.php';
 
     /**
      * @var array
@@ -32,15 +34,53 @@ class AdvancedObjectSearchBundle extends AbstractPimcoreBundle
     /**
      * @return array
      */
-    public static function getConfig() {
-        if(empty(self::$config)) {
-            $file = PIMCORE_CUSTOM_CONFIGURATION_DIRECTORY . "/advancedobjectsearch/config.php";
-            if(file_exists($file)) {
-                $config = include($file);
-            } else {
+
+    /**
+     * @return array|mixed
+     * @throws \Exception
+     */
+    public static function getConfig()
+    {
+        if (empty(self::$config)) {
+            $pathsToCheck = [
+                PIMCORE_CUSTOM_CONFIGURATION_DIRECTORY,
+                PIMCORE_CONFIGURATION_DIRECTORY,
+                PIMCORE_CUSTOM_CONFIGURATION_DIRECTORY . '/' . self::CONFIG_PATH,
+                PIMCORE_CONFIGURATION_DIRECTORY . '/' . self::CONFIG_PATH,
+            ];
+
+            $file = null;
+
+            // check for environment configuration
+            $env = \Pimcore\Config::getEnvironment();
+            if ($env) {
+                $fileExt = \Pimcore\File::getFileExtension(self::CONFIG_FILENAME);
+                $pureName = str_replace('.' . $fileExt, '', self::CONFIG_FILENAME);
+                foreach ($pathsToCheck as $path) {
+                    $tmpFile = $path . '/' .$pureName . '_' . $env . '.' . $fileExt;
+                    if (file_exists($tmpFile)) {
+                        $file = $tmpFile;
+                        break;
+                    }
+                }
+            }
+
+            //check for config file without environment configuration
+            if (!$file) {
+                foreach ($pathsToCheck as $path) {
+                    $tmpFile = $path . '/' . self::CONFIG_FILENAME;
+                    if (file_exists($tmpFile)) {
+                        $file = $tmpFile;
+                        break;
+                    }
+                }
+            }
+
+            if (!$file) {
                 throw new \Exception($file . " doesn't exist");
             }
-            self::$config = $config;
+
+            self::$config = include $file;
         }
 
         return self::$config;
