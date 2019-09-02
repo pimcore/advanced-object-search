@@ -84,15 +84,15 @@ class DefaultAdapter implements IFieldDefinitionAdapter {
                 [
                     'properties' => [
                         self::ES_MAPPING_PROPERTY_STANDARD => [
-                            'type' => 'string',
+                            'type' => 'text',
                             'fields' => [
-                                "raw" =>  [ "type" => "string", "index" => "not_analyzed" ]
+                                'raw' =>  [ 'type' => 'keyword' ]
                             ]
                         ],
                         self::ES_MAPPING_PROPERTY_NOT_INHERITED => [
-                            'type' => 'string',
+                            'type' => 'text',
                             'fields' => [
-                                "raw" =>  [ "type" => "string", "index" => "not_analyzed" ]
+                                'raw' =>  [ 'type' => 'keyword' ]
                             ]
                         ]
                     ]
@@ -102,9 +102,9 @@ class DefaultAdapter implements IFieldDefinitionAdapter {
             return [
                 $this->fieldDefinition->getName(),
                 [
-                    'type' => 'string',
+                    'type' => 'text',
                     'fields' => [
-                        "raw" =>  [ "type" => "string", "index" => "not_analyzed" ]
+                        'raw' =>  [ 'type' => 'keyword' ]
                     ]
                 ]
             ];

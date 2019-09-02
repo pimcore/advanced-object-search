@@ -46,16 +46,16 @@ class ManyToOneRelation extends DefaultAdapter implements IFieldDefinitionAdapte
                         self::ES_MAPPING_PROPERTY_STANDARD => [
                             'type' => 'nested',
                             'properties' => [
-                                'type' =>  ["type" => "string", "index" => "not_analyzed"],
-                                'subtype' =>  ["type" => "string", "index" => "not_analyzed"],
+                                'type' => ['type' => 'keyword'],
+                                'subtype' => ['type' => 'keyword'],
                                 'id' => ["type" => "long"]
                             ]
                         ],
                         self::ES_MAPPING_PROPERTY_NOT_INHERITED => [
                             'type' => 'nested',
                             'properties' => [
-                                'type' =>  ["type" => "string", "index" => "not_analyzed"],
-                                'subtype' =>  ["type" => "string", "index" => "not_analyzed"],
+                                'type' => ['type' => 'keyword'],
+                                'subtype' => ['type' => 'keyword'],
                                 'id' => ["type" => "long"]
                             ]
                         ]
@@ -68,8 +68,8 @@ class ManyToOneRelation extends DefaultAdapter implements IFieldDefinitionAdapte
                 [
                     'type' => 'nested',
                     'properties' => [
-                        'type' =>  ["type" => "string", "index" => "not_analyzed"],
-                        'subtype' =>  ["type" => "string", "index" => "not_analyzed"],
+                        'type' => ['type' => 'keyword'],
+                        'subtype' => ['type' => 'keyword'],
                         'id' => ["type" => "long"]
                     ]
                 ]
