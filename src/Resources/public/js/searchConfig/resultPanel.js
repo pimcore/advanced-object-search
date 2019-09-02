@@ -41,7 +41,9 @@ pimcore.bundle.advancedObjectSearch.searchConfig.resultPanel = Class.create(pimc
         }
     },
 
-    getLayout: function () {
+    getLayout: function (initialFilter) {
+
+        this.initialFilter = initialFilter;
 
         if (this.layout == null) {
             this.layout = new Ext.Panel({
@@ -49,9 +51,17 @@ pimcore.bundle.advancedObjectSearch.searchConfig.resultPanel = Class.create(pimc
                 layout: "fit",
                 listeners: {
                     activate: function () {
-                        if (this.getSaveDataCallback) {
+
+                        var classId = null;
+                        if(this.initialFilter) {
+                            classId = this.initialFilter.classId;
+                        } else if(this.getSaveDataCallback) {
                             var saveData = this.getSaveDataCallback(true);
-                            this.updateGrid(saveData.classId);
+                            classId = saveData.classId;
+                        }
+
+                        if(classId) {
+                            this.updateGrid(classId);
                         }
                     }.bind(this)
                 }
@@ -329,7 +339,12 @@ pimcore.bundle.advancedObjectSearch.searchConfig.resultPanel = Class.create(pimc
 
         var proxy = this.store.getProxy();
 
-        proxy.extraParams.filter = this.getSaveDataCallback();
+        if(this.initialFilter) {
+            proxy.extraParams.filter = Ext.encode(this.initialFilter);
+            this.initialFilter = null;
+        } else {
+            proxy.extraParams.filter = this.getSaveDataCallback();
+        }
 
         if(this.extensionBag) {
             this.extensionBag.addCustomFilter();
