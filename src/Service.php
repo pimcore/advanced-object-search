@@ -160,7 +160,7 @@ class Service {
 
         $mappingParams = [
             "index" => $this->getIndexName($objectClass->getName()),
-//            "type" => $objectClass->getName(),
+            "type" => $objectClass->getName(),
             "body" => [
                 $objectClass->getName() => [
                     "_source" => [
