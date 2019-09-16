@@ -39,14 +39,8 @@ class Select extends DefaultAdapter implements IFieldDefinitionAdapter {
                 $this->fieldDefinition->getName(),
                 [
                     'properties' => [
-                        self::ES_MAPPING_PROPERTY_STANDARD => [
-                            'type' => 'string',
-                            'index' => 'not_analyzed'
-                        ],
-                        self::ES_MAPPING_PROPERTY_NOT_INHERITED => [
-                            'type' => 'string',
-                            'index' => 'not_analyzed'
-                        ]
+                        self::ES_MAPPING_PROPERTY_STANDARD => ['type' => 'keyword'],
+                        self::ES_MAPPING_PROPERTY_NOT_INHERITED => ['type' => 'keyword']
                     ]
                 ]
             ];
@@ -54,8 +48,7 @@ class Select extends DefaultAdapter implements IFieldDefinitionAdapter {
             return [
                 $this->fieldDefinition->getName(),
                 [
-                    'type' => 'string',
-                    'index' => 'not_analyzed'
+                    'type' => 'keyword',
                 ]
             ];
         }

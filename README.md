@@ -1,7 +1,7 @@
 # Advanced Object Search via Elasticsearch
 
 Advanced Object Search bundle provides advanced object search in 
-Pimcore backend powered by Elasticsearch. 
+Pimcore backend powered by Elasticsearch v6. 
 
 ## Integration into Pimcore
 
@@ -204,3 +204,7 @@ with Pimcore < 5.4, please add following rewrite rule to your `.htaccess`.
     # rewrite rule for pre pimcore 5.4 core static files
     RewriteRule ^bundles/pimcoreadmin/(.*) /pimcore/static6/$1 [PT,L]
 ``` 
+
+
+## Supported Elastic Search Versions
+- ElasticSearch 6

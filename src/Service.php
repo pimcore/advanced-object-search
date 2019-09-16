@@ -147,9 +147,9 @@ class Service {
         $mappingProperties = [
             "o_id" => ["type" => "long"],
             "o_checksum" => ["type" => "long"],
-            "type" => ["type" => "string", "index" => "not_analyzed"],
-            "key" =>  ["type" => "string", "index" => "not_analyzed"],
-            "path" => ["type" => "string", "index" => "not_analyzed"]
+            "type" => ["type" => "keyword"],
+            "key" =>  ["type" => "keyword"],
+            "path" => ["type" => "keyword"]
         ];
 
         foreach($fieldDefinitions as $fieldDefinition) {
@@ -170,7 +170,6 @@ class Service {
                 ]
             ]
         ];
-
 
         return $mappingParams;
 
