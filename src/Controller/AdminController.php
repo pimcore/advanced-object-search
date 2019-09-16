@@ -381,7 +381,7 @@ class AdminController extends \Pimcore\Bundle\AdminBundle\Controller\AdminContro
             if(!empty($config["gridConfig"]["columns"])) {
                 $helperColumns = [];
 
-                foreach ($config["gridConfig"]["columns"] as $column) {
+                foreach ($config["gridConfig"]["columns"] as &$column) {
                     if(!$column["isOperator"]) {
                         $fieldDefinition = $classDefinition->getFieldDefinition($column['key']);
                         if($fieldDefinition) {
