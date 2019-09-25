@@ -125,7 +125,7 @@ pimcore.bundle.advancedObjectSearch.helper = {
 
     },
 
-    openEsSearch: function(id, callback) {
+    openEsSearch: function(id, callback, filter) {
         Ext.Ajax.request({
             url: "/admin/bundle/advanced-object-search/admin/load-search",
             params: {
@@ -134,6 +134,10 @@ pimcore.bundle.advancedObjectSearch.helper = {
             method: "get",
             success: function (response) {
                 var rdata = Ext.decode(response.responseText);
+
+                if(rdata.gridConfig) {
+                    rdata.gridConfig.predefinedFilter = filter;
+                }
 
                 var tabId = "pimcore_search_" + id;
                 try {
