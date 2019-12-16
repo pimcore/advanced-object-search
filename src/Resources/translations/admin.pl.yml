@@ -1,0 +1,38 @@
+bundle_advancedObjectSearch: Zaawansowane wyszukiwanie obiektów
+bundle_advancedObjectSearch_field: Pole
+bundle_advancedObjectSearch_condition: Warunek
+bundle_advancedObjectSearch_term: Fraza
+bundle_advancedObjectSearch_operator: Operator
+bundle_advancedObjectSearch_language: Język
+bundle_advancedObjectSearch_subclass:  Podklasa
+bundle_advancedObjectSearch_filter:  Filtr
+bundle_advancedObjectSearch_filters:  Filtry
+bundle_advancedObjectSearch_type:  Typ
+bundle_advancedObjectSearch_ids:  IDs
+bundle_advancedObjectSearch_results:  Wyniki
+bundle_advancedObjectSearch_fulltextterm:  Fraza Wyszukiwania
+bundle_advancedObjectSearch_save_and_share:  Zapisz i Udostępnij
+bundle_advancedObjectSearch_share:  Udostępnianie
+bundle_advancedObjectSearch_combine_entries_with:  Combine Entries with
+bundle_advancedObjectSearch_combine_entries_with_must:  MUSI
+bundle_advancedObjectSearch_combine_entries_with_should:  POWINIEN
+bundle_advancedObjectSearch_group: Grupa
+bundle_advancedObjectSearch_save_success: Konfiguracja zapisana poprawnie
+bundle_advancedObjectSearch_save_error: Wystąpił błąd podczas zapisu konfiguracji
+bundle_advancedObjectSearch_category:  Kategoria
+bundle_advancedObjectSearch_open_saved_searches:  Otwórz zapisaną konfigurację
+bundle_advancedObjectSearch_new:  Nowe
+bundle_advancedObjectSearch_search:  Otwórz istniejącą konfigurację
+bundle_advancedObjectSearch_users:  Użytkownicy
+bundle_advancedObjectSearch_owner:  Właściciel
+bundle_advancedObjectSearch_save_as_copy:  Zapisz jako kopia
+bundle_advancedObjectSearch_name_copy_suffix:  (kopia)
+bundle_advancedObjectSearch_delete_error:  Wystąpił błąd podczas usuwania konfiguracji
+bundle_advancedObjectSearch_delete_really:  Czy na pewno chcesz usunąć konfigurację?
+bundle_advancedObjectSearch_add_to_shortcuts:  Dodaj skrót
+bundle_advancedObjectSearch_remove_from_shortcuts:  Usuń skrót
+bundle_advancedObjectSearch_short_cut_error:  Nie można dodać skrótu dla nie zapisanej konfiguracji
+bundle_advancedObjectSearch_ignoreInheritance:  Bez dziedziczenia
+bundle_advancedObjectSearch_date:  Data
+bundle_advancedObjectSearch_updating_index:  Aktualizacja indeksu wyszukiwarki w trakcie
+bundle_advancedsearch_search: Zaawansowane wyszukiwanie obiektów
