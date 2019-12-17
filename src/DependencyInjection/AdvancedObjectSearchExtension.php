@@ -31,10 +31,12 @@ class AdvancedObjectSearchExtension extends ConfigurableExtension
             new FileLocator(__DIR__ . '/../Resources/config')
         );
 
-
         $loader->load('services.yml');
 
-
+        $container->setParameter(
+            'advanced_object_search.core_fields_configuration',
+            $config['core_fields_configuration']
+        );
 
         // load mappings for field definition adapters
         $serviceLocator = $container->getDefinition("bundle.advanced_object_search.filter_locator");
@@ -46,5 +48,5 @@ class AdvancedObjectSearchExtension extends ConfigurableExtension
 
         $serviceLocator->setArgument(0, $arguments);
     }
-    
+
 }

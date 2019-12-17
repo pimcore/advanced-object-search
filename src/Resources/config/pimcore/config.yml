@@ -30,3 +30,46 @@ advanced_object_search:
         multihref: 'AdvancedObjectSearchBundle\Filter\FieldDefinitionAdapter\ManyToManyRelation'
         multihrefMetadata: 'AdvancedObjectSearchBundle\Filter\FieldDefinitionAdapter\AdvancedManyToManyRelation'
         objectsMetadata: 'AdvancedObjectSearchBundle\Filter\FieldDefinitionAdapter\AdvancedManyToManyObjectRelation'
+
+    core_fields_configuration:
+        -
+            field: o_id
+            type: long
+            title: ID
+            fieldDefinition: Pimcore\Model\DataObject\ClassDefinition\Data\Numeric
+        -
+            field: o_creationDate
+            type: date
+            title: creationdate
+            fieldDefinition: Pimcore\Model\DataObject\ClassDefinition\Data\Datetime
+        -
+            field: o_modificationDate
+            type: date
+            title: modificationdate
+            fieldDefinition: Pimcore\Model\DataObject\ClassDefinition\Data\Datetime
+        -
+            field: o_published
+            type: boolean
+            title: published
+            fieldDefinition: Pimcore\Model\DataObject\ClassDefinition\Data\Select
+            values: { options: [{ key: 'Yes', value: true }, { key: 'No', value: false }] }
+        -
+            field: o_type
+            type: keyword
+            title: type
+            fieldDefinition: Pimcore\Model\DataObject\ClassDefinition\Data\Select
+            values: { options: [{ key: Variant, value: variant }, { key: Object, value: object }] }
+        -
+            field: key
+            type: keyword
+            title: key
+            fieldDefinition: Pimcore\Model\DataObject\ClassDefinition\Data\Input
+        -
+            field: path
+            type: keyword
+            title: path
+            fieldDefinition: Pimcore\Model\DataObject\ClassDefinition\Data\Input
+        -
+            field: type
+            title: classname
+            type: keyword
