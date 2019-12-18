@@ -5,6 +5,11 @@ services:
         autowire: true
         autoconfigure: true
 
+    AdvancedObjectSearchBundle\Installer:
+        public: true
+        arguments:
+            $bundle: "@=service('kernel').getBundle('AdvancedObjectSearchBundle')"
+
     # auto-register all controllers as services
     AdvancedObjectSearchBundle\Controller\:
         resource: '../../Controller'
