@@ -82,4 +82,10 @@ class Installer extends MigrationInstaller
         $key = self::PERMISSION_KEY;
         $this->connection->query("DELETE FROM users_permission_definitions WHERE `key` = '{$key}'");
     }
+
+
+    public function needsReloadAfterInstall()
+    {
+        return true;
+    }
 }
