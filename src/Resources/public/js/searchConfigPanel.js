@@ -138,7 +138,21 @@ pimcore.bundle.advancedObjectSearch.searchConfigPanel = Class.create(pimcore.ele
                     idProperty: 'id'
                 }
             },
-            fields: ['id','label']
+            fields: ['id', 'label']
+        });
+
+        this.rolesStore = new Ext.data.JsonStore({
+            autoDestroy: true,
+            autoLoad: true,
+            proxy: {
+                type: 'ajax',
+                url: '/admin/bundle/advanced-object-search/admin/get-roles',
+                reader: {
+                    rootProperty: 'data',
+                    idProperty: 'id'
+                }
+            },
+            fields: ['id', 'label']
         });
 
         this.nameField = Ext.create('Ext.form.field.Text', {
@@ -164,10 +178,40 @@ pimcore.bundle.advancedObjectSearch.searchConfigPanel = Class.create(pimcore.ele
             value: this.data.settings ? this.data.settings.sharedUserIds : ""
         });
 
+        this.rolesSharingField = Ext.create('Ext.form.field.Tag', {
+            name: "shared_roles",
+            width: 500,
+            fieldLabel: t("bundle_advancedObjectSearch_roles"),
+            queryDelay: 0,
+            resizable: true,
+            queryMode: 'local',
+            minChars: 1,
+            store: this.rolesStore,
+            displayField: 'label',
+            valueField: 'id',
+            forceSelection: true,
+            filterPickList: true,
+            value: this.data.settings ? this.data.settings.sharedUserIds : ""
+        });
+
+        var shareItems = [this.sharingField, this.rolesSharingField];
+
+        var user = pimcore.globalmanager.get("user");
+        if (user.admin) {
+            this.shareGlobally = new Ext.form.field.Checkbox(
+                {
+                    fieldLabel: t("share_globally"),
+                    inputValue: true,
+                    name: "share_globally",
+                    value: this.data.settings ? this.data.settings.shareGlobally : false
+                }
+            );
+
+            shareItems.push(this.shareGlobally);
+        }
 
         var buttons = [];
 
-        
         var buttonText = t("bundle_advancedObjectSearch_add_to_shortcuts");
         if(this.data.settings && this.data.settings.hasShortCut) {
             buttonText = t("bundle_advancedObjectSearch_remove_from_shortcuts");
@@ -180,7 +224,6 @@ pimcore.bundle.advancedObjectSearch.searchConfigPanel = Class.create(pimcore.ele
         });
 
         buttons.push(this.toggleShortCutButton);
-
 
         if(!this.data.settings || this.data.settings.isOwner) {
             buttons.push({
@@ -225,9 +268,7 @@ pimcore.bundle.advancedObjectSearch.searchConfigPanel = Class.create(pimcore.ele
                 xtype: "fieldset",
                 title: t("bundle_advancedObjectSearch_share"),
                 closeable: true,
-                items: [
-                    this.sharingField
-                ]
+                items: shareItems
             }],
             buttons: buttons
         });

@@ -66,6 +66,11 @@ class SavedSearch extends Model\AbstractModel
     public $shortCutUserIds;
 
     /**
+     * @var bool
+     */
+    public $shareGlobally;
+
+    /**
      * @static
      * @param $id
      * @return SavedSearch
@@ -305,6 +310,22 @@ class SavedSearch extends Model\AbstractModel
         $this->setShortCutUserIds(array_filter(array_keys($shortCutUserIds)));
     }
 
+    /**
+     * @return bool
+     */
+    public function getShareGlobally()
+    {
+        return $this->shareGlobally;
+    }
 
+    /**
+     * @param bool $shareGlobally
+     * @return SavedSearch
+     */
+    public function setShareGlobally($shareGlobally)
+    {
+        $this->shareGlobally = $shareGlobally;
+        return $this;
+    }
 
 }
