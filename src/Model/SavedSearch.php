@@ -269,7 +269,7 @@ class SavedSearch extends Model\AbstractModel
     public function setShortCutUserIds($shortCutUserIds)
     {
         if(is_string($shortCutUserIds) && !empty($shortCutUserIds)) {
-            $shortCutUserIds = explode(",", $shortCutUserIds);
+            $shortCutUserIds = array_values(array_filter(explode(",", $shortCutUserIds)));
         }
 
         $this->shortCutUserIds = $shortCutUserIds;
