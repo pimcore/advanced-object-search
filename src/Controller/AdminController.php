@@ -421,6 +421,7 @@ class AdminController extends \Pimcore\Bundle\AdminBundle\Controller\AdminContro
                     'description' => $savedSearch->getDescription(),
                     'category' => $savedSearch->getCategory(),
                     'sharedUserIds' => $savedSearch->getSharedUserIds(),
+                    'shareGlobally' => $savedSearch->getShareGlobally(),
                     'isOwner' => $savedSearch->getOwnerId() == $this->getAdminUser()->getId(),
                     'hasShortCut' => $savedSearch->isInShortCutsForUser($this->getAdminUser())
                 ],
