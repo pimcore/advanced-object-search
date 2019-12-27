@@ -36,13 +36,13 @@ bundle_advancedObjectSearch_ignoreInheritance:  Bez dziedziczenia
 bundle_advancedObjectSearch_date:  Data
 bundle_advancedObjectSearch_updating_index:  Aktualizacja indeksu wyszukiwarki w trakcie
 bundle_advancedsearch_search: Zaawansowane wyszukiwanie obiektów
-operator_lt: mniejszy od
-operator_lte: mniejszy lub równy
-operator_gt: większy od
-operator_gte: większy lub równy
-operator_eq: równy
-operator_exists: istnieje
-operator_not_exists: nie istnieje
-operator_must: musi
-operator_must_not: nie musi
-operator_should: powinien
+bundle_advancedsearch_operator_lt: mniejszy od
+bundle_advancedsearch_operator_lte: mniejszy lub równy
+bundle_advancedsearch_operator_gt: większy od
+bundle_advancedsearch_operator_gte: większy lub równy
+bundle_advancedsearch_operator_eq: równy
+bundle_advancedsearch_operator_exists: istnieje
+bundle_advancedsearch_operator_not_exists: nie istnieje
+bundle_advancedsearch_operator_must: musi
+bundle_advancedsearch_operator_must_not: nie musi
+bundle_advancedsearch_operator_should: powinien
