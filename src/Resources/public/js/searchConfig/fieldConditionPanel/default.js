@@ -66,7 +66,7 @@ pimcore.bundle.advancedObjectSearch.searchConfig.fieldConditionPanel.default = C
             data: this.fieldSelectionInformation.context.operators.map(function (operator) {
                 return {
                     fieldName: operator,
-                    fieldLabel: t('operator_' + operator)
+                    fieldLabel: t('bundle_advancedsearch_operator_' + operator)
                 };
             })
         });
