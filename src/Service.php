@@ -642,7 +642,11 @@ class Service {
      */
     public function buildFilterEntryObject($filterEntry) {
         if(is_array($filterEntry)) {
+
+            //apply default values
+            $filterEntry = array_merge(['operator' => null, 'ignoreInheritance' => null], $filterEntry);
             return new FilterEntry($filterEntry['fieldname'], $filterEntry['filterEntryData'], $filterEntry['operator'], $filterEntry['ignoreInheritance']);
+
         } else if($filterEntry instanceof FilterEntry) {
             return $filterEntry;
         } else {
