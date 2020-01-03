@@ -197,14 +197,13 @@ advanced_object_search:
 If you want custom filters in the result tab directly without having to create a new advanced object search every time
 read [here on how to extend the result tab with custom filters.](./doc/01_Extending_Filters.md).
 
-## Running with Pimcore < 5.4
-With Pimcore 5.4 the location of static Pimcore files like icons has changed. In order to make this bundle work 
-with Pimcore < 5.4, please add following rewrite rule to your `.htaccess`.
-```
-    # rewrite rule for pre pimcore 5.4 core static files
-    RewriteRule ^bundles/pimcoreadmin/(.*) /pimcore/static6/$1 [PT,L]
-``` 
-
 
 ## Supported Elastic Search Versions
 - ElasticSearch 6
+
+
+## Upgrade Notes
+
+### Upgrate to v3.0.0
+- Reinstall of Bundle might be necessary - due to switch to MigrationInstaller
+- Update ES mapping and reindex is necessary - run commands `advanced-object-search:update-mapping` and `advanced-object-search:re-index`
