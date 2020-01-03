@@ -112,8 +112,9 @@ class DefaultAdapter implements IFieldDefinitionAdapter {
     }
 
     /**
-     * @param Concrete $object
+     * @param $object
      * @param bool $ignoreInheritance
+     * @return string
      */
     protected function doGetIndexDataValue($object, $ignoreInheritance = false) {
         $inheritanceBackup = null;
@@ -126,6 +127,10 @@ class DefaultAdapter implements IFieldDefinitionAdapter {
 
         if($ignoreInheritance) {
             AbstractObject::setGetInheritedValues($inheritanceBackup);
+        }
+
+        if(is_array($value)) {
+            return json_encode($value);
         }
 
         return (string) $value;

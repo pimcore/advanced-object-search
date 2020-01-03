@@ -15,7 +15,7 @@
 
 namespace AdvancedObjectSearchBundle;
 
-use AdvancedObjectSearchBundle\Tools\Installer;
+use AdvancedObjectSearchBundle\Installer;
 use Pimcore\Extension\Bundle\AbstractPimcoreBundle;
 use Pimcore\Extension\Bundle\Traits\PackageVersionTrait;
 
@@ -152,6 +152,6 @@ class AdvancedObjectSearchBundle extends AbstractPimcoreBundle
      */
     public function getInstaller()
     {
-        return new Installer();
+        return $this->container->get(Installer::class);
     }
 }

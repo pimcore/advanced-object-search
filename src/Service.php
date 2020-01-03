@@ -20,7 +20,7 @@ use AdvancedObjectSearchBundle\Event\FilterSearchEvent;
 use AdvancedObjectSearchBundle\Filter\FieldDefinitionAdapter\IFieldDefinitionAdapter;
 use AdvancedObjectSearchBundle\Filter\FieldSelectionInformation;
 use AdvancedObjectSearchBundle\Filter\FilterEntry;
-use AdvancedObjectSearchBundle\Tools\Installer;
+use AdvancedObjectSearchBundle\Installer;
 use Elasticsearch\Client;
 use Elasticsearch\Common\Exceptions\Missing404Exception;
 use ONGR\ElasticsearchDSL\BuilderInterface;

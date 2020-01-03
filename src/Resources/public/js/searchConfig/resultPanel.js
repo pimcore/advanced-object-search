@@ -17,6 +17,7 @@ pimcore.bundle.advancedObjectSearch.searchConfig.resultPanel = Class.create(pimc
     systemColumns: ["id", "fullpath", "type", "subtype", "filename", "classname", "creationDate", "modificationDate"],
     noBatchColumns: [],
     batchAppendColumns: [],
+    batchRemoveColumns: [],
 
     getSaveDataCallback: null,
     gridConfigData: {},
@@ -179,7 +180,7 @@ pimcore.bundle.advancedObjectSearch.searchConfig.resultPanel = Class.create(pimc
         gridHelper.enableEditor = !this.portletMode;
         gridHelper.limit = itemsPerPage;
 
-        this.store = gridHelper.getStore(this.noBatchColumns, this.batchAppendColumns);
+        this.store = gridHelper.getStore(this.noBatchColumns, this.batchAppendColumns, this.batchRemoveColumns);
         this.store.setPageSize(itemsPerPage);
 
 
@@ -406,7 +407,7 @@ pimcore.bundle.advancedObjectSearch.searchConfig.resultPanel = Class.create(pimc
         menu.showAt(e.pageX, e.pageY);
     },
 
-    batchPrepare: function (columnIndex, onlySelected, append) {
+    batchPrepare: function (columnIndex, onlySelected, append, remove) {
         // no batch for system properties
         if (this.systemColumns.indexOf(this.grid.getColumns()[columnIndex].dataIndex) > -1) {
             return;
@@ -418,7 +419,7 @@ pimcore.bundle.advancedObjectSearch.searchConfig.resultPanel = Class.create(pimc
             for (var i = 0; i < selectedRows.length; i++) {
                 jobs.push(selectedRows[i].get("id"));
             }
-            this.batchOpen(columnIndex, jobs, append);
+            this.batchOpen(columnIndex, jobs, append, remove);
 
         } else {
 
@@ -450,7 +451,7 @@ pimcore.bundle.advancedObjectSearch.searchConfig.resultPanel = Class.create(pimc
                 success: function (columnIndex, response) {
                     var rdata = Ext.decode(response.responseText);
                     if (rdata.success && rdata.jobs) {
-                        this.batchOpen(columnIndex, rdata.jobs, append);
+                        this.batchOpen(columnIndex, rdata.jobs, append, remove);
                     }
 
                 }.bind(this, columnIndex)

@@ -46,3 +46,4 @@ bundle_advancedsearch_operator_not_exists: nie istnieje
 bundle_advancedsearch_operator_must: musi
 bundle_advancedsearch_operator_must_not: nie musi
 bundle_advancedsearch_operator_should: powinien
+bundle_advancedObjectSearch_roles: Role
