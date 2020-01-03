@@ -17,7 +17,6 @@ namespace AdvancedObjectSearchBundle;
 
 use AdvancedObjectSearchBundle\Event\AdvancedObjectSearchEvents;
 use AdvancedObjectSearchBundle\Event\FilterSearchEvent;
-use AdvancedObjectSearchBundle\Filter\FieldDefinitionAdapter\DefaultAdapter;
 use AdvancedObjectSearchBundle\Filter\FieldDefinitionAdapter\IFieldDefinitionAdapter;
 use AdvancedObjectSearchBundle\Filter\FieldSelectionInformation;
 use AdvancedObjectSearchBundle\Filter\FilterEntry;
@@ -34,6 +33,7 @@ use Pimcore\Model\DataObject\ClassDefinition;
 use Pimcore\Model\DataObject\Concrete;
 use Pimcore\Model\DataObject\Fieldcollection\Definition;
 use Pimcore\Model\User;
+use Pimcore\Translation\Translator;
 use Psr\Container\ContainerInterface;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
@@ -66,19 +66,38 @@ class Service {
     protected $eventDispatcher;
 
     /**
+     * @var Translator
+     */
+    protected $translator;
+
+    /**
+     * @var array
+     */
+    protected $coreFieldsConfig;
+
+    /**
      * Service constructor.
      * @param LoggerInterface $logger
      * @param TokenStorageUserResolver $userResolver
      * @param Client $esClient
-     * @param ContainerInterface $container
+     * @param ContainerInterface $filterLocator
+     * @param EventDispatcherInterface $eventDispatcher
+     * @param Translator $translator
      */
-    public function __construct(LoggerInterface $logger, TokenStorageUserResolver $userResolver, Client $esClient, ContainerInterface $filterLocator, EventDispatcherInterface $eventDispatcher)
-    {
+    public function __construct(
+        LoggerInterface $logger,
+        TokenStorageUserResolver $userResolver,
+        Client $esClient,
+        ContainerInterface $filterLocator,
+        EventDispatcherInterface $eventDispatcher,
+        Translator $translator
+    ) {
         $this->user = $userResolver->getUser();
         $this->logger = $logger;
         $this->esClient = $esClient;
         $this->filterLocator = $filterLocator;
         $this->eventDispatcher = $eventDispatcher;
+        $this->translator = $translator;
     }
 
     /**
@@ -114,7 +133,11 @@ class Service {
 
         $fieldSelectionInformationEntries = [];
 
-        $fieldDefinitions = $definition->getFieldDefinitions();
+        $fieldDefinitions = array_merge(
+            $this->getCoreFieldDefinitions(),
+            $definition->getFieldDefinitions()
+        );
+
         foreach($fieldDefinitions as $fieldDefinition) {
             $fieldDefinitionAdapter = $this->getFieldDefinitionAdapter($fieldDefinition, $allowInheritance);
             $fieldSelectionInformationEntries = array_merge($fieldSelectionInformationEntries, $fieldDefinitionAdapter->getFieldSelectionInformation());
@@ -134,6 +157,80 @@ class Service {
         return $config['index-prefix'] . strtolower($classname);
     }
 
+    /**
+     * returns core fields index data array for given object
+     */
+    public function getCoreFieldsIndexData(Concrete $object) {
+        $date = new \DateTime();
+
+        return [
+            "o_id"                  => $object->getId(),
+            "o_creationDate"        => $date->setTimestamp($object->getCreationDate())->format(\DateTime::ISO8601),
+            "o_modificationDate"    => $date->setTimestamp($object->getModificationDate())->format(\DateTime::ISO8601),
+            "o_published"           => $object->getPublished(),
+            "o_type"                => $object->getType(),
+            "type"                  => $object->getClassName(),
+            "key"                   => $object->getKey(),
+            "path"                  => $object->getPath()
+        ];
+    }
+
+    /**
+     * @param array $coreFieldsConfig
+     */
+    public function setCoreFieldsConfig(array $coreFieldsConfig) {
+        $this->coreFieldsConfig = $coreFieldsConfig;
+    }
+
+    /**
+     * @param null $fieldName
+     * @return array
+     */
+    public function getCoreFieldsConfig($fieldName = null) {
+        if($fieldName !== null && array_key_exists($fieldName, $this->coreFieldsConfig)) {
+            return $this->coreFieldsConfig[$fieldName];
+        }
+
+        return $this->coreFieldsConfig;
+    }
+
+    /**
+     * @param $name
+     * @param array $data
+     * @return ClassDefinition\Data
+     */
+    public function getCoreFieldDefinition($name, array $data) {
+        $title = $this->translator->trans($data['title'], [], 'admin');
+        $values = isset($data['values']) ? $data['values'] : [];
+
+        /** @var ClassDefinition\Data $fieldDefinition */
+        $fieldDefinition = new $data['fieldDefinition']();
+
+        $fieldDefinition->setName($name);
+        $fieldDefinition->setTitle($title);
+        $fieldDefinition->setValues($values);
+
+        return $fieldDefinition;
+    }
+
+    /**
+     * @return array
+     */
+    public function getCoreFieldDefinitions() {
+        $coreConfig = $this->getCoreFieldsConfig();
+
+        $fieldDefinitions = [];
+
+        foreach($coreConfig as $fieldName => $properties) {
+            if(!isset($properties['fieldDefinition'])) {
+                continue;
+            }
+
+            $fieldDefinitions[$fieldName] = $this->getCoreFieldDefinition($fieldName, $properties);
+        }
+
+        return $fieldDefinitions;
+    }
 
     /**
      * generates and returns mapping for given class definition
@@ -144,13 +241,14 @@ class Service {
     public function generateMapping(ClassDefinition $objectClass) {
         $fieldDefinitions = $objectClass->getFieldDefinitions();
 
-        $mappingProperties = [
-            "o_id" => ["type" => "long"],
-            "o_checksum" => ["type" => "long"],
-            "type" => ["type" => "keyword"],
-            "key" =>  ["type" => "keyword"],
-            "path" => ["type" => "keyword"]
-        ];
+        $mappingProperties = array_map(
+            function($fieldProperties) {
+                return [
+                    'type' => $fieldProperties['type']
+                ];
+            },
+            $this->getCoreFieldsConfig()
+        );
 
         foreach($fieldDefinitions as $fieldDefinition) {
             $fieldDefinitionAdapter = $this->getFieldDefinitionAdapter($fieldDefinition, $objectClass->getAllowInherit());
@@ -264,7 +362,6 @@ class Service {
         $this->logger->debug(json_encode($response));
     }
 
-
     /**
      * returns index data array for given object
      *
@@ -273,12 +370,7 @@ class Service {
      */
     public function getIndexData(Concrete $object) {
 
-        $data = [
-            "o_id" => $object->getId(),
-            "type" => $object->getClassName(),
-            "key" => $object->getKey(),
-            "path" => $object->getPath()
-        ];
+        $data = $this->getCoreFieldsIndexData($object);
 
         foreach ($object->getClass()->getFieldDefinitions() as $key => $fieldDefinition) {
             $fieldDefinitionAdapter = $this->getFieldDefinitionAdapter($fieldDefinition, $object->getClass()->getAllowInherit());
@@ -508,7 +600,20 @@ class Service {
 
             } else {
                 $fieldDefinition = $objectClass->getFieldDefinition($filterEntryObject->getFieldname());
-                $fieldDefinitionAdapter = $this->getFieldDefinitionAdapter($fieldDefinition, $objectClass->getAllowInherit());
+
+                $considerInheritance = $objectClass->getAllowInherit();
+
+                if($fieldDefinition === false) {
+                    $fieldName = $filterEntryObject->getFieldname();
+                    $fieldDefinition = $this->getCoreFieldDefinition(
+                        $fieldName,
+                        $this->getCoreFieldsConfig($fieldName)
+                    );
+                    // skip inheritance for core fields
+                    $considerInheritance = false;
+                }
+
+                $fieldDefinitionAdapter = $this->getFieldDefinitionAdapter($fieldDefinition, $considerInheritance);
 
                 if($filterEntryObject->getOperator() == FilterEntry::EXISTS || $filterEntryObject->getOperator() == FilterEntry::NOT_EXISTS) {
 

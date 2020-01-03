@@ -30,7 +30,8 @@ services:
             - '@bundle.advanced_object_search.es_client'
             - '@bundle.advanced_object_search.filter_locator'
             - '@event_dispatcher'
-
+        calls:
+            - [setCoreFieldsConfig, ['%advanced_object_search.core_fields_configuration%']]
         tags:
             - { name: monolog.logger, channel: pimcore_advanced_object_search }
 

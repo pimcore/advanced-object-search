@@ -61,11 +61,20 @@ pimcore.bundle.advancedObjectSearch.searchConfig.fieldConditionPanel.default = C
     },
 
     getOperatorCombobox: function(value) {
+        var operators = Ext.create('Ext.data.Store', {
+            fields: ['fieldName', 'fieldLabel'],
+            data: this.fieldSelectionInformation.context.operators.map(function (operator) {
+                return {
+                    fieldName: operator,
+                    fieldLabel: t('bundle_advancedsearch_operator_' + operator)
+                };
+            })
+        });
+
         this.operatorField = Ext.create('Ext.form.ComboBox',
             {
-
                 fieldLabel:  t("bundle_advancedObjectSearch_operator"),
-                store: this.fieldSelectionInformation.context.operators,
+                store: operators,
                 value: value,
                 queryMode: 'local',
                 width: 300,
