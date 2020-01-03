@@ -260,7 +260,8 @@ class AdminController extends \Pimcore\Bundle\AdminBundle\Controller\AdminContro
         $savedSearch->setName($data->settings->name);
         $savedSearch->setDescription($data->settings->description);
         $savedSearch->setCategory($data->settings->category);
-        $savedSearch->setSharedUserIds($data->settings->shared_users);
+        $savedSearch->setSharedUserIds(array_merge($data->settings->shared_users, $data->settings->shared_roles));
+        $savedSearch->setShareGlobally($data->settings->share_globally && $this->getAdminUser()->isAdmin());
 
         $config = ['classId' => $data->classId, "gridConfig" => $data->gridConfig, "conditions" => $data->conditions];
         $savedSearch->setConfig(json_encode($config));
@@ -314,9 +315,12 @@ class AdminController extends \Pimcore\Bundle\AdminBundle\Controller\AdminContro
         $conditionParams = [];
 
         //filter for current user
-        $conditionParts[] = "(ownerId = ? OR sharedUserIds LIKE ?)";
+        $userIds = [$user->getId()];
+        $userIds = array_merge($userIds, $user->getRoles());
+        $userIds = implode('|', $userIds);
+        $conditionParts[] = "(shareGlobally = 1 OR ownerId = ? OR sharedUserIds REGEXP ?)";
         $conditionParams[] = $user->getId();
-        $conditionParams[] = "%," . $user->getId() . ",%";
+        $conditionParams[] = ",(" . $userIds . "),";
 
         //filter for query
         if (!empty($query)) {
@@ -417,6 +421,7 @@ class AdminController extends \Pimcore\Bundle\AdminBundle\Controller\AdminContro
                     'description' => $savedSearch->getDescription(),
                     'category' => $savedSearch->getCategory(),
                     'sharedUserIds' => $savedSearch->getSharedUserIds(),
+                    'shareGlobally' => $savedSearch->getShareGlobally(),
                     'isOwner' => $savedSearch->getOwnerId() == $this->getAdminUser()->getId(),
                     'hasShortCut' => $savedSearch->isInShortCutsForUser($this->getAdminUser())
                 ],
@@ -435,7 +440,14 @@ class AdminController extends \Pimcore\Bundle\AdminBundle\Controller\AdminContro
     public function loadShortCutsAction(Request $request) {
 
         $list = new SavedSearch\Listing();
-        $list->setCondition("(ownerId = ? OR sharedUserIds LIKE ?) AND shortCutUserIds LIKE ?", [$this->getAdminUser()->getId(), '%,' . $this->getAdminUser()->getId() . ',%', '%,' . $this->getAdminUser()->getId() . ',%']);
+        $list->setCondition(
+            "(ownerId = ? OR sharedUserIds LIKE ?) AND shortCutUserIds LIKE ?",
+            [
+                $this->getAdminUser()->getId(),
+                '%,' . $this->getAdminUser()->getId() . ',%',
+                '%,' . $this->getAdminUser()->getId() . ',%'
+            ]
+        );
         $list->load();
 
         $entries = [];
@@ -508,6 +520,30 @@ class AdminController extends \Pimcore\Bundle\AdminBundle\Controller\AdminContro
         }
 
         return $this->adminJson(['success' => true, 'total' => count($users), 'data' => $users]);
+    }
+
+    /**
+     * @param Request $request
+     * @Route("/get-roles")
+     */
+    public function getRolesAction() {
+
+        $users = [];
+
+        $rolesList = new \Pimcore\Model\User\Role\Listing();
+        $rolesList->setCondition('type = "role"');
+        $rolesList->addConditionParam("CONCAT(',', permissions, ',') LIKE ?", '%,bundle_advancedsearch_search,%');
+        $rolesList->load();
+
+        $roles = [];
+        foreach ($rolesList->getRoles() as $role) {
+            $roles[] = [
+                'id' => $role->getId(),
+                'label' => $role->getName()
+            ];
+        }
+
+        return $this->adminJson(['success' => true, 'total' => count($users), 'data' => $roles]);
     }
 
 
