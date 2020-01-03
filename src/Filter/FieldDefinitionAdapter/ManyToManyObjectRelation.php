@@ -18,6 +18,7 @@ namespace AdvancedObjectSearchBundle\Filter\FieldDefinitionAdapter;
 use AdvancedObjectSearchBundle\Filter\FieldSelectionInformation;
 use AdvancedObjectSearchBundle\Filter\FilterEntry;
 use ONGR\ElasticsearchDSL\Query\Compound\BoolQuery;
+use Pimcore\Model\DataObject\AbstractObject;
 
 class ManyToManyObjectRelation extends ManyToOneRelation implements IFieldDefinitionAdapter {
 
@@ -55,6 +56,23 @@ class ManyToManyObjectRelation extends ManyToOneRelation implements IFieldDefini
                 'allowedClasses' => $allowedClasses
             ]
         )];
+    }
+
+    /**
+     * @inheritDoc
+     */
+    protected function doGetIndexDataValue($object, $ignoreInheritance = false) {
+        $value = parent::doGetIndexDataValue($object, $ignoreInheritance);
+
+        //rewrite all types to 'object' since 'variants' are not supported yet.
+        $filteredValues = array_map(function($item) {
+            return [
+                'id' => $item['id'],
+                'type' => 'object'
+            ];
+        }, $value);
+
+        return $filteredValues;
     }
 
 }
