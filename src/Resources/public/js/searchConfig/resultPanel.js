@@ -494,7 +494,9 @@ pimcore.bundle.advancedObjectSearch.searchConfig.resultPanel = Class.create(pimc
                 var fieldKeys = Object.keys(fields);
 
                 if (rdata.success && rdata.jobs) {
-                    this.exportProcess(rdata.jobs, rdata.fileHandle, fieldKeys, true);
+                    var exportType = {};
+                    exportType.downloadUrl = "/admin/object-helper/download-csv-file";
+                    this.exportProcess(rdata.jobs, rdata.fileHandle, fieldKeys, true, {}, exportType);
                 }
 
             }.bind(this)
