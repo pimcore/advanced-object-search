@@ -271,7 +271,7 @@ pimcore.bundle.advancedObjectSearch.searchConfig.resultPanel = Class.create(pimc
                         buttons: Ext.Msg.OKCANCEL,
                         fn: function (btn) {
                             if (btn == 'ok') {
-                                this.exportPrepare();
+                                this.exportResultPrepare();
                             }
                         }.bind(this),
                         icon: Ext.MessageBox.WARNING
@@ -460,7 +460,7 @@ pimcore.bundle.advancedObjectSearch.searchConfig.resultPanel = Class.create(pimc
 
     },
 
-    exportPrepare: function () {
+    exportResultPrepare: function () {
         var jobs = [];
 
         var fields = this.getGridConfig().columns;
