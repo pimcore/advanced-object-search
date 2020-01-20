@@ -603,7 +603,7 @@ class Service {
 
                 $considerInheritance = $objectClass->getAllowInherit();
 
-                if($fieldDefinition === false) {
+                if(! $fieldDefinition instanceof ClassDefinition\Data) {
                     $fieldName = $filterEntryObject->getFieldname();
                     $fieldDefinition = $this->getCoreFieldDefinition(
                         $fieldName,
