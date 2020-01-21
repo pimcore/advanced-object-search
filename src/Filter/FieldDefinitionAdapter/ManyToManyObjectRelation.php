@@ -39,7 +39,7 @@ class ManyToManyObjectRelation extends ManyToOneRelation implements IFieldDefini
     {
         $allowedTypes = [];
         $allowedClasses = [];
-        $allowedTypes[] = ["objects", "object_ids"];
+        $allowedTypes[] = ["object", "object_ids"];
         $allowedTypes[] = ["object_filter", "object_filter"];
 
         foreach($this->fieldDefinition->getClasses() as $class) {
