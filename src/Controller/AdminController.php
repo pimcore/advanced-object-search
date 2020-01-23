@@ -441,8 +441,9 @@ class AdminController extends \Pimcore\Bundle\AdminBundle\Controller\AdminContro
 
         $list = new SavedSearch\Listing();
         $list->setCondition(
-            "(ownerId = ? OR sharedUserIds LIKE ?) AND shortCutUserIds LIKE ?",
+            "(shareGlobally = ? OR ownerId = ? OR sharedUserIds LIKE ?) AND shortCutUserIds LIKE ?",
             [
+                true,
                 $this->getAdminUser()->getId(),
                 '%,' . $this->getAdminUser()->getId() . ',%',
                 '%,' . $this->getAdminUser()->getId() . ',%'
