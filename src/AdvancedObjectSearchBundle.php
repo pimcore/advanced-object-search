@@ -116,6 +116,7 @@ class AdvancedObjectSearchBundle extends AbstractPimcoreBundle
             '/bundles/advancedobjectsearch/js/searchConfigPanel.js',
             '/bundles/advancedobjectsearch/js/searchConfig/conditionPanelContainerBuilder.js',
             '/bundles/advancedobjectsearch/js/searchConfig/conditionPanel.js',
+            '/bundles/advancedobjectsearch/js/searchConfig/resultAbstractPanel.js',
             '/bundles/advancedobjectsearch/js/searchConfig/resultPanel.js',
             '/bundles/advancedobjectsearch/js/searchConfig/resultExtension.js',
             '/bundles/advancedobjectsearch/js/searchConfig/conditionAbstractPanel.js',

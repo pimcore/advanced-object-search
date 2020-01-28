@@ -13,21 +13,12 @@
 
 
 pimcore.registerNS("pimcore.bundle.advancedObjectSearch.searchConfig.resultPanel");
-pimcore.bundle.advancedObjectSearch.searchConfig.resultPanel = Class.create(pimcore.object.helpers.gridTabAbstract, {
-    systemColumns: ["id", "fullpath", "type", "subtype", "filename", "classname", "creationDate", "modificationDate"],
-    noBatchColumns: [],
-    batchAppendColumns: [],
-    batchRemoveColumns: [],
+pimcore.bundle.advancedObjectSearch.searchConfig.resultPanel = Class.create(pimcore.bundle.advancedObjectSearch.searchConfig.resultAbstractPanel, {
 
-    getSaveDataCallback: null,
-    gridConfigData: {},
-
-    portletMode: false,
-
-    fieldObject: {},
     initialize: function (getSaveDataCallback, gridConfigData, portletMode) {
         this.getSaveDataCallback = getSaveDataCallback;
         this.settings = {};
+        this.element = {};
         this.gridPageSize = 25;
 
         if (gridConfigData) {
@@ -260,26 +251,19 @@ pimcore.bundle.advancedObjectSearch.searchConfig.resultPanel = Class.create(pimc
             });
             plugins.push(this.cellEditing);
 
-            tbar = tbar.concat(['->', "-", {
-                text: t("export_csv"),
-                iconCls: "pimcore_icon_export",
-                handler: function () {
+            var exportButtons = this.getExportButtons();
+            var firstButton = exportButtons.pop();
 
-                    Ext.MessageBox.show({
-                        title: t('warning'),
-                        msg: t('csv_object_export_warning'),
-                        buttons: Ext.Msg.OKCANCEL,
-                        fn: function (btn) {
-                            if (btn == 'ok') {
-                                this.exportResultPrepare();
-                            }
-                        }.bind(this),
-                        icon: Ext.MessageBox.WARNING
-                    });
+            this.exportButton = new Ext.SplitButton({
+                text: firstButton.text,
+                iconCls: firstButton.iconCls,
+                handler: firstButton.handler,
+                menu: exportButtons,
+            });
 
-
-                }.bind(this)
-            }, "-", this.columnConfigButton
+            tbar = tbar.concat(['->', "-",
+                this.exportButton, "-",
+                this.columnConfigButton
             ]);
 
             tbars = [{
@@ -460,7 +444,7 @@ pimcore.bundle.advancedObjectSearch.searchConfig.resultPanel = Class.create(pimc
 
     },
 
-    exportResultPrepare: function () {
+    exportPrepare: function (settings, exportType) {
         var jobs = [];
 
         var fields = this.getGridConfig().columns;
@@ -494,9 +478,7 @@ pimcore.bundle.advancedObjectSearch.searchConfig.resultPanel = Class.create(pimc
                 var fieldKeys = Object.keys(fields);
 
                 if (rdata.success && rdata.jobs) {
-                    var exportType = {};
-                    exportType.downloadUrl = "/admin/object-helper/download-csv-file";
-                    this.exportProcess(rdata.jobs, rdata.fileHandle, fieldKeys, true, {}, exportType);
+                    this.exportProcess(rdata.jobs, rdata.fileHandle, fieldKeys, true, settings, exportType);
                 }
 
             }.bind(this)
@@ -604,16 +586,22 @@ pimcore.bundle.advancedObjectSearch.searchConfig.resultPanel = Class.create(pimc
         } else {
             return this.gridConfigData;
         }
+    },
+
+    getExportButtons: function () {
+        var buttons = [];
+        pimcore.globalmanager.get("pimcore.object.gridexport").forEach(function (exportType) {
+            buttons.push({
+                text: t(exportType.text),
+                iconCls: exportType.icon || "pimcore_icon_export",
+                handler: function () {
+                    pimcore.helpers.exportWarning(exportType, function (settings) {
+                        this.exportPrepare(settings, exportType);
+                    }.bind(this));
+                }.bind(this),
+            })
+        }.bind(this));
+
+        return buttons;
     }
-
 });
-
-/**
- * https://github.com/pimcore/advanced-object-search/issues/64
- * TODO pimcore.object.helpers.gridcolumnconfig for BC reasons, to be removed with next major version
- */
-if (pimcore.object.helpers.gridcolumnconfig) {
-    pimcore.bundle.advancedObjectSearch.searchConfig.resultPanel.addMethods(pimcore.object.helpers.gridcolumnconfig);
-} else {
-    pimcore.bundle.advancedObjectSearch.searchConfig.resultPanel.addMethods(pimcore.element.helpers.gridColumnConfig);
-}
