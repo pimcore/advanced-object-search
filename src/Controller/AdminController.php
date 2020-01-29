@@ -185,7 +185,7 @@ class AdminController extends \Pimcore\Bundle\AdminBundle\Controller\AdminContro
 
         //get ID list from ES Service
         $data = json_decode($request->get("filter"), true);
-        $results = $service->doFilter($data['classId'], $data['conditions']['filters'], $data['conditions']['fulltextSearchTerm'], null, 9999);
+        $results = $service->doFilter($data['classId'], $data['conditions']['filters'] ?? [], $data['conditions']['fulltextSearchTerm'] ?? [], null, 9999);
 
         $ids = $service->extractIdsFromResult($results);
 
@@ -219,20 +219,21 @@ class AdminController extends \Pimcore\Bundle\AdminBundle\Controller\AdminContro
             $request->setLocale($request->get("language"));
         }
 
-        //get ID list from ES Service
         $data = json_decode($request->get("filter"), true);
 
-        //TODO eventually add ID filter for preselected export
+        if (empty($ids = $request->get('ids', false))) {
+            $results = $service->doFilter(
+                $data['classId'],
+                $data['conditions']['filters'],
+                $data['conditions']['fulltextSearchTerm'],
+                0,
+                9999 // elastic search cannot export more results than 9999 in one request
+            );
 
-        $results = $service->doFilter(
-            $data['classId'],
-            $data['conditions']['filters'],
-            $data['conditions']['fulltextSearchTerm'],
-            0,
-            9999 // elastic search cannot export more results than 9999 in one request
-        );
+            //get ID list from ES Service
+            $ids = $service->extractIdsFromResult($results);
+        }
 
-        $ids = $service->extractIdsFromResult($results);
         $jobs = array_chunk($ids, 20);
 
         $fileHandle = uniqid("export-");
@@ -386,7 +387,7 @@ class AdminController extends \Pimcore\Bundle\AdminBundle\Controller\AdminContro
                 $helperColumns = [];
 
                 foreach ($config["gridConfig"]["columns"] as &$column) {
-                    if(!$column["isOperator"]) {
+                    if(!($column["isOperator"] ?? false)) {
                         $fieldDefinition = $classDefinition->getFieldDefinition($column['key']);
                         if($fieldDefinition) {
                             $width = isset($column["layout"]["width"]) ? $column["layout"]["width"] : null;
