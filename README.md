@@ -134,6 +134,7 @@ $results = $service->doFilter(3,
             "fieldname" => "price",
             "filterEntryData" => 50.77
         ],
+        [
             "fieldname" => "price2",
             "filterEntryData" => [
                 "gte" => 50.77,
@@ -149,15 +150,18 @@ $results = $service->doFilter(3,
             "fieldname" => "localizedfields",
             "filterEntryData" => [
                 "en" => [
-                    "locname" => "englname"
+                    "fieldname" => "locname",
+                    "filterEntryData" => "englname"
                 ]
             ]
         ],
         [
             "fieldname" => "localizedfields",
             "filterEntryData" => [
-            "de" => [
-                "locname" => "deutname"
+                "de" => [
+                    "fieldname" => "locname",
+                    "filterEntryData" => "deutname"                
+                ]
             ]
         ],
         new FilterEntry("keywords", "testx", BoolQuery::SHOULD)
