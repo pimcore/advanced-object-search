@@ -17,7 +17,9 @@ namespace AdvancedObjectSearchBundle\Filter\FieldDefinitionAdapter;
 
 use AdvancedObjectSearchBundle\Filter\FieldSelectionInformation;
 use AdvancedObjectSearchBundle\Filter\FilterEntry;
+use ONGR\ElasticsearchDSL\BuilderInterface;
 use ONGR\ElasticsearchDSL\Query\Compound\BoolQuery;
+use ONGR\ElasticsearchDSL\Query\TermLevel\TermQuery;
 use Pimcore\Model\DataObject\AbstractObject;
 use Pimcore\Model\DataObject\Concrete;
 
@@ -74,6 +76,20 @@ class Select extends DefaultAdapter implements IFieldDefinitionAdapter {
         return $value;
     }
 
+    /**
+     * @param $fieldFilter
+     *
+     * filter field format as follows:
+     *   - simple string like
+     *       "filter for value"  --> creates QueryStringQuery
+     *
+     * @param bool $ignoreInheritance
+     * @param string $path
+     * @return BuilderInterface
+     */
+    public function getQueryPart($fieldFilter, $ignoreInheritance = false, $path = "") {
+        return new TermQuery($path . $this->fieldDefinition->getName() . $this->buildQueryFieldPostfix($ignoreInheritance), $fieldFilter);
+    }
 
     /**
      * @inheritdoc
