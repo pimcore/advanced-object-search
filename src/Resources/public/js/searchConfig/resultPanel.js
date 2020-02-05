@@ -468,6 +468,8 @@ pimcore.bundle.advancedObjectSearch.searchConfig.resultPanel = Class.create(pimc
             customFilter: Ext.encode(this.extensionBag.getFilterData())
         };
 
+        settings = Ext.encode(settings);
+
         Ext.Ajax.request({
             url: "/admin/bundle/advanced-object-search/admin/get-export-jobs",
             params: params,
