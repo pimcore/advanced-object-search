@@ -276,7 +276,7 @@ pimcore.bundle.advancedObjectSearch.searchConfigPanel = Class.create(pimcore.ele
         return this.settingsForm;
     },
 
-    getSaveData: function(raw) {
+    getSaveData: function(raw, save) {
         var saveData = {};
 
         saveData['classId'] = this.classSelection.getValue();
@@ -284,7 +284,7 @@ pimcore.bundle.advancedObjectSearch.searchConfigPanel = Class.create(pimcore.ele
         if(this.conditionPanel) {
             saveData["conditions"] = this.conditionPanel.getSaveData();
         }
-        if(this.resultPanel) {
+        if(this.resultPanel && save !== false) {
             saveData["gridConfig"] = this.resultPanel.getSaveData();
         }
 
