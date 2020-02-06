@@ -219,7 +219,6 @@ pimcore.bundle.advancedObjectSearch.searchConfigPanel = Class.create(pimcore.ele
 
         this.toggleShortCutButton = Ext.create('Ext.button.Button', {
             text: buttonText,
-            // iconCls: "pimcore_icon_delete",
             handler: this.toggleShortCut.bind(this)
         });
 
@@ -276,7 +275,7 @@ pimcore.bundle.advancedObjectSearch.searchConfigPanel = Class.create(pimcore.ele
         return this.settingsForm;
     },
 
-    getSaveData: function(raw) {
+    getSaveData: function(raw, save) {
         var saveData = {};
 
         saveData['classId'] = this.classSelection.getValue();
@@ -284,7 +283,9 @@ pimcore.bundle.advancedObjectSearch.searchConfigPanel = Class.create(pimcore.ele
         if(this.conditionPanel) {
             saveData["conditions"] = this.conditionPanel.getSaveData();
         }
-        if(this.resultPanel) {
+
+        //set grid config only for saving purpose
+        if(this.resultPanel && save === true) {
             saveData["gridConfig"] = this.resultPanel.getSaveData();
         }
 
@@ -300,7 +301,7 @@ pimcore.bundle.advancedObjectSearch.searchConfigPanel = Class.create(pimcore.ele
     },
 
     save: function () {
-        var saveData = this.getSaveData();
+        var saveData = this.getSaveData(false, true);
 
         //remote to update id in global manager later on
         pimcore.globalmanager.remove(this.getTabId());
@@ -343,7 +344,7 @@ pimcore.bundle.advancedObjectSearch.searchConfigPanel = Class.create(pimcore.ele
         this.sharingField.setValue("");
         this.nameField.setValue(this.nameField.getValue() + " " + t("bundle_advancedObjectSearch_name_copy_suffix"));
 
-        var saveData = this.getSaveData();
+        var saveData = this.getSaveData(false, true);
 
         Ext.Ajax.request({
             url: "/admin/bundle/advanced-object-search/admin/save",

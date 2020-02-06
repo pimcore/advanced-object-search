@@ -325,10 +325,11 @@ pimcore.bundle.advancedObjectSearch.searchConfig.resultPanel = Class.create(pimc
         var proxy = this.store.getProxy();
 
         if(this.initialFilter) {
+            delete this.initialFilter.gridConfig;
             proxy.extraParams.filter = Ext.encode(this.initialFilter);
             this.initialFilter = null;
         } else {
-            proxy.extraParams.filter = this.getSaveDataCallback();
+            proxy.extraParams.filter = this.getSaveDataCallback(false, false);
         }
 
         if(this.extensionBag) {
@@ -466,6 +467,8 @@ pimcore.bundle.advancedObjectSearch.searchConfig.resultPanel = Class.create(pimc
             "fields[]": fieldKeys,
             customFilter: Ext.encode(this.extensionBag.getFilterData())
         };
+
+        settings = Ext.encode(settings);
 
         Ext.Ajax.request({
             url: "/admin/bundle/advanced-object-search/admin/get-export-jobs",
