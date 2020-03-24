@@ -47,6 +47,10 @@ services:
             - { name: kernel.event_listener, event: pimcore.class.postDelete, method: deleteIndex }
             - { name: kernel.event_listener, event: pimcore.system.maintenance, method: registerMaintenanceJob }
 
+    AdvancedObjectSearchBundle\Maintenance\UpdateQueueProcessor:
+        tags:
+            - { name: pimcore.maintenance.task, type: advancedobjectsearch_update_queue }
+
     bundle.advanced_object_search.filter_locator:
         class: Symfony\Component\DependencyInjection\ServiceLocator
         tags: ['container.service_locator']
