@@ -17,7 +17,9 @@ namespace AdvancedObjectSearchBundle\Maintenance;
 
 
 use AdvancedObjectSearchBundle\Service;
+use Pimcore\Event\System\MaintenanceEvent;
 use Pimcore\Maintenance\TaskInterface;
+use Pimcore\Model\Schedule\Maintenance\Job;
 
 class UpdateQueueProcessor implements TaskInterface
 {
@@ -29,6 +31,14 @@ class UpdateQueueProcessor implements TaskInterface
     public function __construct(Service $service)
     {
         $this->service = $service;
+    }
+
+    /**
+     * Note: When Pimcore v5 support is dropped, this can be removed.
+     */
+    public function registerMaintenanceJob(MaintenanceEvent $maintenanceEvent)
+    {
+        $maintenanceEvent->getManager()->registerJob(new Job(get_class($this), [$this, "execute"]));
     }
 
     public function execute()

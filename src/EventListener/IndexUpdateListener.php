@@ -19,11 +19,9 @@ namespace AdvancedObjectSearchBundle\EventListener;
 use AdvancedObjectSearchBundle\Service;
 use Pimcore\Event\Model\DataObject\ClassDefinitionEvent;
 use Pimcore\Event\Model\DataObjectEvent;
-use Pimcore\Event\System\MaintenanceEvent;
 use Pimcore\Logger;
 use Pimcore\Model\DataObject\AbstractObject;
 use Pimcore\Model\DataObject\Concrete;
-use Pimcore\Model\Schedule\Maintenance\Job;
 
 class IndexUpdateListener
 {
@@ -71,13 +69,4 @@ class IndexUpdateListener
             Logger::err($e);
         }
     }
-
-    public function registerMaintenanceJob(MaintenanceEvent $maintenanceEvent) {
-        $maintenanceEvent->getManager()->registerJob(new Job(get_class($this), [$this, "maintenance"]));
-    }
-
-    public function maintenance() {
-        $this->service->processUpdateQueue(500);
-    }
-
 }
