@@ -6,7 +6,7 @@
     "sort-packages": true
   },
   "require": {
-    "ongr/elasticsearch-dsl": "^5.0.5",
+    "ongr/elasticsearch-dsl": "^6.0.1",
     "pimcore/pimcore": ">=5.5.0 <6.7"
   },
   "autoload": {
