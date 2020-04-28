@@ -45,6 +45,11 @@ services:
             - { name: kernel.event_listener, event: pimcore.dataobject.preDelete, method: deleteObject }
             - { name: kernel.event_listener, event: pimcore.class.postUpdate, method: updateMapping }
             - { name: kernel.event_listener, event: pimcore.class.postDelete, method: deleteIndex }
+
+    AdvancedObjectSearchBundle\Maintenance\UpdateQueueProcessor:
+        tags:
+            - { name: pimcore.maintenance.task, type: advancedobjectsearch_update_queue }
+            # Note: When Pimcore v5 support is dropped, this can be removed.
             - { name: kernel.event_listener, event: pimcore.system.maintenance, method: registerMaintenanceJob }
 
     bundle.advanced_object_search.filter_locator:
