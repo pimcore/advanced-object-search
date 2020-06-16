@@ -392,7 +392,27 @@ pimcore.bundle.advancedObjectSearch.searchConfig.resultPanel = Class.create(pimc
         menu.showAt(e.pageX, e.pageY);
     },
 
-    batchPrepare: function (columnIndex, onlySelected, append, remove) {
+    batchPrepare: function (column, onlySelected, append, remove) {
+
+        var columnIndex;
+        if(typeof column != 'object') {
+            columnIndex = column;
+        } else {
+            var dataIndexName = column.dataIndex;
+            var gridColumns = this.grid.getColumns();
+            columnIndex = -1;
+            for (let i = 0; i < gridColumns.length; i++) {
+                let dataIndex = gridColumns[i].dataIndex;
+                if (dataIndex == dataIndexName) {
+                    columnIndex = i;
+                    break;
+                }
+            }
+            if (columnIndex < 0) {
+                return;
+            }
+        }
+
         // no batch for system properties
         if (this.systemColumns.indexOf(this.grid.getColumns()[columnIndex].dataIndex) > -1) {
             return;
