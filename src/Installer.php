@@ -18,7 +18,7 @@ class Installer extends MigrationInstaller
         if (! file_exists(PIMCORE_CUSTOM_CONFIGURATION_DIRECTORY . "/advancedobjectsearch")) {
             \Pimcore\File::mkdir(PIMCORE_CUSTOM_CONFIGURATION_DIRECTORY . "/advancedobjectsearch");
             copy(
-                __DIR__ . "/../Resources/install/config.php",
+                __DIR__ . "/Resources/install/config.php",
                 PIMCORE_CUSTOM_CONFIGURATION_DIRECTORY . "/advancedobjectsearch/config.php"
             );
         }
