@@ -269,6 +269,7 @@ pimcore.bundle.advancedObjectSearch.searchConfig.resultPanel = Class.create(pimc
             tbars = [{
                 xtype: 'toolbar',
                 dock: 'top',
+                overflowHandler: 'scroller',
                 items: tbar
             }];
 
