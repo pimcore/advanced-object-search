@@ -7,7 +7,7 @@
   },
   "require": {
     "ongr/elasticsearch-dsl": "^6.0.1",
-    "pimcore/pimcore": ">=5.5.0 <6.8"
+    "pimcore/pimcore": ">=5.5.0 <6.9"
   },
   "autoload": {
     "psr-4": {
