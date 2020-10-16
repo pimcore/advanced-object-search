@@ -29,8 +29,8 @@ class Configuration implements ConfigurationInterface
      */
     public function getConfigTreeBuilder()
     {
-        $treeBuilder = new TreeBuilder();
-        $rootNode = $treeBuilder->root('pimcore_advanced_object_search');
+        $treeBuilder = new TreeBuilder('pimcore_advanced_object_search');
+        $rootNode = $treeBuilder->getRootNode();
 
         $rootNode
             ->children()

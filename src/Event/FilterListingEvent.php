@@ -3,7 +3,7 @@
 namespace AdvancedObjectSearchBundle\Event;
 
 use Pimcore\Model\DataObject\Listing;
-use Symfony\Component\EventDispatcher\Event;
+use Symfony\Contracts\EventDispatcher\Event;
 
 class FilterListingEvent extends Event
 {
