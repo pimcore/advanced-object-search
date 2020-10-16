@@ -672,7 +672,7 @@ class Service {
             $search->addQuery(new QueryStringQuery($fullTextQuery));
         }
 
-        $this->eventDispatcher->dispatch(AdvancedObjectSearchEvents::ELASITIC_FILTER, new FilterSearchEvent($search));
+        $this->eventDispatcher->dispatch(new FilterSearchEvent($search), AdvancedObjectSearchEvents::ELASITIC_FILTER);
 
         if($size) {
             $search->setSize($size);
