@@ -3,9 +3,9 @@
 namespace AdvancedObjectSearchBundle\Event;
 
 use ONGR\ElasticsearchDSL\Search;
-use Symfony\Contracts\EventDispatcher\Event;
+use Symfony\Component\EventDispatcher\GenericEvent;
 
-class FilterSearchEvent extends Event
+class FilterSearchEvent extends GenericEvent
 {
     /**
      * @var Search

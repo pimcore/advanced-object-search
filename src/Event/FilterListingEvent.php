@@ -3,9 +3,9 @@
 namespace AdvancedObjectSearchBundle\Event;
 
 use Pimcore\Model\DataObject\Listing;
-use Symfony\Contracts\EventDispatcher\Event;
+use Symfony\Component\EventDispatcher\GenericEvent;
 
-class FilterListingEvent extends Event
+class FilterListingEvent extends GenericEvent
 {
     /**
      * @var Listing
