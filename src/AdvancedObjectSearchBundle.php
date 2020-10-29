@@ -77,7 +77,7 @@ class AdvancedObjectSearchBundle extends AbstractPimcoreBundle
             }
 
             if (!$file) {
-                throw new \Exception($file . " doesn't exist");
+                throw new \Exception("Configuration file could not be found in any of the following locations: " . implode(', ', $pathsToCheck));
             }
 
             self::$config = include $file;
