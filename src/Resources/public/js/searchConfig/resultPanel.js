@@ -278,6 +278,7 @@ pimcore.bundle.advancedObjectSearch.searchConfig.resultPanel = Class.create(pimc
                     {
                         xtype: 'toolbar',
                         dock: 'top',
+                        overflowHandler: 'scroller',
                         items: secondaryTbar
                     }
                 );
