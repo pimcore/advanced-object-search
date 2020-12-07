@@ -20,6 +20,8 @@ pimcore.bundle.advancedObjectSearch.searchConfig.resultAbstractPanel = Class.cre
     batchRemoveColumns: [],
     exportPrepareUrl: "/admin/bundle/advanced-object-search/admin/get-export-jobs",
     batchPrepareUrl: "/admin/bundle/advanced-object-search/admin/get-batch-jobs",
+    batchProcessUrl: "/admin/object-helper/batch",
+    exportProcessUrl: "/admin/object-helper/do-export",
 
     getSaveDataCallback: null,
     gridConfigData: {},
