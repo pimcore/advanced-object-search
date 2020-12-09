@@ -516,6 +516,9 @@ class Service {
                 $object = Concrete::getById($objectId);
                 if($object) {
                     $this->doUpdateIndexData($object);
+                } else {
+                    // Object no longer exists, remove from queue
+                    $db->executeQuery("DELETE FROM " . Installer::QUEUE_TABLE_NAME . " WHERE o_id = ?", [$objectId]);
                 }
             }
             return count($entries);
