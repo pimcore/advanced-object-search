@@ -133,7 +133,7 @@ class Installer extends AbstractInstaller
     {
         $installed = false;
         try {
-            // check if if first permission is installed
+            // check if first permission is installed
             $installed = $this->db->fetchOne('SELECT `key` FROM users_permission_definitions WHERE `key` = :key', [
                 'key' => self::PERMISSION_KEY,
             ]);
