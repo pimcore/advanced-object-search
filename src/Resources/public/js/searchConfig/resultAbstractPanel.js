@@ -18,8 +18,6 @@ pimcore.bundle.advancedObjectSearch.searchConfig.resultAbstractPanel = Class.cre
     noBatchColumns: [],
     batchAppendColumns: [],
     batchRemoveColumns: [],
-    exportPrepareUrl: "/admin/bundle/advanced-object-search/admin/get-export-jobs",
-    batchPrepareUrl: "/admin/bundle/advanced-object-search/admin/get-batch-jobs",
 
     getSaveDataCallback: null,
     gridConfigData: {},
@@ -27,6 +25,13 @@ pimcore.bundle.advancedObjectSearch.searchConfig.resultAbstractPanel = Class.cre
     portletMode: false,
 
     fieldObject: {},
+
+    initialize: function($super) {
+        $super();
+        
+        this.exportPrepareUrl = "/admin/bundle/advanced-object-search/admin/get-export-jobs";
+        this.batchPrepareUrl = "/admin/bundle/advanced-object-search/admin/get-batch-jobs";
+    },
 
     getLayout: function (initialFilter) {
     },
