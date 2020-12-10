@@ -3,17 +3,47 @@
 namespace AdvancedObjectSearchBundle;
 
 use AdvancedObjectSearchBundle\Model\SavedSearch;
-use Doctrine\DBAL\Migrations\Version;
 use Doctrine\DBAL\Schema\Schema;
-use Pimcore\Extension\Bundle\Installer\MigrationInstaller;
+use Pimcore\Db\Connection;
+use Pimcore\Db\ConnectionInterface;
+use Pimcore\Extension\Bundle\Installer\AbstractInstaller;
 use Pimcore\Model\User\Permission\Definition;
+use Symfony\Component\HttpKernel\Bundle\BundleInterface;
 
-class Installer extends MigrationInstaller
+class Installer extends AbstractInstaller
 {
     const QUEUE_TABLE_NAME = 'bundle_advancedobjectsearch_update_queue';
     const PERMISSION_KEY = 'bundle_advancedsearch_search';
 
-    protected function beforeInstallMigration()
+    /**
+     * @var BundleInterface
+     */
+    protected $bundle;
+
+    /**
+     * @var ConnectionInterface
+     */
+    protected $db;
+
+    /**
+     * @var Schema
+     */
+    protected $schema;
+
+    public function __construct(
+        BundleInterface $bundle,
+        ConnectionInterface $connection
+    ) {
+        $this->bundle = $bundle;
+        $this->db = $connection;
+        if ($this->db instanceof Connection) {
+            $this->schema = $this->db->getSchemaManager()->createSchema();
+        }
+
+        parent::__construct();
+    }
+
+    private function installConfigs()
     {
         if (! file_exists(PIMCORE_CUSTOM_CONFIGURATION_DIRECTORY . "/advancedobjectsearch")) {
             \Pimcore\File::mkdir(PIMCORE_CUSTOM_CONFIGURATION_DIRECTORY . "/advancedobjectsearch");
@@ -24,7 +54,7 @@ class Installer extends MigrationInstaller
         }
     }
 
-    protected function afterInstallMigration()
+    private function installPermissions()
     {
         $key = self::PERMISSION_KEY;
         $definition = Definition::getByKey($key);
@@ -40,10 +70,17 @@ class Installer extends MigrationInstaller
         }
     }
 
-    public function migrateInstall(Schema $schema, Version $version)
+    public function install()
     {
-        if (! $schema->hasTable(self::QUEUE_TABLE_NAME)) {
-            $queueTable = $schema->createTable(self::QUEUE_TABLE_NAME);
+        $this->installConfigs();
+        $this->installTables();
+        $this->installPermissions();
+    }
+
+    private function installTables()
+    {
+        if (!$this->schema->hasTable(self::QUEUE_TABLE_NAME)) {
+            $queueTable = $this->schema->createTable(self::QUEUE_TABLE_NAME);
             $queueTable->addColumn('o_id', 'bigint', ['default' => 0, 'notnull' => true]);
             $queueTable->addColumn('classId', 'integer', ['notnull' => false]);
             $queueTable->addColumn('in_queue', 'boolean', ['notnull' => false]);
@@ -52,8 +89,8 @@ class Installer extends MigrationInstaller
             $queueTable->setPrimaryKey(['o_id']);
         }
 
-        if (! $schema->hasTable(SavedSearch\Dao::TABLE_NAME)) {
-            $savedSearchTable = $schema->createTable(SavedSearch\Dao::TABLE_NAME);
+        if (! $this->schema->hasTable(SavedSearch\Dao::TABLE_NAME)) {
+            $savedSearchTable = $this->schema->createTable(SavedSearch\Dao::TABLE_NAME);
             $savedSearchTable->addColumn('id', 'bigint', ['length' => 20, 'autoincrement' => true, 'notnull' => true]);
             $savedSearchTable->addColumn('name', 'string', ['length' => 255, 'notnull' => false]);
             $savedSearchTable->addColumn('description', 'string', ['length' => 255, 'notnull' => false]);
@@ -66,7 +103,7 @@ class Installer extends MigrationInstaller
         }
     }
 
-    public function migrateUninstall(Schema $schema, Version $version)
+    public function uninstall()
     {
         $tables = [
             self::QUEUE_TABLE_NAME,
@@ -74,18 +111,52 @@ class Installer extends MigrationInstaller
         ];
 
         foreach ($tables as $tableName) {
-            if ($schema->hasTable($tableName)) {
-                $schema->dropTable($tableName);
+            if ($this->schema->hasTable($tableName)) {
+                $this->schema->dropTable($tableName);
             }
         }
 
         $key = self::PERMISSION_KEY;
-        $this->connection->query("DELETE FROM users_permission_definitions WHERE `key` = '{$key}'");
+        $this->db->executeQuery("DELETE FROM users_permission_definitions WHERE `key` = '{$key}'");
     }
 
 
     public function needsReloadAfterInstall()
     {
         return true;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function isInstalled()
+    {
+        $installed = false;
+        try {
+            // check if if first permission is installed
+            $installed = $this->db->fetchOne('SELECT `key` FROM users_permission_definitions WHERE `key` = :key', [
+                'key' => self::PERMISSION_KEY,
+            ]);
+        } catch (\Exception $e) {
+            // nothing to do
+        }
+
+        return (bool) $installed;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function canBeInstalled()
+    {
+        return !$this->isInstalled();
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function canBeUninstalled()
+    {
+        return $this->isInstalled();
     }
 }
