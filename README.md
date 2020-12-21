@@ -1,7 +1,7 @@
 # Advanced Object Search via Elasticsearch
 
 Advanced Object Search bundle provides advanced object search in 
-Pimcore backend powered by Elasticsearch v6. 
+Pimcore backend powered by Elasticsearch v6/v7. 
 
 ## Integration into Pimcore
 
@@ -204,6 +204,7 @@ read [here on how to extend the result tab with custom filters.](./doc/01_Extend
 
 ## Supported Elastic Search Versions
 - ElasticSearch 6
+- ElasticSearch 7
 
 
 ## Upgrade Notes
