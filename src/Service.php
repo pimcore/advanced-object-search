@@ -258,14 +258,12 @@ class Service {
 
         $mappingParams = [
             "index" => $this->getIndexName($objectClass->getName()),
-            "type" => $objectClass->getName(),
+            "include_type_name" => false,
             "body" => [
-                $objectClass->getName() => [
-                    "_source" => [
-                        "enabled" => true
-                    ],
-                    "properties" => $mappingProperties
-                ]
+                "_source" => [
+                    "enabled" => true
+                ],
+                "properties" => $mappingProperties
             ]
         ];
 
@@ -382,7 +380,7 @@ class Service {
 
         $params = [
             'index' => $this->getIndexName($object->getClassName()),
-            'type' =>  $object->getClassName(),
+            'type' => '_doc',
             'id' => $object->getId(),
             'body' => $data
         ];
@@ -401,7 +399,7 @@ class Service {
 
         $params = [
             'index' => $this->getIndexName($object->getClassName()),
-            'type' =>  $object->getClassName(),
+            'type' => '_doc',
             'id' => $object->getId()
         ];
 
@@ -416,6 +414,7 @@ class Service {
         $indexUpdateParams = $this->getIndexData($object);
 
         if($indexUpdateParams['body']['o_checksum'] != $originalChecksum) {
+
             $response = $this->esClient->index($indexUpdateParams);
             $this->logger->info("Updates es index for data object " . $object->getId());
             $this->logger->debug(json_encode($response));
@@ -462,7 +461,7 @@ class Service {
 
         $params = [
             'index' => $this->getIndexName($object->getClassName()),
-            'type' =>  $object->getClassName(),
+            'type' => '_doc',
             'id' => $object->getId()
         ];
 
@@ -690,7 +689,8 @@ class Service {
 
         $params = [
             'index' => $this->getIndexName($classDefinition->getName()),
-            'type' => $classDefinition->getName(),
+            'track_total_hits' => true,
+            'rest_total_hits_as_int' => true,
             'body' => $search->toArray()
         ];
 
