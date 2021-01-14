@@ -23,6 +23,7 @@ advanced_object_search:
         select: 'bundle.advanced_object_search.filter.select'
         time: 'bundle.advanced_object_search.filter.time'
         user: 'bundle.advanced_object_search.filter.user'
+        table: 'bundle.advanced_object_search.filter.table'
 
         # legacy mappings
         href: 'AdvancedObjectSearchBundle\Filter\FieldDefinitionAdapter\ManyToOneRelation'

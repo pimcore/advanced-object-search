@@ -148,6 +148,10 @@ services:
         class: AdvancedObjectSearchBundle\Filter\FieldDefinitionAdapter\User
         shared: false
 
+    bundle.advanced_object_search.filter.table:
+        class: AdvancedObjectSearchBundle\Filter\FieldDefinitionAdapter\Table
+        shared: false
+
     # auto-register all commands as services
     AdvancedObjectSearchBundle\Command\ProcessUpdateQueueCommand: ~
     AdvancedObjectSearchBundle\Command\ReindexCommand: ~
