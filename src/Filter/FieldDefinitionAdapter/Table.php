@@ -257,9 +257,7 @@ class Table implements IFieldDefinitionAdapter
                     'operators' => [
                         BoolQuery::MUST,
                         BoolQuery::SHOULD,
-                        BoolQuery::MUST_NOT,
-                        FilterEntry::EXISTS,
-                        FilterEntry::NOT_EXISTS
+                        BoolQuery::MUST_NOT
                     ],
                     'classInheritanceEnabled' => $this->considerInheritance,
                     'columnConfigActivated' => $this->isColumnConfigActivated(),
