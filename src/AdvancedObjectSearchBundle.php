@@ -144,6 +144,7 @@ class AdvancedObjectSearchBundle extends AbstractPimcoreBundle
             '/bundles/advancedobjectsearch/js/searchConfig/fieldConditionPanel/date.js',
             '/bundles/advancedobjectsearch/js/searchConfig/fieldConditionPanel/time.js',
             '/bundles/advancedobjectsearch/js/searchConfig/fieldConditionPanel/quantityValue.js',
+            '/bundles/advancedobjectsearch/js/searchConfig/fieldConditionPanel/table.js',
             '/bundles/advancedobjectsearch/js/portlet/advancedObjectSearch.js'
         ];
     }
