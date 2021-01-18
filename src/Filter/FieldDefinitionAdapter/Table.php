@@ -15,7 +15,7 @@ use Pimcore\Model\DataObject\AbstractObject;
 use Pimcore\Model\DataObject\ClassDefinition\Data;
 use Pimcore\Model\DataObject\Concrete;
 
-class Table implements IFieldDefinitionAdapter
+class Table extends DefaultAdapter
 {
 
     /**
@@ -35,49 +35,9 @@ class Table implements IFieldDefinitionAdapter
     protected $fieldType = "table";
 
     /**
-     * @var Data
-     */
-    protected $fieldDefinition;
-
-    /**
-     * @var bool
-     */
-    protected $considerInheritance;
-
-    /**
      * @var string
      */
     protected $column;
-
-    /**
-     * @var Service
-     */
-    protected $service;
-
-    /**
-     * Table constructor.
-     * @param Service $service
-     */
-    public function __construct(Service $service)
-    {
-        $this->service = $service;
-    }
-
-    /**
-     * @param Data $fieldDefinition
-     */
-    public function setFieldDefinition(Data $fieldDefinition)
-    {
-        $this->fieldDefinition = $fieldDefinition;
-    }
-
-    /**
-     * @param bool $considerInheritance
-     */
-    public function setConsiderInheritance(bool $considerInheritance)
-    {
-        $this->considerInheritance = $considerInheritance;
-    }
 
     /**
      * @return array
@@ -272,4 +232,5 @@ class Table implements IFieldDefinitionAdapter
         return (property_exists($this->fieldDefinition, 'columnConfigActivated')
             && $this->fieldDefinition->columnConfigActivated === true);
     }
+
 }

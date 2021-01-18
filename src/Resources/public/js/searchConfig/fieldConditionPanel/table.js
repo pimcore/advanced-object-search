@@ -52,63 +52,66 @@ pimcore.bundle.advancedObjectSearch.searchConfig.fieldConditionPanel.table = Cla
         termPanel.add(this.termField);
         termPanel.add(this.inheritanceField);
 
-        return Ext.create('Ext.panel.Panel', {
+        var items = [];
+
+        if (this.fieldSelectionInformation.context.columnConfigActivated) {
+            items.push({
+                xtype: 'panel',
+                layout: 'hbox',
+                style: "padding-bottom: 10px",
+                items: [
+                    this.getColumnCombobox(this.data.column),
+                ]
+            });
+        }
+
+        items.push({
+            xtype: 'panel',
+            layout: 'hbox',
+            style: "padding-bottom: 10px",
             items: [
-                {
-                    xtype: 'panel',
-                    layout: 'hbox',
-                    style: "padding-bottom: 10px",
-                    items: [
-                        this.getColumnCombobox(this.data.column),
-                    ]
-                },
-                {
-                    xtype: 'panel',
-                    layout: 'hbox',
-                    style: "padding-bottom: 10px",
-                    items: [
-                        this.getOperatorCombobox(this.data.operator)
-                    ]
-                },
-                {
-                    xtype: 'panel',
-                    layout: 'hbox',
-                    style: "padding-bottom: 10px",
-                    items: [
-                        this.termField,
-                        this.inheritanceField
-                    ]
-                },
+                this.getOperatorCombobox(this.data.operator)
             ]
+        });
+        items.push({
+            xtype: 'panel',
+            layout: 'hbox',
+            style: "padding-bottom: 10px",
+            items: [
+                this.termField,
+                this.inheritanceField
+            ]
+        });
+
+        return Ext.create('Ext.panel.Panel', {
+            items: items
         });
     },
 
     getColumnCombobox: function (value) {
-        if (this.fieldSelectionInformation.context.columnConfigActivated) {
-            var columnConfig = Ext.create('Ext.data.Store', {
-                fields: ['fieldName', 'fieldLabel'],
-                data: this.fieldSelectionInformation.context.columnConfig.map(function (column) {
-                    return {
-                        fieldName: column.key,
-                        fieldLabel: column.label
-                    };
-                })
-            });
+        var columnConfig = Ext.create('Ext.data.Store', {
+            fields: ['fieldName', 'fieldLabel'],
+            data: this.fieldSelectionInformation.context.columnConfig.map(function (column) {
+                return {
+                    fieldName: column.key,
+                    fieldLabel: column.label
+                };
+            })
+        });
 
-            this.columnField = Ext.create('Ext.form.ComboBox',
-                {
-                    fieldLabel: t("bundle_advancedsearch_table_colum_config"),
-                    store: columnConfig,
-                    value: value,
-                    queryMode: 'local',
-                    width: 300,
-                    valueField: 'fieldName',
-                    displayField: 'fieldLabel'
-                }
-            );
+        this.columnField = Ext.create('Ext.form.ComboBox',
+            {
+                fieldLabel: t("bundle_advancedsearch_table_colum_config"),
+                store: columnConfig,
+                value: value,
+                queryMode: 'local',
+                width: 300,
+                valueField: 'fieldName',
+                displayField: 'fieldLabel'
+            }
+        );
 
-            return this.columnField;
-        }
+        return this.columnField;
     },
 
     getOperatorCombobox: function (value) {
