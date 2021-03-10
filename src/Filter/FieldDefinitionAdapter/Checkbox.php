@@ -62,48 +62,6 @@ class Checkbox extends DefaultAdapter implements IFieldDefinitionAdapter {
     }
 
     /**
-     * @param Concrete $object
-     * @param bool $ignoreInheritance
-     */
-    protected function doGetIndexDataValue($object, $ignoreInheritance = false) {
-        $inheritanceBackup = null;
-        if($ignoreInheritance) {
-            $inheritanceBackup = AbstractObject::getGetInheritedValues();
-            AbstractObject::setGetInheritedValues(false);
-        }
-
-        $value = $this->fieldDefinition->getForWebserviceExport($object);
-
-        if($ignoreInheritance) {
-            AbstractObject::setGetInheritedValues($inheritanceBackup);
-        }
-
-        return (bool) $value;
-    }
-
-
-    /**
-     * @param Concrete $object
-     * @return mixed
-     */
-    public function getIndexData($object) {
-
-        $value = $this->doGetIndexDataValue($object, false);
-
-        if($this->considerInheritance) {
-            $notInheritedValue = $this->doGetIndexDataValue($object, true);
-
-            $returnValue = [];
-            $returnValue[self::ES_MAPPING_PROPERTY_STANDARD] = $value;
-            $returnValue[self::ES_MAPPING_PROPERTY_NOT_INHERITED] = $notInheritedValue;
-
-            return $returnValue;
-        } else {
-            return $value;
-        }
-    }
-
-    /**
      * @param $fieldFilter
      *
      * filter field format as follows:

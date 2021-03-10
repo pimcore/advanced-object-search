@@ -23,6 +23,10 @@ services:
     bundle.advanced_object_search.service:
         alias: AdvancedObjectSearchBundle\Service
 
+    AdvancedObjectSearchBundle\Exporter:
+        arguments:
+            - '@bundle.advanced_object_search.filter_locator'
+
     AdvancedObjectSearchBundle\Service:
         arguments:
             - '@logger'

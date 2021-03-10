@@ -87,31 +87,4 @@ class Datetime extends Numeric implements IFieldDefinitionAdapter {
             return new TermQuery($path . $this->fieldDefinition->getName() . $this->buildQueryFieldPostfix($ignoreInheritance), $datetime);
         }
     }
-
-    /**
-     * @param Concrete $object
-     * @param bool $ignoreInheritance
-     */
-    protected function doGetIndexDataValue($object, $ignoreInheritance = false) {
-        $inheritanceBackup = null;
-        if($ignoreInheritance) {
-            $inheritanceBackup = AbstractObject::getGetInheritedValues();
-            AbstractObject::setGetInheritedValues(false);
-        }
-
-        $value = null;
-
-        $getter = "get" . $this->fieldDefinition->getName();
-        $valueObject = $object->$getter();
-        if($valueObject) {
-            $value = $valueObject->format(\DateTime::ISO8601);
-        }
-
-        if($ignoreInheritance) {
-            AbstractObject::setGetInheritedValues($inheritanceBackup);
-        }
-
-        return $value;
-    }
-
 }

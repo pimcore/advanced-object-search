@@ -111,64 +111,6 @@ class DefaultAdapter implements IFieldDefinitionAdapter {
         }
     }
 
-    /**
-     * @param $object
-     * @param bool $ignoreInheritance
-     * @return string
-     */
-    protected function doGetIndexDataValue($object, $ignoreInheritance = false) {
-        $inheritanceBackup = null;
-        if($ignoreInheritance) {
-            $inheritanceBackup = AbstractObject::getGetInheritedValues();
-            AbstractObject::setGetInheritedValues(false);
-        }
-
-        $value = $this->fieldDefinition->getForWebserviceExport($object);
-
-        if($ignoreInheritance) {
-            AbstractObject::setGetInheritedValues($inheritanceBackup);
-        }
-
-        if(is_array($value)) {
-            return json_encode($value);
-        }
-
-        return (string) $value;
-    }
-
-    /**
-     * @param Concrete $object
-     * @return mixed
-     */
-    public function getIndexData($object) {
-
-        $value = $this->doGetIndexDataValue($object, false);
-
-        if($this->considerInheritance) {
-            $notInheritedValue = $this->doGetIndexDataValue($object, true);
-
-            $returnValue = null;
-            if($value) {
-                $returnValue[self::ES_MAPPING_PROPERTY_STANDARD] = $value;
-            }
-
-            if($notInheritedValue) {
-                $returnValue[self::ES_MAPPING_PROPERTY_NOT_INHERITED] = $notInheritedValue;
-            }
-
-            return $returnValue;
-
-        } else {
-
-            if($value) {
-                return $value;
-            } else {
-                return null;
-            }
-        }
-    }
-
-
     protected function buildQueryFieldPostfix($ignoreInheritance = false) {
         $postfix = "";
 
@@ -222,4 +164,14 @@ class DefaultAdapter implements IFieldDefinitionAdapter {
             ]
         )];
     }
+
+    public function postMarshalData($data, Data $fieldDefinition)
+    {
+        if (is_array($data) && isset($data['value'])) {
+            return $data['value'];
+        }
+        return null;
+    }
+
+
 }

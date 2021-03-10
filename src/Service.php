@@ -29,6 +29,7 @@ use ONGR\ElasticsearchDSL\Query\FullText\QueryStringQuery;
 use ONGR\ElasticsearchDSL\Query\TermLevel\WildcardQuery;
 use ONGR\ElasticsearchDSL\Search;
 use Pimcore\Bundle\AdminBundle\Security\User\TokenStorageUserResolver;
+use Pimcore\Logger;
 use Pimcore\Model\DataObject\ClassDefinition;
 use Pimcore\Model\DataObject\Concrete;
 use Pimcore\Model\DataObject\Fieldcollection\Definition;
@@ -66,6 +67,10 @@ class Service {
     protected $eventDispatcher;
 
     /**
+     * @var Exporter
+     */
+    protected $exporter;
+    /**
      * @var Translator
      */
     protected $translator;
@@ -83,6 +88,7 @@ class Service {
      * @param ContainerInterface $filterLocator
      * @param EventDispatcherInterface $eventDispatcher
      * @param Translator $translator
+     * @param Exporter $exporter
      */
     public function __construct(
         LoggerInterface $logger,
@@ -90,7 +96,8 @@ class Service {
         Client $esClient,
         ContainerInterface $filterLocator,
         EventDispatcherInterface $eventDispatcher,
-        Translator $translator
+        Translator $translator,
+        Exporter $exporter
     ) {
         $this->user = $userResolver->getUser();
         $this->logger = $logger;
@@ -98,6 +105,7 @@ class Service {
         $this->filterLocator = $filterLocator;
         $this->eventDispatcher = $eventDispatcher;
         $this->translator = $translator;
+        $this->exporter = $exporter;
     }
 
     /**
@@ -370,19 +378,17 @@ class Service {
 
         $data = $this->getCoreFieldsIndexData($object);
 
-        foreach ($object->getClass()->getFieldDefinitions() as $key => $fieldDefinition) {
-            $fieldDefinitionAdapter = $this->getFieldDefinitionAdapter($fieldDefinition, $object->getClass()->getAllowInherit());
-            $data[$key] = $fieldDefinitionAdapter->getIndexData($object);
-        }
+        $fieldData = $this->exporter->exportObject($object);
+        $newData = array_merge($data, $fieldData);
 
-        $checksum = crc32(json_encode($data));
+        $checksum = crc32(json_encode($newData));
         $data['o_checksum'] = $checksum;
 
         $params = [
             'index' => $this->getIndexName($object->getClassName()),
             'type' => '_doc',
             'id' => $object->getId(),
-            'body' => $data
+            'body' => $newData
         ];
 
         return $params;

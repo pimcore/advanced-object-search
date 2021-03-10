@@ -79,38 +79,6 @@ class Localizedfields extends DefaultAdapter implements IFieldDefinitionAdapter 
         ];
     }
 
-
-    /**
-     * @param Concrete $object
-     * @return array
-     */
-    public function getIndexData($object)
-    {
-
-        $localeBackup = $this->localeService->getLocale();
-
-        $validLanguages = Tool::getValidLanguages();
-
-        $localizedFieldData = [];
-
-        if ($validLanguages) {
-            foreach ($validLanguages as $language) {
-                foreach ($this->fieldDefinition->getFieldDefinitions() as $key => $fieldDefinition) {
-                    $this->localeService->setLocale($language);
-
-                    $fieldDefinitionAdapter = $this->service->getFieldDefinitionAdapter($fieldDefinition, $this->considerInheritance);
-                    $localizedFieldData[$language][$key] = $fieldDefinitionAdapter->getIndexData($object);
-
-                }
-            }
-        }
-
-        $this->localeService->setLocale($localeBackup);
-
-        return $localizedFieldData;
-    }
-
-
     /**
      * @param $fieldFilter
      *
@@ -213,4 +181,9 @@ class Localizedfields extends DefaultAdapter implements IFieldDefinitionAdapter 
         return $fieldSelectionInformationEntries;
     }
 
+    /** @inheritDoc */
+    public function postMarshalData($data, Data $fieldDefinition)
+    {
+        return $data;
+    }
 }

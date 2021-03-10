@@ -137,39 +137,6 @@ class Objectbricks extends DefaultAdapter implements IFieldDefinitionAdapter {
     }
 
     /**
-     * @param Concrete $object
-     * @return array
-     */
-    public function getIndexData($object) {
-
-        $data = [];
-
-        $getter = "get" . ucfirst($this->fieldDefinition->getName());
-        $objectBrickContainer = $object->$getter();
-
-        if($objectBrickContainer) {
-
-
-            foreach($objectBrickContainer->getItems() as $item) {
-                $definition = Definition::getByKey($item->getType());
-
-                $brickData = [];
-
-                foreach($definition->getFieldDefinitions() as $key => $field) {
-                    $fieldDefinitionAdapter = $this->service->getFieldDefinitionAdapter($field, $this->considerInheritance);
-                    $brickData[$key] = $fieldDefinitionAdapter->getIndexData($item);
-                }
-
-                $data[$item->getType()][] = $brickData;
-
-            }
-
-        }
-
-        return $data;
-    }
-
-    /**
      * @inheritdoc
      */
     public function getFieldSelectionInformation()

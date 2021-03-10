@@ -57,22 +57,4 @@ class ManyToManyObjectRelation extends ManyToOneRelation implements IFieldDefini
             ]
         )];
     }
-
-    /**
-     * @inheritDoc
-     */
-    protected function doGetIndexDataValue($object, $ignoreInheritance = false) {
-        $value = parent::doGetIndexDataValue($object, $ignoreInheritance);
-
-        //rewrite all types to 'object' since 'variants' are not supported yet.
-        $filteredValues = array_map(function($item) {
-            return [
-                'id' => $item['id'],
-                'type' => 'object'
-            ];
-        }, $value);
-
-        return $filteredValues;
-    }
-
 }

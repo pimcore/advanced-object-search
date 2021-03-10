@@ -22,6 +22,7 @@ use ONGR\ElasticsearchDSL\Query\Compound\BoolQuery;
 use ONGR\ElasticsearchDSL\Query\TermLevel\RangeQuery;
 use ONGR\ElasticsearchDSL\Query\TermLevel\TermQuery;
 use Pimcore\Model\DataObject\AbstractObject;
+use Pimcore\Model\DataObject\ClassDefinition\Data;
 use Pimcore\Model\DataObject\Concrete;
 
 class QuantityValue extends Numeric implements IFieldDefinitionAdapter {
@@ -127,26 +128,20 @@ class QuantityValue extends Numeric implements IFieldDefinitionAdapter {
         )];
     }
 
-    /**
-     * @param Concrete $object
-     * @param bool $ignoreInheritance
-     */
-    protected function doGetIndexDataValue($object, $ignoreInheritance = false) {
-        $inheritanceBackup = null;
-        if($ignoreInheritance) {
-            $inheritanceBackup = AbstractObject::getGetInheritedValues();
-            AbstractObject::setGetInheritedValues(false);
+    /** @inheritDoc */
+    public function postMarshalData($data, Data $fieldDefinition)
+    {
+        //TODO maybe from now on return the abbreviation instead of the unit id ? or maybe in addition?
+        if (is_array($data)) {
+            if ($data['value'] || $data["value2"]) {
+                return [
+                  'value' => $data['value'],
+                  'unit' => $data['value2']
+                ];
+            }
         }
 
-        $value = $this->fieldDefinition->getForWebserviceExport($object);
-        unset($value['unitAbbreviation']);
-
-
-        if($ignoreInheritance) {
-            AbstractObject::setGetInheritedValues($inheritanceBackup);
-        }
-
-        return $value;
+        return null;
     }
 
 

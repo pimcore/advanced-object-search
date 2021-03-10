@@ -49,12 +49,6 @@ interface IFieldDefinitionAdapter {
     public function getESMapping();
 
     /**
-     * @param Concrete $object
-     * @return array
-     */
-    public function getIndexData($object);
-
-    /**
      * @param $fieldFilter - see concrete implementations for format
      * @param string $path - sub path for nested objects (only needed internally)
      * @param bool $ignoreInheritance - if true inheritance is not considered during query
@@ -76,4 +70,11 @@ interface IFieldDefinitionAdapter {
      * @return FieldSelectionInformation[]
      */
     public function getFieldSelectionInformation();
+
+    /**
+     * @param $data
+     * @param Data $fieldDefinition
+     * @return mixed
+     */
+    public function postMarshalData($data, Data $fieldDefinition);
 }

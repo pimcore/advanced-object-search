@@ -23,15 +23,4 @@ use Pimcore\Model\DataObject\Concrete;
 class CalculatedValue extends DefaultAdapter implements IFieldDefinitionAdapter
 {
 
-    /**
-     * @param Concrete $object
-     * @param bool $ignoreInheritance
-     * @return string
-     */
-    protected function doGetIndexDataValue($object, $ignoreInheritance = false)
-    {
-        $name = $this->fieldDefinition->getName();
-        $value = $object->getValueForFieldName($name);
-        return (string) $value;
-    }
 }

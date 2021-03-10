@@ -147,48 +147,6 @@ class Fieldcollections extends DefaultAdapter implements IFieldDefinitionAdapter
     }
 
     /**
-     * @param Concrete $object
-     * @return array
-     */
-    public function getIndexData($object) {
-
-        $data = [];
-
-        $getter = "get" . ucfirst($this->fieldDefinition->getName());
-        $fieldCollectionItems = $object->$getter();
-
-        if($fieldCollectionItems) {
-
-            //deactivate inheritance since within field collections there is no inheritance
-            $inheritanceBackup = AbstractObject::getGetInheritedValues();
-            AbstractObject::setGetInheritedValues(false);
-
-            foreach($fieldCollectionItems->getItems() as $item) {
-                /**
-                 * @var $item \Pimcore\Model\DataObject\Fieldcollection\Data\AbstractData
-                 */
-                $definition = Fieldcollection\Definition::getByKey($item->getType());
-
-                $fieldCollectionData = [];
-
-                foreach($definition->getFieldDefinitions() as $key => $field) {
-                    $fieldDefinitionAdapter = $this->service->getFieldDefinitionAdapter($field, false);
-                    $fieldCollectionData[$key] = $fieldDefinitionAdapter->getIndexData($item);
-                }
-
-                $data[$item->getType()][] = $fieldCollectionData;
-
-            }
-
-            //reset inheritance
-            AbstractObject::setGetInheritedValues($inheritanceBackup);
-
-        }
-
-        return $data;
-    }
-
-    /**
      * @inheritdoc
      */
     public function getFieldSelectionInformation()

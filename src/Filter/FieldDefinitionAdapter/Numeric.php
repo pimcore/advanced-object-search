@@ -101,26 +101,4 @@ class Numeric extends DefaultAdapter implements IFieldDefinitionAdapter {
             ]
         )];
     }
-
-    /**
-     * @param Concrete $object
-     * @param bool $ignoreInheritance
-     */
-    protected function doGetIndexDataValue($object, $ignoreInheritance = false) {
-        $inheritanceBackup = null;
-        if($ignoreInheritance) {
-            $inheritanceBackup = AbstractObject::getGetInheritedValues();
-            AbstractObject::setGetInheritedValues(false);
-        }
-
-        $value = $this->fieldDefinition->getForWebserviceExport($object);
-
-        if($ignoreInheritance) {
-            AbstractObject::setGetInheritedValues($inheritanceBackup);
-        }
-
-        return $value;
-    }
-
-
 }
