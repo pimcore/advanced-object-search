@@ -20,6 +20,7 @@ use AdvancedObjectSearchBundle\Event\FilterSearchEvent;
 use AdvancedObjectSearchBundle\Filter\FieldDefinitionAdapter\FieldDefinitionAdapterInterface;
 use AdvancedObjectSearchBundle\Filter\FieldSelectionInformation;
 use AdvancedObjectSearchBundle\Filter\FilterEntry;
+use AdvancedObjectSearchBundle\Tools\ElasticSearchConfigService;
 use Elasticsearch\Client;
 use Elasticsearch\Common\Exceptions\Missing404Exception;
 use ONGR\ElasticsearchDSL\BuilderInterface;
@@ -75,6 +76,11 @@ class Service {
     protected $coreFieldsConfig;
 
     /**
+     * @var string
+     */
+    protected $indexNamePrefix;
+
+    /**
      * Service constructor.
      * @param LoggerInterface $logger
      * @param TokenStorageUserResolver $userResolver
@@ -82,6 +88,7 @@ class Service {
      * @param ContainerInterface $filterLocator
      * @param EventDispatcherInterface $eventDispatcher
      * @param Translator $translator
+     * @param ElasticSearchConfigService $elasticSearchConfigService
      */
     public function __construct(
         LoggerInterface $logger,
@@ -89,7 +96,8 @@ class Service {
         Client $esClient,
         ContainerInterface $filterLocator,
         EventDispatcherInterface $eventDispatcher,
-        Translator $translator
+        Translator $translator,
+        ElasticSearchConfigService $elasticSearchConfigService
     ) {
         $this->user = $userResolver->getUser();
         $this->logger = $logger;
@@ -97,6 +105,7 @@ class Service {
         $this->filterLocator = $filterLocator;
         $this->eventDispatcher = $eventDispatcher;
         $this->translator = $translator;
+        $this->indexNamePrefix = $elasticSearchConfigService->getIndexNamePrefix();
     }
 
     /**
@@ -152,8 +161,7 @@ class Service {
      * @return string
      */
     public function getIndexName($classname) {
-        $config = AdvancedObjectSearchBundle::getConfig();
-        return $config['index-prefix'] . strtolower($classname);
+        return $this->indexNamePrefix . strtolower($classname);
     }
 
     /**

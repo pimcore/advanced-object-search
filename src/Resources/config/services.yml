@@ -20,16 +20,23 @@ services:
         class: Elasticsearch\Client
         factory: ['AdvancedObjectSearchBundle\Tools\EsClientFactory', getESClient]
 
+    AdvancedObjectSearchBundle\Tools\ElasticSearchConfigService:
+        public: true
+        arguments:
+            $hosts: '%pimcore.advanced_object_search.es_hosts%'
+            $indexNamePrefix: '%pimcore.advanced_object_search.index_name_prefix%'
+        calls:
+            - [setLogger, ['@logger']]
+        tags:
+            - { name: monolog.logger, channel: advanced_object_search.es }
+
     bundle.advanced_object_search.service:
         alias: AdvancedObjectSearchBundle\Service
 
     AdvancedObjectSearchBundle\Service:
         arguments:
-            - '@logger'
-            - '@pimcore_admin.security.token_storage_user_resolver'
-            - '@bundle.advanced_object_search.es_client'
-            - '@bundle.advanced_object_search.filter_locator'
-            - '@event_dispatcher'
+            $esClient: '@bundle.advanced_object_search.es_client'
+            $filterLocator: '@bundle.advanced_object_search.filter_locator'
         calls:
             - [setCoreFieldsConfig, ['%advanced_object_search.core_fields_configuration%']]
         tags:
