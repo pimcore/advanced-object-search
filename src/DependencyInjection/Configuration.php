@@ -24,8 +24,6 @@ use Symfony\Component\Config\Definition\ConfigurationInterface;
  */
 class Configuration implements ConfigurationInterface
 {
-    CONST BC_DEFAULT_VALUE = 'BC_DEFAULT_VALUE';
-
     /**
      * {@inheritdoc}
      */
@@ -37,12 +35,12 @@ class Configuration implements ConfigurationInterface
         $rootNode
             ->children()
                 ->scalarNode('index_name_prefix')
-                    ->defaultValue(self::BC_DEFAULT_VALUE)
+                    ->defaultValue('advanced_object_search')
                     ->info('Prefix for index names')
                 ->end()
                 ->arrayNode('es_hosts')
                     ->prototype('scalar')->end()
-                    ->defaultValue([self::BC_DEFAULT_VALUE])
+                    ->defaultValue(['localhost'])
                     ->info('List of elasticsearch hosts')
                 ->end()
                 ->arrayNode('field_definition_adapters')
