@@ -3,7 +3,7 @@
 namespace AdvancedObjectSearchBundle\Event;
 
 use AdvancedObjectSearchBundle\Model\SavedSearch;
-use Symfony\Component\EventDispatcher\Event;
+use Symfony\Contracts\EventDispatcher\Event;
 
 class SavedSearchEvent extends Event
 {
