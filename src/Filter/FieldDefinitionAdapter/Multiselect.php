@@ -16,7 +16,7 @@
 namespace AdvancedObjectSearchBundle\Filter\FieldDefinitionAdapter;
 
 
-class Multiselect extends Select implements IFieldDefinitionAdapter {
+class Multiselect extends Select implements FieldDefinitionAdapterInterface {
 
     /**
      * field type for search frontend

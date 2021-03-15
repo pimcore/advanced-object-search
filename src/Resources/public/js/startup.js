@@ -33,6 +33,10 @@ pimcore.bundle.advancedObjectSearch = Class.create(pimcore.plugin.admin, {
             pimcore.bundle.advancedObjectSearch.helper.initializeStatusIcon();
 
         }
+
+        if(pimcore.bundle && pimcore.bundle.perspectiveeditor && pimcore.bundle.perspectiveeditor.MenuItemPermissionHelper) {
+            pimcore.bundle.perspectiveeditor.MenuItemPermissionHelper.permissions.toolbar.search.push('items.advancedObjectSearch');
+        }
     }
 });
 

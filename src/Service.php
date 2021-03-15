@@ -17,10 +17,9 @@ namespace AdvancedObjectSearchBundle;
 
 use AdvancedObjectSearchBundle\Event\AdvancedObjectSearchEvents;
 use AdvancedObjectSearchBundle\Event\FilterSearchEvent;
-use AdvancedObjectSearchBundle\Filter\FieldDefinitionAdapter\IFieldDefinitionAdapter;
+use AdvancedObjectSearchBundle\Filter\FieldDefinitionAdapter\FieldDefinitionAdapterInterface;
 use AdvancedObjectSearchBundle\Filter\FieldSelectionInformation;
 use AdvancedObjectSearchBundle\Filter\FilterEntry;
-use AdvancedObjectSearchBundle\Installer;
 use Elasticsearch\Client;
 use Elasticsearch\Common\Exceptions\Missing404Exception;
 use ONGR\ElasticsearchDSL\BuilderInterface;
@@ -105,7 +104,7 @@ class Service {
      *
      * @param ClassDefinition\Data $fieldDefinition
      * @param bool $considerInheritance
-     * @return IFieldDefinitionAdapter
+     * @return FieldDefinitionAdapterInterface
      */
     public function getFieldDefinitionAdapter(ClassDefinition\Data $fieldDefinition, bool $considerInheritance) {
         $adapter = null;

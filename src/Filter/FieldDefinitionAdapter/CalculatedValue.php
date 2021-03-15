@@ -16,11 +16,7 @@ namespace AdvancedObjectSearchBundle\Filter\FieldDefinitionAdapter;
 
 use Pimcore\Model\DataObject\Concrete;
 
-/**
- * Class CalculatedValue
- * @package Divante\AOSExtensionBundle\Filter\FieldDefinitionAdapter
- */
-class CalculatedValue extends DefaultAdapter implements IFieldDefinitionAdapter
+class CalculatedValue extends DefaultAdapter implements FieldDefinitionAdapterInterface
 {
 
     /**
