@@ -222,4 +222,5 @@ read [here on how to extend the result tab with custom filters.](./doc/01_Extend
 - Update ES mapping and reindex is necessary - run commands `advanced-object-search:update-mapping` and `advanced-object-search:re-index`
 
 ### Upgrade to v4.0.0
-- Removed BC Layer for old configuration file. Configuration now only in symfony configuration tree. 
+- Removed BC Layer for old configuration file. Configuration now only in symfony configuration tree.
+- Removed deprecated `IFieldDefinitionAdapterInterface`, use `FieldDefinitionAdapterInterfaceInterface` instead. 
