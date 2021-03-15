@@ -23,7 +23,13 @@ class AdvancedObjectSearchBundle extends AbstractPimcoreBundle
 {
     use PackageVersionTrait;
 
+    /**
+     * @deprecated
+     */
     const CONFIG_PATH = 'advancedobjectsearch';
+    /**
+     * @deprecated
+     */
     const CONFIG_FILENAME = 'config.php';
 
     /**
@@ -37,6 +43,8 @@ class AdvancedObjectSearchBundle extends AbstractPimcoreBundle
 
     /**
      * @return array|mixed
+     *
+     * @deprecated use symfony config instead
      * @throws \Exception
      */
     public static function getConfig()

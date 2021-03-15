@@ -13,17 +13,6 @@ class Installer extends MigrationInstaller
     const QUEUE_TABLE_NAME = 'bundle_advancedobjectsearch_update_queue';
     const PERMISSION_KEY = 'bundle_advancedsearch_search';
 
-    protected function beforeInstallMigration()
-    {
-        if (! file_exists(PIMCORE_CUSTOM_CONFIGURATION_DIRECTORY . "/advancedobjectsearch")) {
-            \Pimcore\File::mkdir(PIMCORE_CUSTOM_CONFIGURATION_DIRECTORY . "/advancedobjectsearch");
-            copy(
-                __DIR__ . "/Resources/install/config.php",
-                PIMCORE_CUSTOM_CONFIGURATION_DIRECTORY . "/advancedobjectsearch/config.php"
-            );
-        }
-    }
-
     protected function afterInstallMigration()
     {
         $key = self::PERMISSION_KEY;

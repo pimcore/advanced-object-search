@@ -21,13 +21,17 @@ class EsClientFactory
     protected static $esClient = null;
 
     /**
+     * @param ElasticSearchConfigService $esConfigService
      * @return Client
+     * @throws \Exception
      */
-    public static function getESClient() {
+    public static function getESClient(ElasticSearchConfigService $esConfigService) {
 
         if(empty(self::$esClient)) {
-            $config = AdvancedObjectSearchBundle::getConfig();
-            self::$esClient = \Elasticsearch\ClientBuilder::create()->setHosts($config['hosts'])->build();
+            self::$esClient = \Elasticsearch\ClientBuilder::create()
+                ->setHosts($esConfigService->getHosts())
+                ->setLogger($esConfigService->getLogger())
+                ->build();
         }
 
         return self::$esClient;

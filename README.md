@@ -6,10 +6,18 @@ Pimcore backend powered by Elasticsearch v6/v7.
 ## Integration into Pimcore
 
 ### Installation and Configuration
-- During installation, all tables and the configuration file in `app/config/pimcore/advancedobjectsearch` are created. 
-- Before starting, the configuration file has to be set up correctly: 
-  - add Elasticsearch host(s)
-  - configure index prefix
+- Installer creates all necessary tables. 
+- Before starting, setup following configurations in symfony configuration tree: 
+
+```yml
+advanced_object_search:
+    # Prefix for index names
+    index_name_prefix: 'advanced_object_search_'   
+    
+    # List of elasticsearch hosts
+    es_hosts:
+        - 'localhost'
+```
 - call Pimcore command `advanced-object-search:update-mapping` for creating mappings and `advanced-object-search:re-index` for indexing data for the first time. 
 
 

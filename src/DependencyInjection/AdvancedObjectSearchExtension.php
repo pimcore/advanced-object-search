@@ -15,6 +15,7 @@
 namespace AdvancedObjectSearchBundle\DependencyInjection;
 
 
+use AdvancedObjectSearchBundle\AdvancedObjectSearchBundle;
 use Symfony\Component\Config\FileLocator;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Loader\YamlFileLoader;
@@ -47,6 +48,29 @@ class AdvancedObjectSearchExtension extends ConfigurableExtension
         }
 
         $serviceLocator->setArgument(0, $arguments);
+
+
+        if($config['index_name_prefix'] === Configuration::BC_DEFAULT_VALUE) {
+            @trigger_error(
+                'config.php configuration is deprecated, use symfony configuration instead.',
+                E_USER_DEPRECATED
+            );
+
+            $container->setParameter('pimcore.advanced_object_search.index_name_prefix', AdvancedObjectSearchBundle::getConfig()['index-prefix']);
+        } else {
+            $container->setParameter('pimcore.advanced_object_search.index_name_prefix', $config['index_name_prefix']);
+        }
+        if(is_array($config['es_hosts']) && $config['es_hosts'][0] === Configuration::BC_DEFAULT_VALUE) {
+            @trigger_error(
+                'config.php configuration is deprecated, use symfony configuration instead.',
+                E_USER_DEPRECATED
+            );
+
+            $container->setParameter('pimcore.advanced_object_search.es_hosts', AdvancedObjectSearchBundle::getConfig()['hosts']);
+        } else {
+            $container->setParameter('pimcore.advanced_object_search.es_hosts', $config['es_hosts']);
+        }
+
     }
 
 }
