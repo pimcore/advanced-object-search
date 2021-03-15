@@ -65,6 +65,8 @@ class Installer extends SettingsStoreAwareInstaller
         }
 
         $this->installPermissions();
+
+        parent::install();
     }
 
     public function uninstall()
@@ -92,6 +94,8 @@ class Installer extends SettingsStoreAwareInstaller
 
         $key = self::PERMISSION_KEY;
         $db->exec("DELETE FROM users_permission_definitions WHERE `key` = '{$key}'");
+
+        parent::uninstall();
     }
 
 
