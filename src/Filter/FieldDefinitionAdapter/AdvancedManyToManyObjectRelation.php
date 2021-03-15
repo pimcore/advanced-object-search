@@ -16,7 +16,7 @@
 namespace AdvancedObjectSearchBundle\Filter\FieldDefinitionAdapter;
 
 
-class AdvancedManyToManyObjectRelation extends ManyToManyObjectRelation implements IFieldDefinitionAdapter {
+class AdvancedManyToManyObjectRelation extends ManyToManyObjectRelation implements FieldDefinitionAdapterInterface {
 
     /**
      * field type for search frontend

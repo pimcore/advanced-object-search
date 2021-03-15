@@ -24,7 +24,7 @@ use Pimcore\Model\DataObject\ClassDefinition\Data;
 use Pimcore\Model\DataObject\Concrete;
 use Pimcore\Model\DataObject\Objectbrick\Definition;
 
-class Objectbricks extends DefaultAdapter implements IFieldDefinitionAdapter {
+class Objectbricks extends DefaultAdapter implements FieldDefinitionAdapterInterface {
 
     /**
      * field type for search frontend

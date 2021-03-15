@@ -22,7 +22,7 @@ use ONGR\ElasticsearchDSL\Query\TermLevel\TermQuery;
 use Pimcore\Model\DataObject\AbstractObject;
 use Pimcore\Model\DataObject\Concrete;
 
-class Checkbox extends DefaultAdapter implements IFieldDefinitionAdapter {
+class Checkbox extends DefaultAdapter implements FieldDefinitionAdapterInterface {
 
     /**
      * field type for search frontend

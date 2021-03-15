@@ -16,7 +16,7 @@
 namespace AdvancedObjectSearchBundle\Filter\FieldDefinitionAdapter;
 
 
-class User extends Select implements IFieldDefinitionAdapter {
+class User extends Select implements FieldDefinitionAdapterInterface {
 
     /**
      * field type for search frontend

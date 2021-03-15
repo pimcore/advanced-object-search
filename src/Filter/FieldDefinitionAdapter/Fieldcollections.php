@@ -25,7 +25,7 @@ use Pimcore\Model\DataObject\ClassDefinition\Data;
 use Pimcore\Model\DataObject\Concrete;
 use Pimcore\Model\DataObject\Fieldcollection;
 
-class Fieldcollections extends DefaultAdapter implements IFieldDefinitionAdapter {
+class Fieldcollections extends DefaultAdapter implements FieldDefinitionAdapterInterface {
 
     /**
      * field type for search frontend

@@ -20,7 +20,7 @@ use AdvancedObjectSearchBundle\Filter\FilterEntry;
 use ONGR\ElasticsearchDSL\Query\Compound\BoolQuery;
 use Pimcore\Model\DataObject\AbstractObject;
 
-class ManyToManyObjectRelation extends ManyToOneRelation implements IFieldDefinitionAdapter {
+class ManyToManyObjectRelation extends ManyToOneRelation implements FieldDefinitionAdapterInterface {
 
     /**
      * field type for search frontend

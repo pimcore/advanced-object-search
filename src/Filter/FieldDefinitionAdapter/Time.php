@@ -19,7 +19,7 @@ namespace AdvancedObjectSearchBundle\Filter\FieldDefinitionAdapter;
 use Pimcore\Model\DataObject\AbstractObject;
 use Pimcore\Model\DataObject\Concrete;
 
-class Time extends Datetime implements IFieldDefinitionAdapter {
+class Time extends Datetime implements FieldDefinitionAdapterInterface {
 
     /**
      * field type for search frontend

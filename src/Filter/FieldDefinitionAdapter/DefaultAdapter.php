@@ -26,7 +26,7 @@ use Pimcore\Model\DataObject\AbstractObject;
 use Pimcore\Model\DataObject\ClassDefinition\Data;
 use Pimcore\Model\DataObject\Concrete;
 
-class DefaultAdapter implements IFieldDefinitionAdapter {
+class DefaultAdapter implements FieldDefinitionAdapterInterface {
 
     /**
      * field type for search frontend

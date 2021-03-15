@@ -16,7 +16,7 @@
 namespace AdvancedObjectSearchBundle\Filter\FieldDefinitionAdapter;
 
 
-class Countrymultiselect extends Select implements IFieldDefinitionAdapter {
+class Countrymultiselect extends Select implements FieldDefinitionAdapterInterface {
 
     /**
      * field type for search frontend
