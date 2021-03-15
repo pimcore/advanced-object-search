@@ -15,15 +15,14 @@
 namespace AdvancedObjectSearchBundle\DependencyInjection;
 
 
-use AdvancedObjectSearchBundle\AdvancedObjectSearchBundle;
-use Pimcore\Logger;
 use Symfony\Component\Config\FileLocator;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
+use Symfony\Component\DependencyInjection\Extension\PrependExtensionInterface;
 use Symfony\Component\DependencyInjection\Loader\YamlFileLoader;
 use Symfony\Component\DependencyInjection\Reference;
 use Symfony\Component\HttpKernel\DependencyInjection\ConfigurableExtension;
 
-class AdvancedObjectSearchExtension extends ConfigurableExtension
+class AdvancedObjectSearchExtension extends ConfigurableExtension implements PrependExtensionInterface
 {
 
     public function loadInternal(array $config, ContainerBuilder $container)
@@ -53,6 +52,21 @@ class AdvancedObjectSearchExtension extends ConfigurableExtension
         $container->setParameter('pimcore.advanced_object_search.index_name_prefix', $config['index_name_prefix']);
         $container->setParameter('pimcore.advanced_object_search.es_hosts', $config['es_hosts']);
 
+    }
+
+    /**
+     * @param ContainerBuilder $container
+     */
+    public function prepend(ContainerBuilder $container)
+    {
+        if ($container->hasExtension('doctrine_migrations')) {
+            $loader = new YamlFileLoader(
+                $container,
+                new FileLocator(__DIR__ . '/../Resources/config')
+            );
+
+            $loader->load('doctrine_migrations.yml');
+        }
     }
 
 }
