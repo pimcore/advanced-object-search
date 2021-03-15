@@ -91,20 +91,20 @@ class SavedSearch extends Model\AbstractModel
 
     public function save()
     {
-        \Pimcore::getEventDispatcher()->dispatch(SavedSearchEvents::PRE_SAVE, new SavedSearchEvent($this));
+        \Pimcore::getEventDispatcher()->dispatch(new SavedSearchEvent($this), SavedSearchEvents::PRE_SAVE);
 
         $this->getDao()->save();
 
-        \Pimcore::getEventDispatcher()->dispatch(SavedSearchEvents::POST_SAVE, new SavedSearchEvent($this));
+        \Pimcore::getEventDispatcher()->dispatch(new SavedSearchEvent($this), SavedSearchEvents::POST_SAVE);
     }
 
     public function delete()
     {
-        \Pimcore::getEventDispatcher()->dispatch(SavedSearchEvents::PRE_DELETE, new SavedSearchEvent($this));
-        
+        \Pimcore::getEventDispatcher()->dispatch(new SavedSearchEvent($this), SavedSearchEvents::PRE_DELETE);
+
         $this->getDao()->delete();
 
-        \Pimcore::getEventDispatcher()->dispatch(SavedSearchEvents::POST_DELETE, new SavedSearchEvent($this));
+        \Pimcore::getEventDispatcher()->dispatch(new SavedSearchEvent($this), SavedSearchEvents::POST_DELETE);
     }
 
     /**
