@@ -15,7 +15,9 @@
 pimcore.registerNS("pimcore.bundle.advancedObjectSearch.searchConfig.resultPanel");
 pimcore.bundle.advancedObjectSearch.searchConfig.resultPanel = Class.create(pimcore.bundle.advancedObjectSearch.searchConfig.resultAbstractPanel, {
 
-    initialize: function (getSaveDataCallback, gridConfigData, portletMode) {
+    initialize: function ($super, getSaveDataCallback, gridConfigData, portletMode) {
+        $super();
+
         this.getSaveDataCallback = getSaveDataCallback;
         this.settings = {};
         this.element = {};
@@ -278,6 +280,7 @@ pimcore.bundle.advancedObjectSearch.searchConfig.resultPanel = Class.create(pimc
                     {
                         xtype: 'toolbar',
                         dock: 'top',
+                        overflowHandler: 'scroller',
                         items: secondaryTbar
                     }
                 );

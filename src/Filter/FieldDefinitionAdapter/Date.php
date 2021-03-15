@@ -16,7 +16,7 @@
 namespace AdvancedObjectSearchBundle\Filter\FieldDefinitionAdapter;
 
 
-class Date extends Datetime implements IFieldDefinitionAdapter {
+class Date extends Datetime implements FieldDefinitionAdapterInterface {
 
     /**
      * field type for search frontend

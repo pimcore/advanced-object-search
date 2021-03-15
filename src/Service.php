@@ -17,10 +17,10 @@ namespace AdvancedObjectSearchBundle;
 
 use AdvancedObjectSearchBundle\Event\AdvancedObjectSearchEvents;
 use AdvancedObjectSearchBundle\Event\FilterSearchEvent;
-use AdvancedObjectSearchBundle\Filter\FieldDefinitionAdapter\IFieldDefinitionAdapter;
+use AdvancedObjectSearchBundle\Filter\FieldDefinitionAdapter\FieldDefinitionAdapterInterface;
 use AdvancedObjectSearchBundle\Filter\FieldSelectionInformation;
 use AdvancedObjectSearchBundle\Filter\FilterEntry;
-use AdvancedObjectSearchBundle\Installer;
+use AdvancedObjectSearchBundle\Tools\ElasticSearchConfigService;
 use Elasticsearch\Client;
 use Elasticsearch\Common\Exceptions\Missing404Exception;
 use ONGR\ElasticsearchDSL\BuilderInterface;
@@ -76,6 +76,11 @@ class Service {
     protected $coreFieldsConfig;
 
     /**
+     * @var string
+     */
+    protected $indexNamePrefix;
+
+    /**
      * Service constructor.
      * @param LoggerInterface $logger
      * @param TokenStorageUserResolver $userResolver
@@ -83,6 +88,7 @@ class Service {
      * @param ContainerInterface $filterLocator
      * @param EventDispatcherInterface $eventDispatcher
      * @param Translator $translator
+     * @param ElasticSearchConfigService $elasticSearchConfigService
      */
     public function __construct(
         LoggerInterface $logger,
@@ -90,7 +96,8 @@ class Service {
         Client $esClient,
         ContainerInterface $filterLocator,
         EventDispatcherInterface $eventDispatcher,
-        Translator $translator
+        Translator $translator,
+        ElasticSearchConfigService $elasticSearchConfigService
     ) {
         $this->user = $userResolver->getUser();
         $this->logger = $logger;
@@ -98,6 +105,7 @@ class Service {
         $this->filterLocator = $filterLocator;
         $this->eventDispatcher = $eventDispatcher;
         $this->translator = $translator;
+        $this->indexNamePrefix = $elasticSearchConfigService->getIndexNamePrefix();
     }
 
     /**
@@ -105,7 +113,7 @@ class Service {
      *
      * @param ClassDefinition\Data $fieldDefinition
      * @param bool $considerInheritance
-     * @return IFieldDefinitionAdapter
+     * @return FieldDefinitionAdapterInterface
      */
     public function getFieldDefinitionAdapter(ClassDefinition\Data $fieldDefinition, bool $considerInheritance) {
         $adapter = null;
@@ -153,8 +161,7 @@ class Service {
      * @return string
      */
     public function getIndexName($classname) {
-        $config = AdvancedObjectSearchBundle::getConfig();
-        return $config['index-prefix'] . strtolower($classname);
+        return $this->indexNamePrefix . strtolower($classname);
     }
 
     /**
@@ -258,14 +265,12 @@ class Service {
 
         $mappingParams = [
             "index" => $this->getIndexName($objectClass->getName()),
-            "type" => $objectClass->getName(),
+            "include_type_name" => false,
             "body" => [
-                $objectClass->getName() => [
-                    "_source" => [
-                        "enabled" => true
-                    ],
-                    "properties" => $mappingProperties
-                ]
+                "_source" => [
+                    "enabled" => true
+                ],
+                "properties" => $mappingProperties
             ]
         ];
 
@@ -382,7 +387,7 @@ class Service {
 
         $params = [
             'index' => $this->getIndexName($object->getClassName()),
-            'type' =>  $object->getClassName(),
+            'type' => '_doc',
             'id' => $object->getId(),
             'body' => $data
         ];
@@ -401,7 +406,7 @@ class Service {
 
         $params = [
             'index' => $this->getIndexName($object->getClassName()),
-            'type' =>  $object->getClassName(),
+            'type' => '_doc',
             'id' => $object->getId()
         ];
 
@@ -416,6 +421,7 @@ class Service {
         $indexUpdateParams = $this->getIndexData($object);
 
         if($indexUpdateParams['body']['o_checksum'] != $originalChecksum) {
+
             $response = $this->esClient->index($indexUpdateParams);
             $this->logger->info("Updates es index for data object " . $object->getId());
             $this->logger->debug(json_encode($response));
@@ -462,7 +468,7 @@ class Service {
 
         $params = [
             'index' => $this->getIndexName($object->getClassName()),
-            'type' =>  $object->getClassName(),
+            'type' => '_doc',
             'id' => $object->getId()
         ];
 
@@ -516,6 +522,9 @@ class Service {
                 $object = Concrete::getById($objectId);
                 if($object) {
                     $this->doUpdateIndexData($object);
+                } else {
+                    // Object no longer exists, remove from queue
+                    $db->executeQuery("DELETE FROM " . Installer::QUEUE_TABLE_NAME . " WHERE o_id = ?", [$objectId]);
                 }
             }
             return count($entries);
@@ -687,7 +696,8 @@ class Service {
 
         $params = [
             'index' => $this->getIndexName($classDefinition->getName()),
-            'type' => $classDefinition->getName(),
+            'track_total_hits' => true,
+            'rest_total_hits_as_int' => true,
             'body' => $search->toArray()
         ];
 

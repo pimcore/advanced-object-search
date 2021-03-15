@@ -15,6 +15,8 @@
 namespace AdvancedObjectSearchBundle\DependencyInjection;
 
 
+use AdvancedObjectSearchBundle\AdvancedObjectSearchBundle;
+use Pimcore\Logger;
 use Symfony\Component\Config\FileLocator;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Loader\YamlFileLoader;
@@ -47,6 +49,25 @@ class AdvancedObjectSearchExtension extends ConfigurableExtension
         }
 
         $serviceLocator->setArgument(0, $arguments);
+
+        $container->setParameter('pimcore.advanced_object_search.index_name_prefix', $config['index_name_prefix']);
+        if($config['index_name_prefix'] === Configuration::BC_DEFAULT_VALUE) {
+            try {
+                $container->setParameter('pimcore.advanced_object_search.index_name_prefix', AdvancedObjectSearchBundle::getConfig()['index-prefix']);
+            } catch (\Exception $e) {
+                Logger::error('Error loading advanced-object-search config: ' . $e->getMessage());
+            }
+        }
+
+        $container->setParameter('pimcore.advanced_object_search.es_hosts', $config['es_hosts']);
+        if(is_array($config['es_hosts']) && $config['es_hosts'][0] === Configuration::BC_DEFAULT_VALUE) {
+            try {
+                $container->setParameter('pimcore.advanced_object_search.es_hosts', AdvancedObjectSearchBundle::getConfig()['hosts']);
+            } catch (\Exception $e) {
+                Logger::error('Error loading advanced-object-search config: ' . $e->getMessage());
+            }
+        }
+
     }
 
 }

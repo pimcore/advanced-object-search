@@ -21,7 +21,7 @@ use ONGR\ElasticsearchDSL\Query\TermLevel\TermQuery;
 use Pimcore\Model\DataObject\AbstractObject;
 use Pimcore\Model\DataObject\Concrete;
 
-class Datetime extends Numeric implements IFieldDefinitionAdapter {
+class Datetime extends Numeric implements FieldDefinitionAdapterInterface {
 
     /**
      * field type for search frontend

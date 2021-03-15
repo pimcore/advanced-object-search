@@ -24,6 +24,8 @@ use Symfony\Component\Config\Definition\ConfigurationInterface;
  */
 class Configuration implements ConfigurationInterface
 {
+    CONST BC_DEFAULT_VALUE = 'BC_DEFAULT_VALUE';
+
     /**
      * {@inheritdoc}
      */
@@ -34,6 +36,15 @@ class Configuration implements ConfigurationInterface
 
         $rootNode
             ->children()
+                ->scalarNode('index_name_prefix')
+                    ->defaultValue(self::BC_DEFAULT_VALUE)
+                    ->info('Prefix for index names')
+                ->end()
+                ->arrayNode('es_hosts')
+                    ->prototype('scalar')->end()
+                    ->defaultValue([self::BC_DEFAULT_VALUE])
+                    ->info('List of elasticsearch hosts')
+                ->end()
                 ->arrayNode('field_definition_adapters')
                     ->info("Add mapping between data object type and service implementation for field definition adapter")
                     ->useAttributeAsKey('name')

@@ -23,7 +23,13 @@ class AdvancedObjectSearchBundle extends AbstractPimcoreBundle
 {
     use PackageVersionTrait;
 
+    /**
+     * @deprecated
+     */
     const CONFIG_PATH = 'advancedobjectsearch';
+    /**
+     * @deprecated
+     */
     const CONFIG_FILENAME = 'config.php';
 
     /**
@@ -37,6 +43,8 @@ class AdvancedObjectSearchBundle extends AbstractPimcoreBundle
 
     /**
      * @return array|mixed
+     *
+     * @deprecated use symfony config instead
      * @throws \Exception
      */
     public static function getConfig()
@@ -77,7 +85,7 @@ class AdvancedObjectSearchBundle extends AbstractPimcoreBundle
             }
 
             if (!$file) {
-                throw new \Exception($file . " doesn't exist");
+                throw new \Exception("Configuration file could not be found in any of the following locations: " . implode(', ', $pathsToCheck));
             }
 
             self::$config = include $file;
@@ -144,6 +152,7 @@ class AdvancedObjectSearchBundle extends AbstractPimcoreBundle
             '/bundles/advancedobjectsearch/js/searchConfig/fieldConditionPanel/date.js',
             '/bundles/advancedobjectsearch/js/searchConfig/fieldConditionPanel/time.js',
             '/bundles/advancedobjectsearch/js/searchConfig/fieldConditionPanel/quantityValue.js',
+            '/bundles/advancedobjectsearch/js/searchConfig/fieldConditionPanel/table.js',
             '/bundles/advancedobjectsearch/js/portlet/advancedObjectSearch.js'
         ];
     }

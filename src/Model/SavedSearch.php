@@ -15,6 +15,8 @@
 
 namespace AdvancedObjectSearchBundle\Model;
 
+use AdvancedObjectSearchBundle\Event\SavedSearchEvents;
+use AdvancedObjectSearchBundle\Event\SavedSearchEvent;
 use Pimcore\Model;
 
 class SavedSearch extends Model\AbstractModel
@@ -87,10 +89,22 @@ class SavedSearch extends Model\AbstractModel
         }
     }
 
-
     public function save()
     {
+        \Pimcore::getEventDispatcher()->dispatch(SavedSearchEvents::PRE_SAVE, new SavedSearchEvent($this));
+
         $this->getDao()->save();
+
+        \Pimcore::getEventDispatcher()->dispatch(SavedSearchEvents::POST_SAVE, new SavedSearchEvent($this));
+    }
+
+    public function delete()
+    {
+        \Pimcore::getEventDispatcher()->dispatch(SavedSearchEvents::PRE_DELETE, new SavedSearchEvent($this));
+        
+        $this->getDao()->delete();
+
+        \Pimcore::getEventDispatcher()->dispatch(SavedSearchEvents::POST_DELETE, new SavedSearchEvent($this));
     }
 
     /**

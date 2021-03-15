@@ -25,7 +25,7 @@ use ONGR\ElasticsearchDSL\Query\TermLevel\TermQuery;
 use Pimcore\Model\DataObject\AbstractObject;
 use Pimcore\Model\DataObject\Concrete;
 
-class ManyToOneRelation extends DefaultAdapter implements IFieldDefinitionAdapter {
+class ManyToOneRelation extends DefaultAdapter implements FieldDefinitionAdapterInterface {
 
     /**
      * field type for search frontend

@@ -47,3 +47,4 @@ bundle_advancedsearch_operator_must: must
 bundle_advancedsearch_operator_must_not: must not
 bundle_advancedsearch_operator_should: should
 bundle_advancedObjectSearch_roles: Roles
+bundle_advancedsearch_table_colum_config: Column

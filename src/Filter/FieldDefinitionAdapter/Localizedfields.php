@@ -26,7 +26,7 @@ use Pimcore\Model\DataObject\Concrete;
 use Pimcore\Localization\LocaleServiceInterface;
 use Pimcore\Tool;
 
-class Localizedfields extends DefaultAdapter implements IFieldDefinitionAdapter {
+class Localizedfields extends DefaultAdapter implements FieldDefinitionAdapterInterface {
 
     /**
      * @var Data\Localizedfields
@@ -34,7 +34,7 @@ class Localizedfields extends DefaultAdapter implements IFieldDefinitionAdapter 
     protected $fieldDefinition;
 
     /**
-     * @var Locale
+     * @var LocaleServiceInterface
      */
     protected $localeService;
 
