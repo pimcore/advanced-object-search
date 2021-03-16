@@ -58,5 +58,7 @@ class UpdateMappingCommand extends ServiceAwareCommand
             $this->service->updateMapping($class);
 
         }
+
+        return 0;
     }
 }

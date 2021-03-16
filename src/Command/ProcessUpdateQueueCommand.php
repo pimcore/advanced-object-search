@@ -39,5 +39,7 @@ class ProcessUpdateQueueCommand extends ServiceAwareCommand
             $count = $this->service->processUpdateQueue();
         }
 
+        return 0;
+
     }
 }
