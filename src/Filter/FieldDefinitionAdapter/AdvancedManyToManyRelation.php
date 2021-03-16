@@ -32,12 +32,7 @@ class AdvancedManyToManyRelation extends ManyToOneRelation implements FieldDefin
         $value = parent::doGetIndexDataValue($object, $ignoreInheritance);
 
         $filteredValues = array_map(function($item) {
-
-            if(isset($item['element'])) {
-                return $item['element'];
-            } else {
-                return $item;
-            }
+			return $item['element'] ?? $item;
         }, $value);
 
         return $filteredValues;
