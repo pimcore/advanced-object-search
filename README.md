@@ -224,7 +224,8 @@ read [here on how to extend the result tab with custom filters.](./doc/01_Extend
 ### Upgrade to v4.0.0
 - Removed BC Layer for old configuration file. Configuration now only in symfony configuration tree.
 - Removed deprecated `IFieldDefinitionAdapterInterface`, use `FieldDefinitionAdapterInterfaceInterface` instead. 
-- Execute all migrations of the bundle
+- Data is Elasticsearch might be different, so recheck if you are depending directly on the data in Elasticsearch.
+- Execute all migrations of the bundle.
 
 #### Upgrade to Pimcore X
 - Update to latest (allowed) bundle version in Pimcore 6.9 and execute all migrations

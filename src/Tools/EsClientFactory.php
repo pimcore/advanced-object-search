@@ -31,6 +31,7 @@ class EsClientFactory
             self::$esClient = \Elasticsearch\ClientBuilder::create()
                 ->setHosts($esConfigService->getHosts())
                 ->setLogger($esConfigService->getLogger())
+                ->setConnectionParams(['client' => ['ignore' => [404]]])
                 ->build();
         }
 

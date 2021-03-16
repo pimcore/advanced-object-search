@@ -138,9 +138,14 @@ class QuantityValue extends Numeric implements FieldDefinitionAdapterInterface {
             AbstractObject::setGetInheritedValues(false);
         }
 
-        $value = $this->fieldDefinition->getForWebserviceExport($object);
-        unset($value['unitAbbreviation']);
-
+        $value = null;
+        $rawValue = $this->loadRawDataFromContainer($object, $this->fieldDefinition->getName());
+        if($rawValue instanceof \Pimcore\Model\DataObject\Data\QuantityValue) {
+            $value = [
+                'value' => $rawValue->getValue(),
+                'unit' => $rawValue->getUnitId()
+            ];
+        }
 
         if($ignoreInheritance) {
             AbstractObject::setGetInheritedValues($inheritanceBackup);
