@@ -24,6 +24,7 @@ use ONGR\ElasticsearchDSL\Query\TermLevel\ExistsQuery;
 use ONGR\ElasticsearchDSL\Query\TermLevel\TermQuery;
 use Pimcore\Model\DataObject\AbstractObject;
 use Pimcore\Model\DataObject\Concrete;
+use Pimcore\Normalizer\NormalizerInterface;
 
 class ManyToOneRelation extends DefaultAdapter implements FieldDefinitionAdapterInterface {
 
@@ -197,7 +198,10 @@ class ManyToOneRelation extends DefaultAdapter implements FieldDefinitionAdapter
         }
 
         $rawValue = $this->loadRawDataFromContainer($object, $this->fieldDefinition->getName());
-        $value = $this->fieldDefinition->marshal($rawValue);
+        $value = null;
+        if($this->fieldDefinition instanceof NormalizerInterface) {
+            $value = $this->fieldDefinition->normalize($rawValue);
+        }
 
         if($ignoreInheritance) {
             AbstractObject::setGetInheritedValues($inheritanceBackup);

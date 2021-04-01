@@ -27,6 +27,7 @@ use Pimcore\Model\DataObject\AbstractObject;
 use Pimcore\Model\DataObject\ClassDefinition\Data;
 use Pimcore\Model\DataObject\Concrete;
 use Pimcore\Model\DataObject\Localizedfield;
+use Pimcore\Normalizer\NormalizerInterface;
 
 class DefaultAdapter implements FieldDefinitionAdapterInterface {
 
@@ -144,9 +145,10 @@ class DefaultAdapter implements FieldDefinitionAdapterInterface {
         }
 
         $rawValue = $this->loadRawDataFromContainer($object, $this->fieldDefinition->getName());
-        $value = $this->fieldDefinition->marshal($rawValue, null, ['raw' => true]);
-        $value = json_decode(json_encode($value), true);
-//        $value = $this->fieldDefinition->getForWebserviceExport($object);
+        $value = null;
+        if($this->fieldDefinition instanceof NormalizerInterface) {
+            $value = $this->fieldDefinition->normalize($rawValue);
+        }
 
         if($ignoreInheritance) {
             AbstractObject::setGetInheritedValues($inheritanceBackup);
