@@ -26,7 +26,7 @@ class AdvancedObjectSearchBundle extends AbstractPimcoreBundle
     /**
      * @inheritDoc
      */
-    protected function getComposerPackageName()
+    protected function getComposerPackageName(): string
     {
         return 'pimcore/advanced-object-search';
     }
