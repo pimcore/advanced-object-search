@@ -530,14 +530,13 @@ class AdminController extends \Pimcore\Bundle\AdminBundle\Controller\AdminContro
      */
     public function getRolesAction() {
 
-        $users = [];
+        $roles = [];
 
         $rolesList = new \Pimcore\Model\User\Role\Listing();
         $rolesList->setCondition('type = "role"');
         $rolesList->addConditionParam("CONCAT(',', permissions, ',') LIKE ?", '%,bundle_advancedsearch_search,%');
         $rolesList->load();
 
-        $roles = [];
         foreach ($rolesList->getRoles() as $role) {
             $roles[] = [
                 'id' => $role->getId(),
@@ -545,7 +544,7 @@ class AdminController extends \Pimcore\Bundle\AdminBundle\Controller\AdminContro
             ];
         }
 
-        return $this->adminJson(['success' => true, 'total' => count($users), 'data' => $roles]);
+        return $this->adminJson(['success' => true, 'total' => count($roles), 'data' => $roles]);
     }
 
 
