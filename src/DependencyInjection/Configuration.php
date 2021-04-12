@@ -24,25 +24,23 @@ use Symfony\Component\Config\Definition\ConfigurationInterface;
  */
 class Configuration implements ConfigurationInterface
 {
-    CONST BC_DEFAULT_VALUE = 'BC_DEFAULT_VALUE';
-
     /**
      * {@inheritdoc}
      */
     public function getConfigTreeBuilder()
     {
-        $treeBuilder = new TreeBuilder();
-        $rootNode = $treeBuilder->root('pimcore_advanced_object_search');
+        $treeBuilder = new TreeBuilder('pimcore_advanced_object_search');
+        $rootNode = $treeBuilder->getRootNode();
 
         $rootNode
             ->children()
                 ->scalarNode('index_name_prefix')
-                    ->defaultValue(self::BC_DEFAULT_VALUE)
+                    ->defaultValue('advanced_object_search')
                     ->info('Prefix for index names')
                 ->end()
                 ->arrayNode('es_hosts')
                     ->prototype('scalar')->end()
-                    ->defaultValue([self::BC_DEFAULT_VALUE])
+                    ->defaultValue(['localhost'])
                     ->info('List of elasticsearch hosts')
                 ->end()
                 ->arrayNode('field_definition_adapters')

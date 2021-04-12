@@ -22,9 +22,12 @@ use ONGR\ElasticsearchDSL\BuilderInterface;
 use ONGR\ElasticsearchDSL\Query\Compound\BoolQuery;
 use ONGR\ElasticsearchDSL\Query\FullText\QueryStringQuery;
 use ONGR\ElasticsearchDSL\Query\TermLevel\ExistsQuery;
+use Pimcore\Localization\LocaleServiceInterface;
 use Pimcore\Model\DataObject\AbstractObject;
 use Pimcore\Model\DataObject\ClassDefinition\Data;
 use Pimcore\Model\DataObject\Concrete;
+use Pimcore\Model\DataObject\Localizedfield;
+use Pimcore\Normalizer\NormalizerInterface;
 
 class DefaultAdapter implements FieldDefinitionAdapterInterface {
 
@@ -51,11 +54,18 @@ class DefaultAdapter implements FieldDefinitionAdapterInterface {
     protected $service;
 
     /**
+     * @var LocaleServiceInterface
+     */
+    protected $localeService;
+
+    /**
      * DefaultAdapter constructor.
      * @param Service $service
+     * @param LocaleServiceInterface $locale
      */
-    public function __construct(Service $service) {
+    public function __construct(Service $service, LocaleServiceInterface $locale) {
         $this->service = $service;
+        $this->localeService = $locale;
     }
 
     /**
@@ -111,6 +121,17 @@ class DefaultAdapter implements FieldDefinitionAdapterInterface {
         }
     }
 
+    protected function loadRawDataFromContainer($container, $fieldName) {
+        $data = null;
+        $getter = 'get' . ucfirst($fieldName);
+        if (method_exists($container, $getter)) { // for DataObject\Concrete, DataObject\Fieldcollection\Data\AbstractData, DataObject\Objectbrick\Data\AbstractData
+            $data = $container->$getter();
+        } elseif ($container instanceof Localizedfield) {
+            $data = $container->getLocalizedValue($fieldName, $this->localeService->getLocale(), true);
+        }
+        return $data;
+    }
+
     /**
      * @param $object
      * @param bool $ignoreInheritance
@@ -123,7 +144,11 @@ class DefaultAdapter implements FieldDefinitionAdapterInterface {
             AbstractObject::setGetInheritedValues(false);
         }
 
-        $value = $this->fieldDefinition->getForWebserviceExport($object);
+        $rawValue = $this->loadRawDataFromContainer($object, $this->fieldDefinition->getName());
+        $value = null;
+        if($this->fieldDefinition instanceof NormalizerInterface) {
+            $value = $this->fieldDefinition->normalize($rawValue);
+        }
 
         if($ignoreInheritance) {
             AbstractObject::setGetInheritedValues($inheritanceBackup);

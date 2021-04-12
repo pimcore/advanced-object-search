@@ -2,18 +2,17 @@
 
 namespace AdvancedObjectSearchBundle;
 
+use AdvancedObjectSearchBundle\Migrations\PimcoreX\Version20210305134111;
 use AdvancedObjectSearchBundle\Model\SavedSearch;
-use Doctrine\DBAL\Migrations\Version;
-use Doctrine\DBAL\Schema\Schema;
-use Pimcore\Extension\Bundle\Installer\MigrationInstaller;
+use Pimcore\Extension\Bundle\Installer\SettingsStoreAwareInstaller;
 use Pimcore\Model\User\Permission\Definition;
 
-class Installer extends MigrationInstaller
+class Installer extends SettingsStoreAwareInstaller
 {
     const QUEUE_TABLE_NAME = 'bundle_advancedobjectsearch_update_queue';
     const PERMISSION_KEY = 'bundle_advancedsearch_search';
 
-    protected function afterInstallMigration()
+    protected function installPermissions()
     {
         $key = self::PERMISSION_KEY;
         $definition = Definition::getByKey($key);
@@ -29,8 +28,12 @@ class Installer extends MigrationInstaller
         }
     }
 
-    public function migrateInstall(Schema $schema, Version $version)
+    public function install()
     {
+        $db = \Pimcore\Db::get();
+        $currentSchema = $db->getSchemaManager()->createSchema();
+        $schema = $db->getSchemaManager()->createSchema();
+
         if (! $schema->hasTable(self::QUEUE_TABLE_NAME)) {
             $queueTable = $schema->createTable(self::QUEUE_TABLE_NAME);
             $queueTable->addColumn('o_id', 'bigint', ['default' => 0, 'notnull' => true]);
@@ -51,12 +54,27 @@ class Installer extends MigrationInstaller
             $savedSearchTable->addColumn('config', 'text', ['notnull' => false]);
             $savedSearchTable->addColumn('sharedUserIds', 'string', ['length' => 1000, 'notnull' => false]);
             $savedSearchTable->addColumn('shortCutUserIds', 'text', ['notnull' => false]);
+            $savedSearchTable->addColumn("shareGlobally", "boolean", ['default' => null, 'notnull' => false]);
+            $savedSearchTable->addIndex(["shareGlobally"], "shareGlobally");
             $savedSearchTable->setPrimaryKey(['id']);
         }
+
+        $sqlStatements = $currentSchema->getMigrateToSql($schema, $db->getDatabasePlatform());
+        if(!empty($sqlStatements)) {
+            $db->exec(implode(';', $sqlStatements));
+        }
+
+        $this->installPermissions();
+
+        parent::install();
     }
 
-    public function migrateUninstall(Schema $schema, Version $version)
+    public function uninstall()
     {
+        $db = \Pimcore\Db::get();
+        $currentSchema = $db->getSchemaManager()->createSchema();
+        $schema = $db->getSchemaManager()->createSchema();
+
         $tables = [
             self::QUEUE_TABLE_NAME,
             SavedSearch\Dao::TABLE_NAME,
@@ -68,13 +86,26 @@ class Installer extends MigrationInstaller
             }
         }
 
+        $sqlStatements = $currentSchema->getMigrateToSql($schema, $db->getDatabasePlatform());
+        if(!empty($sqlStatements)) {
+            $db->exec(implode(';', $sqlStatements));
+        }
+
+
         $key = self::PERMISSION_KEY;
-        $this->connection->query("DELETE FROM users_permission_definitions WHERE `key` = '{$key}'");
+        $db->exec("DELETE FROM users_permission_definitions WHERE `key` = '{$key}'");
+
+        parent::uninstall();
     }
 
 
     public function needsReloadAfterInstall()
     {
         return true;
+    }
+
+    public function getLastMigrationVersionClassName(): ?string
+    {
+        return Version20210305134111::class;
     }
 }

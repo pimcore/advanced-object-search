@@ -74,5 +74,7 @@ class ReindexCommand extends ServiceAwareCommand
                 \Pimcore::collectGarbage();
             }
         }
+
+        return 0;
     }
 }

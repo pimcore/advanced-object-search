@@ -91,12 +91,11 @@ class Table extends DefaultAdapter
             AbstractObject::setGetInheritedValues(false);
         }
 
-        $value = $this->fieldDefinition->getForWebserviceExport($object);
+        $value = $this->loadRawDataFromContainer($object, $this->fieldDefinition->getName());
         if ($this->isColumnConfigActivated()) {
             // When saving an object the array doesnt have named keys, so first get data for resource
             // and then get the data from resource. This way we have named keys in the data array
-            $value = $this->fieldDefinition->getDataFromResource($this->fieldDefinition->getDataForResource($value,
-                $object));
+            $value = $this->fieldDefinition->getDataFromResource($this->fieldDefinition->getDataForResource($value, $object));
         }
 
         if ($ignoreInheritance) {

@@ -157,7 +157,7 @@ class AdminController extends \Pimcore\Bundle\AdminBundle\Controller\AdminContro
             }
 
             $list->setCondition(implode(" AND ", $conditionFilters));
-            $eventDispatcher->dispatch(AdvancedObjectSearchEvents::LISTING_FILER, new FilterListingEvent($list));
+            $eventDispatcher->dispatch(new FilterListingEvent($list), AdvancedObjectSearchEvents::LISTING_FILER);
 
             $list->load();
 
@@ -517,7 +517,7 @@ class AdminController extends \Pimcore\Bundle\AdminBundle\Controller\AdminContro
         foreach($userList as $user) {
             $users[] = [
                 'id' => $user->getId(),
-                'label' => $user->getUsername()
+                'label' => $user->getName()
             ];
         }
 

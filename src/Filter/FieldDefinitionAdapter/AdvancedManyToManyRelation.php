@@ -25,4 +25,17 @@ class AdvancedManyToManyRelation extends ManyToOneRelation implements FieldDefin
      */
     protected $fieldType = "advancedManyToManyRelation";
 
+    /**
+     * @inheritDoc
+     */
+    protected function doGetIndexDataValue($object, $ignoreInheritance = false) {
+        $value = parent::doGetIndexDataValue($object, $ignoreInheritance);
+
+        $filteredValues = array_map(function($item) {
+			return $item['element'] ?? $item;
+        }, $value);
+
+        return $filteredValues;
+    }
+
 }

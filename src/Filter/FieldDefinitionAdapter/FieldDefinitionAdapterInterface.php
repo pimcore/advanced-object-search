@@ -19,6 +19,7 @@ use AdvancedObjectSearchBundle\Filter\FieldSelectionInformation;
 use AdvancedObjectSearchBundle\Service;
 use ONGR\ElasticsearchDSL\BuilderInterface;
 use ONGR\ElasticsearchDSL\Query\TermLevel\ExistsQuery;
+use Pimcore\Localization\LocaleServiceInterface;
 use Pimcore\Model\DataObject\ClassDefinition\Data;
 use Pimcore\Model\DataObject\Concrete;
 
@@ -28,10 +29,10 @@ interface FieldDefinitionAdapterInterface {
     const ES_MAPPING_PROPERTY_NOT_INHERITED = "notInherited";
 
     /**
-     * IFieldDefinitionAdapter constructor.
      * @param Service $service
+     * @param LocaleServiceInterface $locale
      */
-    public function __construct(Service $service);
+    public function __construct(Service $service, LocaleServiceInterface $locale);
 
     /**
      * @param Data $fieldDefinition

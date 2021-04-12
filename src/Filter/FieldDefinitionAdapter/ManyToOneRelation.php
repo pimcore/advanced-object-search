@@ -24,6 +24,7 @@ use ONGR\ElasticsearchDSL\Query\TermLevel\ExistsQuery;
 use ONGR\ElasticsearchDSL\Query\TermLevel\TermQuery;
 use Pimcore\Model\DataObject\AbstractObject;
 use Pimcore\Model\DataObject\Concrete;
+use Pimcore\Normalizer\NormalizerInterface;
 
 class ManyToOneRelation extends DefaultAdapter implements FieldDefinitionAdapterInterface {
 
@@ -47,7 +48,6 @@ class ManyToOneRelation extends DefaultAdapter implements FieldDefinitionAdapter
                             'type' => 'nested',
                             'properties' => [
                                 'type' => ['type' => 'keyword'],
-                                'subtype' => ['type' => 'keyword'],
                                 'id' => ["type" => "long"]
                             ]
                         ],
@@ -55,7 +55,6 @@ class ManyToOneRelation extends DefaultAdapter implements FieldDefinitionAdapter
                             'type' => 'nested',
                             'properties' => [
                                 'type' => ['type' => 'keyword'],
-                                'subtype' => ['type' => 'keyword'],
                                 'id' => ["type" => "long"]
                             ]
                         ]
@@ -69,7 +68,6 @@ class ManyToOneRelation extends DefaultAdapter implements FieldDefinitionAdapter
                     'type' => 'nested',
                     'properties' => [
                         'type' => ['type' => 'keyword'],
-                        'subtype' => ['type' => 'keyword'],
                         'id' => ["type" => "long"]
                     ]
                 ]
@@ -199,7 +197,11 @@ class ManyToOneRelation extends DefaultAdapter implements FieldDefinitionAdapter
             AbstractObject::setGetInheritedValues(false);
         }
 
-        $value = $this->fieldDefinition->getForWebserviceExport($object);
+        $rawValue = $this->loadRawDataFromContainer($object, $this->fieldDefinition->getName());
+        $value = null;
+        if($this->fieldDefinition instanceof NormalizerInterface) {
+            $value = $this->fieldDefinition->normalize($rawValue);
+        }
 
         if($ignoreInheritance) {
             AbstractObject::setGetInheritedValues($inheritanceBackup);

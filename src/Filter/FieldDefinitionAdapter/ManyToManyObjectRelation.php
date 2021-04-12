@@ -66,10 +66,18 @@ class ManyToManyObjectRelation extends ManyToOneRelation implements FieldDefinit
 
         //rewrite all types to 'object' since 'variants' are not supported yet.
         $filteredValues = array_map(function($item) {
-            return [
-                'id' => $item['id'],
-                'type' => 'object'
-            ];
+
+            if(isset($item['element'])) {
+                return [
+                    'id' => $item['element']['id'],
+                    'type' => 'object'
+                ];
+            } else {
+                return [
+                    'id' => $item['id'],
+                    'type' => 'object'
+                ];
+            }
         }, $value);
 
         return $filteredValues;

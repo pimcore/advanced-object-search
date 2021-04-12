@@ -72,7 +72,7 @@ class Checkbox extends DefaultAdapter implements FieldDefinitionAdapterInterface
             AbstractObject::setGetInheritedValues(false);
         }
 
-        $value = $this->fieldDefinition->getForWebserviceExport($object);
+        $value = $this->loadRawDataFromContainer($object, $this->fieldDefinition->getName());
 
         if($ignoreInheritance) {
             AbstractObject::setGetInheritedValues($inheritanceBackup);
