@@ -288,8 +288,12 @@ class Service {
      */
     public function updateMapping(ClassDefinition $classDefinition) {
 
-        //updating mapping without recreating index
+        if(!$this->esClient->indices()->exists(['index' => $this->getIndexName($classDefinition->getName())])) {
+            $this->createIndex($classDefinition);
+        }
+
         try {
+            //updating mapping without recreating index
             $this->doUpdateMapping($classDefinition);
             return true;
         } catch (\Exception $e) {
