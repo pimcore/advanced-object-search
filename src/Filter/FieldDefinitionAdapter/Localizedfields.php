@@ -17,7 +17,6 @@ namespace AdvancedObjectSearchBundle\Filter\FieldDefinitionAdapter;
 
 use AdvancedObjectSearchBundle\Filter\FieldSelectionInformation;
 use AdvancedObjectSearchBundle\Filter\FilterEntry;
-use AdvancedObjectSearchBundle\Service;
 use ONGR\ElasticsearchDSL\BuilderInterface;
 use ONGR\ElasticsearchDSL\Query\Compound\BoolQuery;
 use ONGR\ElasticsearchDSL\Query\Joining\NestedQuery;
