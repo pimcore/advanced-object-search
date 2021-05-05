@@ -48,7 +48,7 @@ class QuantityValue extends Numeric implements FieldDefinitionAdapterInterface {
                                     'type' => 'float',
                                 ],
                                 'unit' => [
-                                    'type' => 'integer',
+                                    'type' => 'keyword',
                                 ]
                             ]
                         ],
@@ -58,7 +58,7 @@ class QuantityValue extends Numeric implements FieldDefinitionAdapterInterface {
                                     'type' => 'float',
                                 ],
                                 'unit' => [
-                                    'type' => 'integer',
+                                    'type' => 'keyword',
                                 ]
                             ]
                         ]
@@ -74,7 +74,7 @@ class QuantityValue extends Numeric implements FieldDefinitionAdapterInterface {
                             'type' => 'float',
                         ],
                         'unit' => [
-                            'type' => 'integer',
+                            'type' => 'keyword',
                         ]
                     ]
 
