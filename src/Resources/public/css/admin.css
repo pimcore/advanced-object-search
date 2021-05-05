@@ -32,7 +32,7 @@
     background: url("/bundles/pimcoreadmin/img/flat-color-icons/binoculars.svg") center center no-repeat !important;
 }
 
-.pimcore_version_6 .pimcore_bundle_nav_icon_advancedObjectSearch {
+.pimcore_version_6 .pimcore_bundle_nav_icon_advancedObjectSearch, .pimcore_version_10 .pimcore_bundle_nav_icon_advancedObjectSearch {
     background: url("/bundles/pimcoreadmin/img/flat-white-icons/binoculars.svg") center center no-repeat !important;
 }
 
