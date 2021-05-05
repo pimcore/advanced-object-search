@@ -56,8 +56,6 @@ services:
     AdvancedObjectSearchBundle\Maintenance\UpdateQueueProcessor:
         tags:
             - { name: pimcore.maintenance.task, type: advancedobjectsearch_update_queue }
-            # Note: When Pimcore v5 support is dropped, this can be removed.
-            - { name: kernel.event_listener, event: pimcore.system.maintenance, method: registerMaintenanceJob }
 
     bundle.advanced_object_search.filter_locator:
         class: Symfony\Component\DependencyInjection\ServiceLocator

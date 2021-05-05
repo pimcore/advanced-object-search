@@ -33,14 +33,6 @@ class UpdateQueueProcessor implements TaskInterface
         $this->service = $service;
     }
 
-    /**
-     * Note: When Pimcore v5 support is dropped, this can be removed.
-     */
-    public function registerMaintenanceJob(MaintenanceEvent $maintenanceEvent)
-    {
-        $maintenanceEvent->getManager()->registerJob(new Job(get_class($this), [$this, "execute"]));
-    }
-
     public function execute()
     {
         $this->service->processUpdateQueue(500);
