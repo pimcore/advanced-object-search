@@ -1,17 +1,17 @@
 <?php
+
 /**
  * Pimcore
  *
  * This source file is available under two different licenses:
  * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Enterprise License (PEL)
+ * - Pimcore Commercial License (PCL)
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
- * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- * @license    http://www.pimcore.org/license     GPLv3 and PEL
+ *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
+ *  @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
-
 
 namespace AdvancedObjectSearchBundle\Command;
 
@@ -27,7 +27,7 @@ class ReindexCommand extends ServiceAwareCommand
     {
         $this
             ->setName('advanced-object-search:re-index')
-            ->setDescription("Reindex all objects of given class. Does not delete index first or resets update queue.")
+            ->setDescription('Reindex all objects of given class. Does not delete index first or resets update queue.')
             ->addOption('classes', 'c', InputOption::VALUE_OPTIONAL, 'just update specific classes, use "," (comma) to execute more than one class')
         ;
     }
@@ -35,9 +35,9 @@ class ReindexCommand extends ServiceAwareCommand
     protected function execute(InputInterface $input, OutputInterface $output)
     {
         $classes = [];
-        if ($input->getOption("classes")) {
-            $classNames = explode(",", $input->getOption("classes"));
-            foreach($classNames as $name) {
+        if ($input->getOption('classes')) {
+            $classNames = explode(',', $input->getOption('classes'));
+            foreach ($classNames as $name) {
                 $classes[] = ClassDefinition::getByName($name);
             }
         } else {
@@ -50,18 +50,18 @@ class ReindexCommand extends ServiceAwareCommand
         $elementsPerLoop = 100;
 
         foreach ($classes as $class) {
-            $listClassName = "\\Pimcore\\Model\\DataObject\\" . ucfirst($class->getName()) . "\\Listing";
+            $listClassName = '\\Pimcore\\Model\\DataObject\\' . ucfirst($class->getName()) . '\\Listing';
             $list = new $listClassName();
             $list->setObjectTypes([AbstractObject::OBJECT_TYPE_OBJECT, AbstractObject::OBJECT_TYPE_VARIANT]);
             $list->setUnpublished(true);
 
             $elementsTotal = $list->getTotalCount();
 
-            for ($i=0; $i<(ceil($elementsTotal/$elementsPerLoop)); $i++) {
+            for ($i = 0; $i < (ceil($elementsTotal / $elementsPerLoop)); $i++) {
                 $list->setLimit($elementsPerLoop);
-                $list->setOffset($i*$elementsPerLoop);
+                $list->setOffset($i * $elementsPerLoop);
 
-                $this->output->writeln("Processing " . $class->getName() . ": " . ($list->getOffset()+$elementsPerLoop) . "/" . $elementsTotal);
+                $this->output->writeln('Processing ' . $class->getName() . ': ' . ($list->getOffset() + $elementsPerLoop) . '/' . $elementsTotal);
 
                 $objects = $list->load();
                 foreach ($objects as $object) {

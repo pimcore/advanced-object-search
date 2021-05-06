@@ -1,20 +1,24 @@
 <?php
+
 /**
- * Created by PhpStorm.
- * User: cfasching
- * Date: 14.08.2017
- * Time: 16:09
+ * Pimcore
+ *
+ * This source file is available under two different licenses:
+ * - GNU General Public License version 3 (GPLv3)
+ * - Pimcore Commercial License (PCL)
+ * Full copyright and license information is available in
+ * LICENSE.md which is distributed with this source code.
+ *
+ *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
+ *  @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
 namespace AdvancedObjectSearchBundle\Tools;
 
-
-use AdvancedObjectSearchBundle\AdvancedObjectSearchBundle;
 use Elasticsearch\Client;
 
 class EsClientFactory
 {
-
     /**
      * @var Client
      */
@@ -22,12 +26,14 @@ class EsClientFactory
 
     /**
      * @param ElasticSearchConfigService $esConfigService
+     *
      * @return Client
+     *
      * @throws \Exception
      */
-    public static function getESClient(ElasticSearchConfigService $esConfigService) {
-
-        if(empty(self::$esClient)) {
+    public static function getESClient(ElasticSearchConfigService $esConfigService)
+    {
+        if (empty(self::$esClient)) {
             self::$esClient = \Elasticsearch\ClientBuilder::create()
                 ->setHosts($esConfigService->getHosts())
                 ->setLogger($esConfigService->getLogger())

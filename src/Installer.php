@@ -1,5 +1,18 @@
 <?php
 
+/**
+ * Pimcore
+ *
+ * This source file is available under two different licenses:
+ * - GNU General Public License version 3 (GPLv3)
+ * - Pimcore Commercial License (PCL)
+ * Full copyright and license information is available in
+ * LICENSE.md which is distributed with this source code.
+ *
+ *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
+ *  @license    http://www.pimcore.org/license     GPLv3 and PCL
+ */
+
 namespace AdvancedObjectSearchBundle;
 
 use AdvancedObjectSearchBundle\Migrations\PimcoreX\Version20210305134111;
@@ -54,13 +67,13 @@ class Installer extends SettingsStoreAwareInstaller
             $savedSearchTable->addColumn('config', 'text', ['notnull' => false]);
             $savedSearchTable->addColumn('sharedUserIds', 'string', ['length' => 1000, 'notnull' => false]);
             $savedSearchTable->addColumn('shortCutUserIds', 'text', ['notnull' => false]);
-            $savedSearchTable->addColumn("shareGlobally", "boolean", ['default' => null, 'notnull' => false]);
-            $savedSearchTable->addIndex(["shareGlobally"], "shareGlobally");
+            $savedSearchTable->addColumn('shareGlobally', 'boolean', ['default' => null, 'notnull' => false]);
+            $savedSearchTable->addIndex(['shareGlobally'], 'shareGlobally');
             $savedSearchTable->setPrimaryKey(['id']);
         }
 
         $sqlStatements = $currentSchema->getMigrateToSql($schema, $db->getDatabasePlatform());
-        if(!empty($sqlStatements)) {
+        if (!empty($sqlStatements)) {
             $db->exec(implode(';', $sqlStatements));
         }
 
@@ -87,17 +100,15 @@ class Installer extends SettingsStoreAwareInstaller
         }
 
         $sqlStatements = $currentSchema->getMigrateToSql($schema, $db->getDatabasePlatform());
-        if(!empty($sqlStatements)) {
+        if (!empty($sqlStatements)) {
             $db->exec(implode(';', $sqlStatements));
         }
-
 
         $key = self::PERMISSION_KEY;
         $db->exec("DELETE FROM users_permission_definitions WHERE `key` = '{$key}'");
 
         parent::uninstall();
     }
-
 
     public function needsReloadAfterInstall()
     {

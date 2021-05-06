@@ -1,60 +1,57 @@
 <?php
+
 /**
  * Pimcore
  *
  * This source file is available under two different licenses:
  * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Enterprise License (PEL)
+ * - Pimcore Commercial License (PCL)
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
- * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- * @license    http://www.pimcore.org/license     GPLv3 and PEL
+ *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
+ *  @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
-
 namespace AdvancedObjectSearchBundle\Filter\FieldDefinitionAdapter;
-
 
 use Pimcore\Model\DataObject\AbstractObject;
 use Pimcore\Model\DataObject\Concrete;
 
-class Time extends Datetime implements FieldDefinitionAdapterInterface {
-
+class Time extends Datetime implements FieldDefinitionAdapterInterface
+{
     /**
      * field type for search frontend
      *
      * @var string
      */
-    protected $fieldType = "time";
-
+    protected $fieldType = 'time';
 
     /**
      * @param Concrete $object
      * @param bool $ignoreInheritance
      */
-    protected function doGetIndexDataValue($object, $ignoreInheritance = false) {
+    protected function doGetIndexDataValue($object, $ignoreInheritance = false)
+    {
         $inheritanceBackup = null;
-        if($ignoreInheritance) {
+        if ($ignoreInheritance) {
             $inheritanceBackup = AbstractObject::getGetInheritedValues();
             AbstractObject::setGetInheritedValues(false);
         }
 
         $value = null;
 
-        $getter = "get" . $this->fieldDefinition->getName();
+        $getter = 'get' . $this->fieldDefinition->getName();
         $valueObject = $object->$getter();
-        if($valueObject) {
-            $valueObject = new \DateTime("0000-01-01T" . $valueObject);
+        if ($valueObject) {
+            $valueObject = new \DateTime('0000-01-01T' . $valueObject);
             $value = $valueObject->format(\DateTime::ISO8601);
         }
 
-        if($ignoreInheritance) {
+        if ($ignoreInheritance) {
             AbstractObject::setGetInheritedValues($inheritanceBackup);
         }
 
         return $value;
     }
-
-
 }

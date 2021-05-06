@@ -1,19 +1,19 @@
 <?php
+
 /**
  * Pimcore
  *
  * This source file is available under two different licenses:
  * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Enterprise License (PEL)
+ * - Pimcore Commercial License (PCL)
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
- * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- * @license    http://www.pimcore.org/license     GPLv3 and PEL
+ *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
+ *  @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
 namespace AdvancedObjectSearchBundle\DependencyInjection;
-
 
 use Symfony\Component\Config\FileLocator;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
@@ -24,7 +24,6 @@ use Symfony\Component\HttpKernel\DependencyInjection\ConfigurableExtension;
 
 class AdvancedObjectSearchExtension extends ConfigurableExtension implements PrependExtensionInterface
 {
-
     public function loadInternal(array $config, ContainerBuilder $container)
     {
         $loader = new YamlFileLoader(
@@ -40,7 +39,7 @@ class AdvancedObjectSearchExtension extends ConfigurableExtension implements Pre
         );
 
         // load mappings for field definition adapters
-        $serviceLocator = $container->getDefinition("bundle.advanced_object_search.filter_locator");
+        $serviceLocator = $container->getDefinition('bundle.advanced_object_search.filter_locator');
         $arguments = [];
 
         foreach ($config['field_definition_adapters'] as $key => $serviceId) {
@@ -51,7 +50,6 @@ class AdvancedObjectSearchExtension extends ConfigurableExtension implements Pre
 
         $container->setParameter('pimcore.advanced_object_search.index_name_prefix', $config['index_name_prefix']);
         $container->setParameter('pimcore.advanced_object_search.es_hosts', $config['es_hosts']);
-
     }
 
     /**
@@ -68,5 +66,4 @@ class AdvancedObjectSearchExtension extends ConfigurableExtension implements Pre
             $loader->load('doctrine_migrations.yml');
         }
     }
-
 }

@@ -1,17 +1,17 @@
 <?php
+
 /**
  * Pimcore
  *
  * This source file is available under two different licenses:
  * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Enterprise License (PEL)
+ * - Pimcore Commercial License (PCL)
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
- * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- * @license    http://www.pimcore.org/license     GPLv3 and PEL
+ *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
+ *  @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
-
 
 namespace AdvancedObjectSearchBundle\Filter\FieldDefinitionAdapter;
 
@@ -29,14 +29,14 @@ use Pimcore\Model\DataObject\Concrete;
 use Pimcore\Model\DataObject\Localizedfield;
 use Pimcore\Normalizer\NormalizerInterface;
 
-class DefaultAdapter implements FieldDefinitionAdapterInterface {
-
+class DefaultAdapter implements FieldDefinitionAdapterInterface
+{
     /**
      * field type for search frontend
      *
      * @var string
      */
-    protected $fieldType = "default";
+    protected $fieldType = 'default';
 
     /**
      * @var Data
@@ -60,10 +60,12 @@ class DefaultAdapter implements FieldDefinitionAdapterInterface {
 
     /**
      * DefaultAdapter constructor.
+     *
      * @param Service $service
      * @param LocaleServiceInterface $locale
      */
-    public function __construct(Service $service, LocaleServiceInterface $locale) {
+    public function __construct(Service $service, LocaleServiceInterface $locale)
+    {
         $this->service = $service;
         $this->localeService = $locale;
     }
@@ -71,24 +73,25 @@ class DefaultAdapter implements FieldDefinitionAdapterInterface {
     /**
      * @param Data $fieldDefinition
      */
-    public function setFieldDefinition(Data $fieldDefinition) {
+    public function setFieldDefinition(Data $fieldDefinition)
+    {
         $this->fieldDefinition = $fieldDefinition;
     }
 
     /**
      * @param bool $considerInheritance
      */
-    public function setConsiderInheritance(bool $considerInheritance) {
+    public function setConsiderInheritance(bool $considerInheritance)
+    {
         $this->considerInheritance = $considerInheritance;
     }
-
 
     /**
      * @return array
      */
-    public function getESMapping() {
-
-        if($this->considerInheritance) {
+    public function getESMapping()
+    {
+        if ($this->considerInheritance) {
             return [
                 $this->fieldDefinition->getName(),
                 [
@@ -96,13 +99,13 @@ class DefaultAdapter implements FieldDefinitionAdapterInterface {
                         self::ES_MAPPING_PROPERTY_STANDARD => [
                             'type' => 'text',
                             'fields' => [
-                                'raw' =>  [ 'type' => 'keyword' ]
+                                'raw' => [ 'type' => 'keyword' ]
                             ]
                         ],
                         self::ES_MAPPING_PROPERTY_NOT_INHERITED => [
                             'type' => 'text',
                             'fields' => [
-                                'raw' =>  [ 'type' => 'keyword' ]
+                                'raw' => [ 'type' => 'keyword' ]
                             ]
                         ]
                     ]
@@ -114,14 +117,15 @@ class DefaultAdapter implements FieldDefinitionAdapterInterface {
                 [
                     'type' => 'text',
                     'fields' => [
-                        'raw' =>  [ 'type' => 'keyword' ]
+                        'raw' => [ 'type' => 'keyword' ]
                     ]
                 ]
             ];
         }
     }
 
-    protected function loadRawDataFromContainer($container, $fieldName) {
+    protected function loadRawDataFromContainer($container, $fieldName)
+    {
         $data = null;
         $getter = 'get' . ucfirst($fieldName);
         if (method_exists($container, $getter)) { // for DataObject\Concrete, DataObject\Fieldcollection\Data\AbstractData, DataObject\Objectbrick\Data\AbstractData
@@ -129,32 +133,35 @@ class DefaultAdapter implements FieldDefinitionAdapterInterface {
         } elseif ($container instanceof Localizedfield) {
             $data = $container->getLocalizedValue($fieldName, $this->localeService->getLocale(), true);
         }
+
         return $data;
     }
 
     /**
      * @param $object
      * @param bool $ignoreInheritance
+     *
      * @return string
      */
-    protected function doGetIndexDataValue($object, $ignoreInheritance = false) {
+    protected function doGetIndexDataValue($object, $ignoreInheritance = false)
+    {
         $inheritanceBackup = null;
-        if($ignoreInheritance) {
+        if ($ignoreInheritance) {
             $inheritanceBackup = AbstractObject::getGetInheritedValues();
             AbstractObject::setGetInheritedValues(false);
         }
 
         $rawValue = $this->loadRawDataFromContainer($object, $this->fieldDefinition->getName());
         $value = null;
-        if($this->fieldDefinition instanceof NormalizerInterface) {
+        if ($this->fieldDefinition instanceof NormalizerInterface) {
             $value = $this->fieldDefinition->normalize($rawValue);
         }
 
-        if($ignoreInheritance) {
+        if ($ignoreInheritance) {
             AbstractObject::setGetInheritedValues($inheritanceBackup);
         }
 
-        if(is_array($value)) {
+        if (is_array($value)) {
             return json_encode($value);
         }
 
@@ -163,29 +170,28 @@ class DefaultAdapter implements FieldDefinitionAdapterInterface {
 
     /**
      * @param Concrete $object
+     *
      * @return mixed
      */
-    public function getIndexData($object) {
-
+    public function getIndexData($object)
+    {
         $value = $this->doGetIndexDataValue($object, false);
 
-        if($this->considerInheritance) {
+        if ($this->considerInheritance) {
             $notInheritedValue = $this->doGetIndexDataValue($object, true);
 
             $returnValue = null;
-            if($value) {
+            if ($value) {
                 $returnValue[self::ES_MAPPING_PROPERTY_STANDARD] = $value;
             }
 
-            if($notInheritedValue) {
+            if ($notInheritedValue) {
                 $returnValue[self::ES_MAPPING_PROPERTY_NOT_INHERITED] = $notInheritedValue;
             }
 
             return $returnValue;
-
         } else {
-
-            if($value) {
+            if ($value) {
                 return $value;
             } else {
                 return null;
@@ -193,21 +199,20 @@ class DefaultAdapter implements FieldDefinitionAdapterInterface {
         }
     }
 
+    protected function buildQueryFieldPostfix($ignoreInheritance = false)
+    {
+        $postfix = '';
 
-    protected function buildQueryFieldPostfix($ignoreInheritance = false) {
-        $postfix = "";
-
-        if($this->considerInheritance) {
-            if($ignoreInheritance) {
-                $postfix = "." . self::ES_MAPPING_PROPERTY_NOT_INHERITED;
+        if ($this->considerInheritance) {
+            if ($ignoreInheritance) {
+                $postfix = '.' . self::ES_MAPPING_PROPERTY_NOT_INHERITED;
             } else {
-                $postfix = "." . self::ES_MAPPING_PROPERTY_STANDARD;
+                $postfix = '.' . self::ES_MAPPING_PROPERTY_STANDARD;
             }
         }
 
         return $postfix;
     }
-
 
     /**
      * @param $fieldFilter
@@ -215,19 +220,20 @@ class DefaultAdapter implements FieldDefinitionAdapterInterface {
      * filter field format as follows:
      *   - simple string like
      *       "filter for value"  --> creates QueryStringQuery
-     *
      * @param bool $ignoreInheritance
      * @param string $path
+     *
      * @return BuilderInterface
      */
-    public function getQueryPart($fieldFilter, $ignoreInheritance = false, $path = "") {
-        return new QueryStringQuery($fieldFilter, ["fields" => [$path . $this->fieldDefinition->getName() . $this->buildQueryFieldPostfix($ignoreInheritance)]]);
+    public function getQueryPart($fieldFilter, $ignoreInheritance = false, $path = '')
+    {
+        return new QueryStringQuery($fieldFilter, ['fields' => [$path . $this->fieldDefinition->getName() . $this->buildQueryFieldPostfix($ignoreInheritance)]]);
     }
 
     /**
      * @inheritdoc
      */
-    public function getExistsFilter($fieldFilter, $ignoreInheritance = false, $path = "")
+    public function getExistsFilter($fieldFilter, $ignoreInheritance = false, $path = '')
     {
         return new ExistsQuery($path . $this->fieldDefinition->getName() . $this->buildQueryFieldPostfix($ignoreInheritance));
     }
