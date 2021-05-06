@@ -1,15 +1,16 @@
 <?php
+
 /**
  * Pimcore
  *
  * This source file is available under two different licenses:
  * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Enterprise License (PEL)
+ * - Pimcore Commercial License (PCL)
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
- * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- * @license    http://www.pimcore.org/license     GPLv3 and PEL
+ *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
+ *  @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
 namespace AdvancedObjectSearchBundle\DependencyInjection;
@@ -44,7 +45,7 @@ class Configuration implements ConfigurationInterface
                     ->info('List of elasticsearch hosts')
                 ->end()
                 ->arrayNode('field_definition_adapters')
-                    ->info("Add mapping between data object type and service implementation for field definition adapter")
+                    ->info('Add mapping between data object type and service implementation for field definition adapter')
                     ->useAttributeAsKey('name')
                         ->prototype('scalar')
                     ->end()

@@ -1,17 +1,17 @@
 <?php
+
 /**
  * Pimcore
  *
  * This source file is available under two different licenses:
  * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Enterprise License (PEL)
+ * - Pimcore Commercial License (PCL)
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
- * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- * @license    http://www.pimcore.org/license     GPLv3 and PEL
+ *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
+ *  @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
-
 
 namespace AdvancedObjectSearchBundle\Model\SavedSearch;
 
@@ -19,17 +19,18 @@ use Pimcore\Model;
 
 class Dao extends Model\Dao\AbstractDao
 {
-    const TABLE_NAME = "bundle_advancedobjectsearch_savedsearch";
+    const TABLE_NAME = 'bundle_advancedobjectsearch_savedsearch';
 
     /**
      * @param $id
+     *
      * @throws \Exception
      */
     public function getById($id)
     {
-        $data = $this->db->fetchRow("SELECT * FROM " . $this->db->quoteIdentifier(self::TABLE_NAME) . " WHERE id = ?", $id);
-        if (!$data["id"]) {
-            throw new \Exception("SavedSearch item with id " . $id . " not found");
+        $data = $this->db->fetchRow('SELECT * FROM ' . $this->db->quoteIdentifier(self::TABLE_NAME) . ' WHERE id = ?', $id);
+        if (!$data['id']) {
+            throw new \Exception('SavedSearch item with id ' . $id . ' not found');
         }
         $this->assignVariablesToModel($data);
     }
@@ -48,10 +49,10 @@ class Dao extends Model\Dao\AbstractDao
             $data = [];
             foreach ($dataAttributes as $key => $value) {
                 if (in_array($key, $this->getValidTableColumns(self::TABLE_NAME))) {
-                    if (in_array($key, ["sharedUserIds", "shortCutUserIds"])) {
+                    if (in_array($key, ['sharedUserIds', 'shortCutUserIds'])) {
                         // sharedUserIds and shortCustUserIds are stored as csv
                         if (is_array($value)) {
-                            $value = "," . implode(",", $value) . ",";
+                            $value = ',' . implode(',', $value) . ',';
                         }
                     }
                     $data[$key] = $value;
@@ -66,6 +67,7 @@ class Dao extends Model\Dao\AbstractDao
             }
 
             $this->db->commit();
+
             return true;
         } catch (\Exception $e) {
             $this->db->rollBack();
@@ -90,5 +92,4 @@ class Dao extends Model\Dao\AbstractDao
             throw $e;
         }
     }
-
 }

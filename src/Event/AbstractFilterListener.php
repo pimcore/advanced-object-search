@@ -1,5 +1,18 @@
 <?php
 
+/**
+ * Pimcore
+ *
+ * This source file is available under two different licenses:
+ * - GNU General Public License version 3 (GPLv3)
+ * - Pimcore Commercial License (PCL)
+ * Full copyright and license information is available in
+ * LICENSE.md which is distributed with this source code.
+ *
+ *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
+ *  @license    http://www.pimcore.org/license     GPLv3 and PCL
+ */
+
 namespace AdvancedObjectSearchBundle\Event;
 
 use AdvancedObjectSearchBundle\Service;
@@ -24,11 +37,9 @@ abstract class AbstractFilterListener implements EventSubscriberInterface
         $request = $requestStack->getCurrentRequest();
 
         $this->service = $service;
-        if($request) {
-
-            $this->parameters = new ParameterBag(json_decode($request->get("customFilter"), true) ?: []);
+        if ($request) {
+            $this->parameters = new ParameterBag(json_decode($request->get('customFilter'), true) ?: []);
         } else {
-
             $this->parameters = new ParameterBag([]);
         }
     }
@@ -56,11 +67,11 @@ abstract class AbstractFilterListener implements EventSubscriberInterface
     {
         return [
             AdvancedObjectSearchEvents::ELASITIC_FILTER => [
-                ["onElasticSearch", 10],
+                ['onElasticSearch', 10],
             ],
 
             AdvancedObjectSearchEvents::LISTING_FILER => [
-                ["onListing", 10]
+                ['onListing', 10]
             ]
         ];
     }
@@ -82,7 +93,7 @@ abstract class AbstractFilterListener implements EventSubscriberInterface
     /**
      * @return bool
      */
-    protected abstract function supports(): bool;
+    abstract protected function supports(): bool;
 
     /**
      * @param FilterSearchEvent $event

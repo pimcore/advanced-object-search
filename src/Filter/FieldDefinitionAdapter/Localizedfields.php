@@ -1,17 +1,17 @@
 <?php
+
 /**
  * Pimcore
  *
  * This source file is available under two different licenses:
  * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Enterprise License (PEL)
+ * - Pimcore Commercial License (PCL)
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
- * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- * @license    http://www.pimcore.org/license     GPLv3 and PEL
+ *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
+ *  @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
-
 
 namespace AdvancedObjectSearchBundle\Filter\FieldDefinitionAdapter;
 
@@ -24,8 +24,8 @@ use Pimcore\Model\DataObject\ClassDefinition\Data;
 use Pimcore\Model\DataObject\Concrete;
 use Pimcore\Tool;
 
-class Localizedfields extends DefaultAdapter implements FieldDefinitionAdapterInterface {
-
+class Localizedfields extends DefaultAdapter implements FieldDefinitionAdapterInterface
+{
     /**
      * @var Data\Localizedfields
      */
@@ -34,11 +34,11 @@ class Localizedfields extends DefaultAdapter implements FieldDefinitionAdapterIn
     /**
      * @return array
      */
-    public function getESMapping() {
-
+    public function getESMapping()
+    {
         $children = $this->fieldDefinition->getFieldDefinitions();
         $childMappingProperties = [];
-        foreach($children as $child) {
+        foreach ($children as $child) {
             $fieldDefinitionAdapter = $this->service->getFieldDefinitionAdapter($child, $this->considerInheritance);
             list($key, $mappingEntry) = $fieldDefinitionAdapter->getESMapping();
             $childMappingProperties[$key] = $mappingEntry;
@@ -46,7 +46,7 @@ class Localizedfields extends DefaultAdapter implements FieldDefinitionAdapterIn
 
         $mappingProperties = [];
         $languages = Tool::getValidLanguages();
-        foreach($languages as $language) {
+        foreach ($languages as $language) {
             $mappingProperties[$language] = [
                 'type' => 'nested',
                 'properties' => $childMappingProperties
@@ -62,14 +62,13 @@ class Localizedfields extends DefaultAdapter implements FieldDefinitionAdapterIn
         ];
     }
 
-
     /**
      * @param Concrete $object
+     *
      * @return array
      */
     public function getIndexData($object)
     {
-
         $localeBackup = $this->localeService->getLocale();
 
         $validLanguages = Tool::getValidLanguages();
@@ -83,7 +82,6 @@ class Localizedfields extends DefaultAdapter implements FieldDefinitionAdapterIn
 
                     $fieldDefinitionAdapter = $this->service->getFieldDefinitionAdapter($fieldDefinition, $this->considerInheritance);
                     $localizedFieldData[$language][$key] = $fieldDefinitionAdapter->getIndexData($object);
-
                 }
             }
         }
@@ -92,7 +90,6 @@ class Localizedfields extends DefaultAdapter implements FieldDefinitionAdapterIn
 
         return $localizedFieldData;
     }
-
 
     /**
      * @param $fieldFilter
@@ -106,66 +103,61 @@ class Localizedfields extends DefaultAdapter implements FieldDefinitionAdapterIn
      *      'en' => [
      *          ["fieldnme" => "locname", "filterEntryData" => "englname"]
      *       ]
-     *
      * @param bool $ignoreInheritance
      * @param string $path
+     *
      * @return BoolQuery
      */
-    public function getQueryPart($fieldFilter, $ignoreInheritance = false, $path = "") {
-
+    public function getQueryPart($fieldFilter, $ignoreInheritance = false, $path = '')
+    {
         $languageQueries = [];
 
-        foreach($fieldFilter as $language => $languageFilters) {
-            $path = $path . $this->fieldDefinition->getName() . "." . $language;
+        foreach ($fieldFilter as $language => $languageFilters) {
+            $path = $path . $this->fieldDefinition->getName() . '.' . $language;
             $languageBoolQuery = new BoolQuery();
 
-            foreach($languageFilters as $localizedFieldFilter) {
+            foreach ($languageFilters as $localizedFieldFilter) {
                 $filterEntryObject = $this->service->buildFilterEntryObject($localizedFieldFilter);
 
-                if($filterEntryObject->getFilterEntryData() instanceof BuilderInterface) {
+                if ($filterEntryObject->getFilterEntryData() instanceof BuilderInterface) {
 
                     // add given builder interface without any further processing
                     $languageBoolQuery->add($filterEntryObject->getFilterEntryData(), $filterEntryObject->getOuterOperator());
-
                 } else {
                     $fieldDefinition = $this->fieldDefinition->getFielddefinition($filterEntryObject->getFieldname());
                     $fieldDefinitionAdapter = $this->service->getFieldDefinitionAdapter($fieldDefinition, $this->considerInheritance);
 
-                    if($filterEntryObject->getOperator() == FilterEntry::EXISTS || $filterEntryObject->getOperator() == FilterEntry::NOT_EXISTS) {
+                    if ($filterEntryObject->getOperator() == FilterEntry::EXISTS || $filterEntryObject->getOperator() == FilterEntry::NOT_EXISTS) {
 
                         //add exists filter generated by filter definition adapter
                         $languageBoolQuery->add(
-                            $fieldDefinitionAdapter->getExistsFilter($filterEntryObject->getFilterEntryData(), $filterEntryObject->getIgnoreInheritance(), $path . "."),
+                            $fieldDefinitionAdapter->getExistsFilter($filterEntryObject->getFilterEntryData(), $filterEntryObject->getIgnoreInheritance(), $path . '.'),
                             $filterEntryObject->getOuterOperator()
                         );
-
                     } else {
 
                         //add query part generated by filter definition adapter
                         $languageBoolQuery->add(
-                            $fieldDefinitionAdapter->getQueryPart($filterEntryObject->getFilterEntryData(), $filterEntryObject->getIgnoreInheritance(), $path . "."),
+                            $fieldDefinitionAdapter->getQueryPart($filterEntryObject->getFilterEntryData(), $filterEntryObject->getIgnoreInheritance(), $path . '.'),
                             $filterEntryObject->getOuterOperator()
                         );
-
                     }
-
-
                 }
             }
             $languageQueries[] = new NestedQuery($path, $languageBoolQuery);
         }
 
-        if(count($languageQueries) == 1) {
+        if (count($languageQueries) == 1) {
             return $languageQueries[0];
         } else {
             $boolQuery = new BoolQuery();
-            foreach($languageQueries as $query) {
-                 $boolQuery->add($query);
+            foreach ($languageQueries as $query) {
+                $boolQuery->add($query);
             }
+
             return $boolQuery;
         }
     }
-
 
     /**
      * returns selectable fields with their type information for search frontend
@@ -177,17 +169,17 @@ class Localizedfields extends DefaultAdapter implements FieldDefinitionAdapterIn
         $fieldSelectionInformationEntries = [];
 
         $children = $this->fieldDefinition->getFieldDefinitions();
-        foreach($children as $child) {
+        foreach ($children as $child) {
             $fieldDefinitionAdapter = $this->service->getFieldDefinitionAdapter($child, $this->considerInheritance);
 
             $subEntries = $fieldDefinitionAdapter->getFieldSelectionInformation();
-            foreach($subEntries as $subEntry) {
+            foreach ($subEntries as $subEntry) {
                 $context = $subEntry->getContext();
                 $context['subType'] = $subEntry->getFieldType();
                 $context['languages'] = Tool::getValidLanguages();
                 $subEntry->setContext($context);
 
-                $subEntry->setFieldType("localizedfields");
+                $subEntry->setFieldType('localizedfields');
             }
 
             $fieldSelectionInformationEntries = array_merge($fieldSelectionInformationEntries, $subEntries);
@@ -195,5 +187,4 @@ class Localizedfields extends DefaultAdapter implements FieldDefinitionAdapterIn
 
         return $fieldSelectionInformationEntries;
     }
-
 }

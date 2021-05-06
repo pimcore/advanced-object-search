@@ -1,20 +1,19 @@
 <?php
+
 /**
  * Pimcore
  *
  * This source file is available under two different licenses:
  * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Enterprise License (PEL)
+ * - Pimcore Commercial License (PCL)
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
- * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- * @license    http://www.pimcore.org/license     GPLv3 and PEL
+ *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
+ *  @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
 
-
 namespace AdvancedObjectSearchBundle\EventListener;
-
 
 use AdvancedObjectSearchBundle\Service;
 use Pimcore\Event\Model\DataObject\ClassDefinitionEvent;
@@ -41,7 +40,7 @@ class IndexUpdateListener
         AbstractObject::setGetInheritedValues(true);
 
         $object = $event->getObject();
-        if($object instanceof Concrete) {
+        if ($object instanceof Concrete) {
             $this->service->doUpdateIndexData($object);
         }
 
@@ -51,17 +50,19 @@ class IndexUpdateListener
     public function deleteObject(DataObjectEvent $event)
     {
         $object = $event->getObject();
-        if($object instanceof Concrete) {
+        if ($object instanceof Concrete) {
             $this->service->doDeleteFromIndex($object);
         }
     }
 
-    public function updateMapping(ClassDefinitionEvent $event) {
+    public function updateMapping(ClassDefinitionEvent $event)
+    {
         $classDefinition = $event->getClassDefinition();
         $this->service->updateMapping($classDefinition);
     }
 
-    public function deleteIndex(ClassDefinitionEvent $event) {
+    public function deleteIndex(ClassDefinitionEvent $event)
+    {
         $classDefinition = $event->getClassDefinition();
         try {
             $this->service->deleteIndex($classDefinition);

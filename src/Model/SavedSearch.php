@@ -1,27 +1,26 @@
 <?php
+
 /**
  * Pimcore
  *
  * This source file is available under two different licenses:
  * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Enterprise License (PEL)
+ * - Pimcore Commercial License (PCL)
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
- * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- * @license    http://www.pimcore.org/license     GPLv3 and PEL
+ *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
+ *  @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
-
 
 namespace AdvancedObjectSearchBundle\Model;
 
-use AdvancedObjectSearchBundle\Event\SavedSearchEvents;
 use AdvancedObjectSearchBundle\Event\SavedSearchEvent;
+use AdvancedObjectSearchBundle\Event\SavedSearchEvents;
 use Pimcore\Model;
 
 class SavedSearch extends Model\AbstractModel
 {
-
     /**
      * @var int
      */
@@ -74,7 +73,9 @@ class SavedSearch extends Model\AbstractModel
 
     /**
      * @static
+     *
      * @param $id
+     *
      * @return SavedSearch
      */
     public static function getById($id)
@@ -117,11 +118,13 @@ class SavedSearch extends Model\AbstractModel
 
     /**
      * @param int $id
+     *
      * @return SavedSearch
      */
     public function setId($id)
     {
         $this->id = $id;
+
         return $this;
     }
 
@@ -135,11 +138,13 @@ class SavedSearch extends Model\AbstractModel
 
     /**
      * @param string $name
+     *
      * @return SavedSearch
      */
     public function setName($name)
     {
         $this->name = $name;
+
         return $this;
     }
 
@@ -153,11 +158,13 @@ class SavedSearch extends Model\AbstractModel
 
     /**
      * @param string $description
+     *
      * @return SavedSearch
      */
     public function setDescription($description)
     {
         $this->description = $description;
+
         return $this;
     }
 
@@ -166,20 +173,23 @@ class SavedSearch extends Model\AbstractModel
      */
     public function getOwner()
     {
-        if(empty($this->owner)) {
+        if (empty($this->owner)) {
             $this->owner = Model\User::getById($this->ownerId);
         }
+
         return $this->owner;
     }
 
     /**
      * @param Model\User $owner
+     *
      * @return SavedSearch
      */
     public function setOwner($owner)
     {
         $this->owner = $owner;
         $this->ownerId = $owner->getId();
+
         return $this;
     }
 
@@ -193,11 +203,13 @@ class SavedSearch extends Model\AbstractModel
 
     /**
      * @param string $config
+     *
      * @return SavedSearch
      */
     public function setConfig($config)
     {
         $this->config = $config;
+
         return $this;
     }
 
@@ -211,11 +223,13 @@ class SavedSearch extends Model\AbstractModel
 
     /**
      * @param string $category
+     *
      * @return SavedSearch
      */
     public function setCategory($category)
     {
         $this->category = $category;
+
         return $this;
     }
 
@@ -229,12 +243,14 @@ class SavedSearch extends Model\AbstractModel
 
     /**
      * @param int $ownerId
+     *
      * @return SavedSearch
      */
     public function setOwnerId($ownerId)
     {
         $this->ownerId = $ownerId;
         $this->owner = null;
+
         return $this;
     }
 
@@ -249,11 +265,13 @@ class SavedSearch extends Model\AbstractModel
     /**
      * @return Model\User[]
      */
-    public function getSharedUsers() {
+    public function getSharedUsers()
+    {
         $users = [];
-        foreach($this->sharedUserIds as $id) {
+        foreach ($this->sharedUserIds as $id) {
             $users[] = Model\User::getById($id);
         }
+
         return $users;
     }
 
@@ -262,8 +280,8 @@ class SavedSearch extends Model\AbstractModel
      */
     public function setSharedUserIds($sharedUserIds)
     {
-        if(is_string($sharedUserIds) && !empty($sharedUserIds)) {
-            $sharedUserIds = array_values(array_filter(explode(",", $sharedUserIds)));
+        if (is_string($sharedUserIds) && !empty($sharedUserIds)) {
+            $sharedUserIds = array_values(array_filter(explode(',', $sharedUserIds)));
         }
 
         $this->sharedUserIds = $sharedUserIds;
@@ -282,31 +300,34 @@ class SavedSearch extends Model\AbstractModel
      */
     public function setShortCutUserIds($shortCutUserIds)
     {
-        if(is_string($shortCutUserIds) && !empty($shortCutUserIds)) {
-            $shortCutUserIds = array_values(array_filter(explode(",", $shortCutUserIds)));
+        if (is_string($shortCutUserIds) && !empty($shortCutUserIds)) {
+            $shortCutUserIds = array_values(array_filter(explode(',', $shortCutUserIds)));
         }
 
         $this->shortCutUserIds = $shortCutUserIds;
     }
 
-
     /**
      * @param Model\User $user
+     *
      * @return bool
      */
-    public function isInShortCutsForUser(Model\User $user) {
+    public function isInShortCutsForUser(Model\User $user)
+    {
         $userId = $user->getId();
+
         return $this->getShortCutUserIds() && in_array($userId, $this->getShortCutUserIds());
     }
 
     /**
      * @param Model\User $user
      */
-    public function addShortCutForUser(Model\User $user) {
+    public function addShortCutForUser(Model\User $user)
+    {
         $userId = $user->getId();
 
         $shortCutUserIds = $this->getShortCutUserIds();
-        if(!$shortCutUserIds) {
+        if (!$shortCutUserIds) {
             $shortCutUserIds = [];
         }
         $shortCutUserIds[] = $userId;
@@ -316,7 +337,8 @@ class SavedSearch extends Model\AbstractModel
     /**
      * @param Model\User $user
      */
-    public function removeShortCutForUser(Model\User $user) {
+    public function removeShortCutForUser(Model\User $user)
+    {
         $userId = $user->getId();
         $shortCutUserIds = $this->getShortCutUserIds();
         $shortCutUserIds = array_flip($shortCutUserIds);
@@ -334,12 +356,13 @@ class SavedSearch extends Model\AbstractModel
 
     /**
      * @param bool $shareGlobally
+     *
      * @return SavedSearch
      */
     public function setShareGlobally($shareGlobally)
     {
         $this->shareGlobally = $shareGlobally;
+
         return $this;
     }
-
 }

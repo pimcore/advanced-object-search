@@ -1,17 +1,17 @@
 <?php
+
 /**
  * Pimcore
  *
  * This source file is available under two different licenses:
  * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Enterprise License (PEL)
+ * - Pimcore Commercial License (PCL)
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
- * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- * @license    http://www.pimcore.org/license     GPLv3 and PEL
+ *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
+ *  @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
-
 
 namespace AdvancedObjectSearchBundle\Filter\FieldDefinitionAdapter;
 
@@ -23,20 +23,21 @@ use ONGR\ElasticsearchDSL\Query\TermLevel\TermQuery;
 use Pimcore\Model\DataObject\AbstractObject;
 use Pimcore\Model\DataObject\Concrete;
 
-class Select extends DefaultAdapter implements FieldDefinitionAdapterInterface {
-
+class Select extends DefaultAdapter implements FieldDefinitionAdapterInterface
+{
     /**
      * field type for search frontend
      *
      * @var string
      */
-    protected $fieldType = "select";
+    protected $fieldType = 'select';
 
     /**
      * @return array
      */
-    public function getESMapping() {
-        if($this->considerInheritance) {
+    public function getESMapping()
+    {
+        if ($this->considerInheritance) {
             return [
                 $this->fieldDefinition->getName(),
                 [
@@ -60,16 +61,17 @@ class Select extends DefaultAdapter implements FieldDefinitionAdapterInterface {
      * @param Concrete $object
      * @param bool $ignoreInheritance
      */
-    protected function doGetIndexDataValue($object, $ignoreInheritance = false) {
+    protected function doGetIndexDataValue($object, $ignoreInheritance = false)
+    {
         $inheritanceBackup = null;
-        if($ignoreInheritance) {
+        if ($ignoreInheritance) {
             $inheritanceBackup = AbstractObject::getGetInheritedValues();
             AbstractObject::setGetInheritedValues(false);
         }
 
         $value = $this->loadRawDataFromContainer($object, $this->fieldDefinition->getName());
 
-        if($ignoreInheritance) {
+        if ($ignoreInheritance) {
             AbstractObject::setGetInheritedValues($inheritanceBackup);
         }
 
@@ -82,12 +84,13 @@ class Select extends DefaultAdapter implements FieldDefinitionAdapterInterface {
      * filter field format as follows:
      *   - simple string like
      *       "filter for value"  --> creates QueryStringQuery
-     *
      * @param bool $ignoreInheritance
      * @param string $path
+     *
      * @return BuilderInterface
      */
-    public function getQueryPart($fieldFilter, $ignoreInheritance = false, $path = "") {
+    public function getQueryPart($fieldFilter, $ignoreInheritance = false, $path = '')
+    {
         return new TermQuery($path . $this->fieldDefinition->getName() . $this->buildQueryFieldPostfix($ignoreInheritance), $fieldFilter);
     }
 
@@ -107,5 +110,4 @@ class Select extends DefaultAdapter implements FieldDefinitionAdapterInterface {
             ]
         )];
     }
-
 }

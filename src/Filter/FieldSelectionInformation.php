@@ -1,22 +1,22 @@
 <?php
+
 /**
  * Pimcore
  *
  * This source file is available under two different licenses:
  * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Enterprise License (PEL)
+ * - Pimcore Commercial License (PCL)
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
- * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- * @license    http://www.pimcore.org/license     GPLv3 and PEL
+ *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
+ *  @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
-
 
 namespace AdvancedObjectSearchBundle\Filter;
 
-class FieldSelectionInformation {
-
+class FieldSelectionInformation
+{
     /**
      * @var string
      */
@@ -36,6 +36,7 @@ class FieldSelectionInformation {
 
     /**
      * FieldSelectionInformation constructor.
+     *
      * @param $fieldName
      * @param $fieldLabel
      * @param $fieldType
@@ -113,8 +114,8 @@ class FieldSelectionInformation {
         $this->context = $context;
     }
 
-
-    public function toArray() {
+    public function toArray()
+    {
         return [
             'fieldName' => $this->fieldName,
             'fieldLabel' => $this->fieldLabel,
@@ -122,7 +123,4 @@ class FieldSelectionInformation {
             'context' => $this->context
         ];
     }
-
-
-
 }

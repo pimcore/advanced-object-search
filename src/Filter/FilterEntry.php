@@ -1,29 +1,29 @@
 <?php
+
 /**
  * Pimcore
  *
  * This source file is available under two different licenses:
  * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Enterprise License (PEL)
+ * - Pimcore Commercial License (PCL)
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
- * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- * @license    http://www.pimcore.org/license     GPLv3 and PEL
+ *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
+ *  @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
-
 
 namespace AdvancedObjectSearchBundle\Filter;
 
 use ONGR\ElasticsearchDSL\BuilderInterface;
 use ONGR\ElasticsearchDSL\Query\Compound\BoolQuery;
 
-class FilterEntry {
+class FilterEntry
+{
+    const EXISTS = 'exists';
+    const NOT_EXISTS = 'not_exists';
 
-    const EXISTS = "exists";
-    const NOT_EXISTS = "not_exists";
-
-    const FIELDNAME_GROUP = "~~group~~";
+    const FIELDNAME_GROUP = '~~group~~';
 
     /**
      * operator for combining filters, default = MUST
@@ -56,6 +56,7 @@ class FilterEntry {
 
     /**
      * FilterEntry constructor.
+     *
      * @param string $fieldname
      * @param BuilderInterface|string|\stdClass|array $filterEntryData
      * @param string $operator
@@ -63,7 +64,7 @@ class FilterEntry {
      */
     public function __construct($fieldname, $filterEntryData, $operator = BoolQuery::MUST, $ignoreInheritance = false)
     {
-        if($operator) {
+        if ($operator) {
             $this->operator = $operator;
         }
         $this->fieldname = $fieldname;
@@ -79,10 +80,11 @@ class FilterEntry {
         return $this->operator;
     }
 
-    public function getOuterOperator() {
-        if($this->operator == self::EXISTS) {
+    public function getOuterOperator()
+    {
+        if ($this->operator == self::EXISTS) {
             return BoolQuery::MUST;
-        } else if($this->operator == self::NOT_EXISTS) {
+        } elseif ($this->operator == self::NOT_EXISTS) {
             return BoolQuery::MUST_NOT;
         } else {
             return $this->operator;
@@ -132,7 +134,8 @@ class FilterEntry {
     /**
      * @return bool
      */
-    public function isGroup() {
+    public function isGroup()
+    {
         return $this->fieldname == self::FIELDNAME_GROUP;
     }
 
@@ -143,5 +146,4 @@ class FilterEntry {
     {
         return $this->ignoreInheritance;
     }
-
 }

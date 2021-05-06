@@ -1,15 +1,25 @@
 <?php
 
+/**
+ * Pimcore
+ *
+ * This source file is available under two different licenses:
+ * - GNU General Public License version 3 (GPLv3)
+ * - Pimcore Commercial License (PCL)
+ * Full copyright and license information is available in
+ * LICENSE.md which is distributed with this source code.
+ *
+ *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
+ *  @license    http://www.pimcore.org/license     GPLv3 and PCL
+ */
+
 namespace AdvancedObjectSearchBundle\Filter\FieldDefinitionAdapter;
 
 use AdvancedObjectSearchBundle\Filter\FieldSelectionInformation;
-use AdvancedObjectSearchBundle\Filter\FilterEntry;
-use AdvancedObjectSearchBundle\Service;
 use ONGR\ElasticsearchDSL\BuilderInterface;
 use ONGR\ElasticsearchDSL\Query\Compound\BoolQuery;
 use ONGR\ElasticsearchDSL\Query\FullText\QueryStringQuery;
 use ONGR\ElasticsearchDSL\Query\Joining\NestedQuery;
-use ONGR\ElasticsearchDSL\Query\TermLevel\ExistsQuery;
 use ONGR\ElasticsearchDSL\Query\TermLevel\TermQuery;
 use Pimcore\Model\DataObject\AbstractObject;
 use Pimcore\Model\DataObject\ClassDefinition\Data;
@@ -17,7 +27,6 @@ use Pimcore\Model\DataObject\Concrete;
 
 class Table extends DefaultAdapter
 {
-
     /**
      * @url https://www.elastic.co/guide/en/elasticsearch/reference/current/ignore-above.html
      *
@@ -32,7 +41,7 @@ class Table extends DefaultAdapter
      *
      * @var string
      */
-    protected $fieldType = "table";
+    protected $fieldType = 'table';
 
     /**
      * @var string
@@ -81,6 +90,7 @@ class Table extends DefaultAdapter
     /**
      * @param $object
      * @param bool $ignoreInheritance
+     *
      * @return string
      */
     protected function doGetIndexDataValue($object, $ignoreInheritance = false)
@@ -111,11 +121,11 @@ class Table extends DefaultAdapter
 
     /**
      * @param Concrete $object
+     *
      * @return mixed
      */
     public function getIndexData($object)
     {
-
         $value = $this->doGetIndexDataValue($object, false);
 
         if ($this->considerInheritance) {
@@ -131,9 +141,7 @@ class Table extends DefaultAdapter
             }
 
             return $returnValue;
-
         } else {
-
             if ($value) {
                 return $value;
             } else {
@@ -142,31 +150,29 @@ class Table extends DefaultAdapter
         }
     }
 
-
     protected function buildQueryFieldPostfix($ignoreInheritance = false)
     {
-        $postfix = "";
+        $postfix = '';
 
         if ($this->considerInheritance) {
             if ($ignoreInheritance) {
-                $postfix = "." . self::ES_MAPPING_PROPERTY_NOT_INHERITED;
+                $postfix = '.' . self::ES_MAPPING_PROPERTY_NOT_INHERITED;
             } else {
-                $postfix = "." . self::ES_MAPPING_PROPERTY_STANDARD;
+                $postfix = '.' . self::ES_MAPPING_PROPERTY_STANDARD;
             }
         }
 
         return $postfix;
     }
 
-
     /**
      * @param $fieldFilter
-     *
      * @param bool $ignoreInheritance
      * @param string $path
+     *
      * @return BuilderInterface
      */
-    public function getQueryPart($fieldFilter, $ignoreInheritance = false, $path = "")
+    public function getQueryPart($fieldFilter, $ignoreInheritance = false, $path = '')
     {
         $term = $fieldFilter['term'];
         $fieldsPath = $path . $this->fieldDefinition->getName() . $this->buildQueryFieldPostfix($ignoreInheritance);
@@ -177,22 +183,22 @@ class Table extends DefaultAdapter
 
             if (!empty($fieldFilter['column'])) {
                 $innerBoolQuery = new BoolQuery();
-                $innerBoolQuery->add(new TermQuery($fieldsPath . "." . $fieldFilter['column'], $term));
+                $innerBoolQuery->add(new TermQuery($fieldsPath . '.' . $fieldFilter['column'], $term));
                 $boolQuery->add(new NestedQuery($fieldsPath, $innerBoolQuery), BoolQuery::SHOULD);
             } else {
                 foreach ($this->fieldDefinition->columnConfig as $column) {
                     $innerBoolQuery = new BoolQuery();
-                    $innerBoolQuery->add(new TermQuery($fieldsPath . "." . $column['key'], $term));
+                    $innerBoolQuery->add(new TermQuery($fieldsPath . '.' . $column['key'], $term));
 
                     $boolQuery->add(new NestedQuery($fieldsPath, $innerBoolQuery), BoolQuery::SHOULD);
                 }
-                $boolQuery->addParameter("minimum_should_match", 1);
+                $boolQuery->addParameter('minimum_should_match', 1);
             }
 
             return $boolQuery;
         }
 
-        return new QueryStringQuery($term, ["fields" => [$fieldsPath]]);
+        return new QueryStringQuery($term, ['fields' => [$fieldsPath]]);
     }
 
     /**
@@ -228,8 +234,7 @@ class Table extends DefaultAdapter
 
     protected function isColumnConfigActivated()
     {
-        return (property_exists($this->fieldDefinition, 'columnConfigActivated')
-            && $this->fieldDefinition->columnConfigActivated === true);
+        return property_exists($this->fieldDefinition, 'columnConfigActivated')
+            && $this->fieldDefinition->columnConfigActivated === true;
     }
-
 }

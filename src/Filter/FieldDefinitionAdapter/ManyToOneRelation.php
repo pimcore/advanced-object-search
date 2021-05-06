@@ -1,17 +1,17 @@
 <?php
+
 /**
  * Pimcore
  *
  * This source file is available under two different licenses:
  * - GNU General Public License version 3 (GPLv3)
- * - Pimcore Enterprise License (PEL)
+ * - Pimcore Commercial License (PCL)
  * Full copyright and license information is available in
  * LICENSE.md which is distributed with this source code.
  *
- * @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
- * @license    http://www.pimcore.org/license     GPLv3 and PEL
+ *  @copyright  Copyright (c) Pimcore GmbH (http://www.pimcore.org)
+ *  @license    http://www.pimcore.org/license     GPLv3 and PCL
  */
-
 
 namespace AdvancedObjectSearchBundle\Filter\FieldDefinitionAdapter;
 
@@ -26,20 +26,21 @@ use Pimcore\Model\DataObject\AbstractObject;
 use Pimcore\Model\DataObject\Concrete;
 use Pimcore\Normalizer\NormalizerInterface;
 
-class ManyToOneRelation extends DefaultAdapter implements FieldDefinitionAdapterInterface {
-
+class ManyToOneRelation extends DefaultAdapter implements FieldDefinitionAdapterInterface
+{
     /**
      * field type for search frontend
      *
      * @var string
      */
-    protected $fieldType = "manyToOneRelation";
+    protected $fieldType = 'manyToOneRelation';
 
     /**
      * @return array
      */
-    public function getESMapping() {
-        if($this->considerInheritance) {
+    public function getESMapping()
+    {
+        if ($this->considerInheritance) {
             return [
                 $this->fieldDefinition->getName(),
                 [
@@ -48,14 +49,14 @@ class ManyToOneRelation extends DefaultAdapter implements FieldDefinitionAdapter
                             'type' => 'nested',
                             'properties' => [
                                 'type' => ['type' => 'keyword'],
-                                'id' => ["type" => "long"]
+                                'id' => ['type' => 'long']
                             ]
                         ],
                         self::ES_MAPPING_PROPERTY_NOT_INHERITED => [
                             'type' => 'nested',
                             'properties' => [
                                 'type' => ['type' => 'keyword'],
-                                'id' => ["type" => "long"]
+                                'id' => ['type' => 'long']
                             ]
                         ]
                     ]
@@ -68,14 +69,12 @@ class ManyToOneRelation extends DefaultAdapter implements FieldDefinitionAdapter
                     'type' => 'nested',
                     'properties' => [
                         'type' => ['type' => 'keyword'],
-                        'id' => ["type" => "long"]
+                        'id' => ['type' => 'long']
                     ]
                 ]
             ];
         }
-
     }
-
 
     /**
      * @param $fieldFilter
@@ -96,58 +95,50 @@ class ManyToOneRelation extends DefaultAdapter implements FieldDefinitionAdapter
      *         'filters'            => [ STANDARD FULL FEATURED FILTER ARRAY ]
      *      ]
      *       --> creates a sub query with given information, receives ids and then creates TermsQuery
-     *
      * @param bool $ignoreInheritance
      * @param string $path
+     *
      * @return BuilderInterface
      */
-    public function getQueryPart($fieldFilter, $ignoreInheritance = false, $path = "")
+    public function getQueryPart($fieldFilter, $ignoreInheritance = false, $path = '')
     {
-        if(is_array($fieldFilter)) {
-
+        if (is_array($fieldFilter)) {
             $path = $path . $this->fieldDefinition->getName() . $this->buildQueryFieldPostfix($ignoreInheritance);
 
             $boolQuery = new BoolQuery();
 
-            if($fieldFilter['id']) {
-
+            if ($fieldFilter['id']) {
                 $idArray = $fieldFilter['id'];
-                if(!is_array($idArray)) {
+                if (!is_array($idArray)) {
                     $idArray = [$idArray];
                 } else {
                     $idArray = array_filter($idArray);
                 }
-
-            } else if($fieldFilter['type'] == "object" && $fieldFilter['classId'] && ($fieldFilter['filters'] || $fieldFilter['fulltextSearchTerm'])) {
-
+            } elseif ($fieldFilter['type'] == 'object' && $fieldFilter['classId'] && ($fieldFilter['filters'] || $fieldFilter['fulltextSearchTerm'])) {
                 $results = $this->service->doFilter($fieldFilter['classId'], $fieldFilter['filters'], $fieldFilter['fulltextSearchTerm']);
                 $idArray = $this->service->extractIdsFromResult($results);
-
-
             } else {
-                throw new \Exception("invalid filter entry definition " . print_r($fieldFilter, true));
+                throw new \Exception('invalid filter entry definition ' . print_r($fieldFilter, true));
             }
 
-            if($idArray) {
-                foreach($idArray as $id) {
+            if ($idArray) {
+                foreach ($idArray as $id) {
                     $innerBoolQuery = new BoolQuery();
-                    $innerBoolQuery->add(new TermQuery($path . ".type", $fieldFilter['type']));
-                    $innerBoolQuery->add(new TermQuery($path . ".id", $id));
+                    $innerBoolQuery->add(new TermQuery($path . '.type', $fieldFilter['type']));
+                    $innerBoolQuery->add(new TermQuery($path . '.id', $id));
 
                     $boolQuery->add(new NestedQuery($path, $innerBoolQuery), BoolQuery::SHOULD);
                 }
-                $boolQuery->addParameter("minimum_should_match", 1);
+                $boolQuery->addParameter('minimum_should_match', 1);
             } else {
-                $boolQuery->add(new ExistsQuery($path . ".notavailablefield"));
+                $boolQuery->add(new ExistsQuery($path . '.notavailablefield'));
             }
-
 
             return $boolQuery;
         } else {
-            throw new \Exception("invalid filter entry for relations filter: " . print_r($fieldFilter, true));
+            throw new \Exception('invalid filter entry for relations filter: ' . print_r($fieldFilter, true));
         }
     }
-
 
     /**
      * returns selectable fields with their type information for search frontend
@@ -158,17 +149,17 @@ class ManyToOneRelation extends DefaultAdapter implements FieldDefinitionAdapter
     {
         $allowedTypes = [];
         $allowedClasses = [];
-        if($this->fieldDefinition->getAssetsAllowed()) {
-            $allowedTypes[] = ["asset", "asset_ids"];
+        if ($this->fieldDefinition->getAssetsAllowed()) {
+            $allowedTypes[] = ['asset', 'asset_ids'];
         }
-        if($this->fieldDefinition->getDocumentsAllowed()) {
-            $allowedTypes[] = ["document", "document_ids"];
+        if ($this->fieldDefinition->getDocumentsAllowed()) {
+            $allowedTypes[] = ['document', 'document_ids'];
         }
-        if($this->fieldDefinition->getObjectsAllowed()) {
-            $allowedTypes[] = ["object", "object_ids"];
-            $allowedTypes[] = ["object_filter", "object_filter"];
+        if ($this->fieldDefinition->getObjectsAllowed()) {
+            $allowedTypes[] = ['object', 'object_ids'];
+            $allowedTypes[] = ['object_filter', 'object_filter'];
 
-            foreach($this->fieldDefinition->getClasses() as $class) {
+            foreach ($this->fieldDefinition->getClasses() as $class) {
                 $allowedClasses[] = $class['classes'];
             }
         }
@@ -190,20 +181,21 @@ class ManyToOneRelation extends DefaultAdapter implements FieldDefinitionAdapter
      * @param Concrete $object
      * @param bool $ignoreInheritance
      */
-    protected function doGetIndexDataValue($object, $ignoreInheritance = false) {
+    protected function doGetIndexDataValue($object, $ignoreInheritance = false)
+    {
         $inheritanceBackup = null;
-        if($ignoreInheritance) {
+        if ($ignoreInheritance) {
             $inheritanceBackup = AbstractObject::getGetInheritedValues();
             AbstractObject::setGetInheritedValues(false);
         }
 
         $rawValue = $this->loadRawDataFromContainer($object, $this->fieldDefinition->getName());
         $value = null;
-        if($this->fieldDefinition instanceof NormalizerInterface) {
+        if ($this->fieldDefinition instanceof NormalizerInterface) {
             $value = $this->fieldDefinition->normalize($rawValue);
         }
 
-        if($ignoreInheritance) {
+        if ($ignoreInheritance) {
             AbstractObject::setGetInheritedValues($inheritanceBackup);
         }
 
