@@ -1,4 +1,8 @@
 advanced_object_search:
+    index_configuration:
+        nested_fields_limit: 200
+        total_fields_limit: 100000
+
     field_definition_adapters:
         default: 'bundle.advanced_object_search.filter.default'
         calculatedValue: 'bundle.advanced_object_search.filter.calculatedValue'

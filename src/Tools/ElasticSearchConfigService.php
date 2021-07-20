@@ -27,21 +27,29 @@ class ElasticSearchConfigService implements LoggerAwareInterface
      * @var string[]
      */
     protected $hosts;
+
     /**
      * @var string
      */
     protected $indexNamePrefix;
 
     /**
+     * @var array
+     */
+    protected $indexConfiguration;
+
+    /**
      * ElasticSearchConfigService constructor.
      *
      * @param string[] $hosts
      * @param string $indexNamePrefix
+     * @param array $indexConfiguration
      */
-    public function __construct(array $hosts, string $indexNamePrefix)
+    public function __construct(array $hosts, string $indexNamePrefix, array $indexConfiguration)
     {
         $this->hosts = $hosts;
         $this->indexNamePrefix = $indexNamePrefix;
+        $this->indexConfiguration = $indexConfiguration;
     }
 
     /**
@@ -74,6 +82,18 @@ class ElasticSearchConfigService implements LoggerAwareInterface
     public function setIndexNamePrefix(string $indexNamePrefix): void
     {
         $this->indexNamePrefix = $indexNamePrefix;
+    }
+
+    /**
+     * @return string|int|null
+     */
+    public function getIndexConfiguration(string $key)
+    {
+        if (isset($this->indexConfiguration[$key])) {
+            return $this->indexConfiguration[$key];
+        }
+
+        return null;
     }
 
     /**

@@ -81,6 +81,11 @@ class Service
     protected $indexNamePrefix;
 
     /**
+     * @var ElasticSearchConfigService
+     */
+    protected $elasticSearchConfigService;
+
+    /**
      * Service constructor.
      *
      * @param LoggerInterface $logger
@@ -107,6 +112,7 @@ class Service
         $this->eventDispatcher = $eventDispatcher;
         $this->translator = $translator;
         $this->indexNamePrefix = $elasticSearchConfigService->getIndexNamePrefix();
+        $this->elasticSearchConfigService = $elasticSearchConfigService;
     }
 
     /**
@@ -354,21 +360,29 @@ class Service
 
         try {
             $this->logger->info("Creating index $indexName for class " . $classDefinition->getName());
-            $body = [
-                'settings' => [
-                    'index' => [
-                        'mapping' => [
-                            'nested_fields' => [
-                                'limit' => 200
-                            ],
-                            'total_fields' => [
-                                'limit' => 100000
+
+            $response = $this->esClient->indices()->create([
+                'index' => $indexName,
+                'body' => [
+                    'settings' => [
+                        'index' => [
+                            'mapping' => [
+                                'nested_fields' => [
+                                    'limit' => (int) $this->elasticSearchConfigService->getIndexConfiguration(
+                                        'nested_fields_limit'
+                                    )
+                                ],
+                                'total_fields' => [
+                                    'limit' => (int) $this->elasticSearchConfigService->getIndexConfiguration(
+                                        'total_fields_limit'
+                                    )
+                                ]
                             ]
                         ]
                     ]
                 ]
-            ];
-            $response = $this->esClient->indices()->create(['index' => $indexName, 'body' => $body]);
+            ]);
+
             $this->logger->debug(json_encode($response));
         } catch (\Exception $e) {
             $this->logger->error($e);
