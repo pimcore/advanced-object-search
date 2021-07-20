@@ -156,6 +156,10 @@ class Service
         );
 
         foreach ($fieldDefinitions as $fieldDefinition) {
+            if ($this->isExcludedField($definition->getName(), $fieldDefinition->getName())) {
+                continue;
+            }
+
             $fieldDefinitionAdapter = $this->getFieldDefinitionAdapter($fieldDefinition, $allowInheritance);
             $fieldSelectionInformationEntries = array_merge($fieldSelectionInformationEntries, $fieldDefinitionAdapter->getFieldSelectionInformation());
         }
@@ -278,6 +282,10 @@ class Service
         );
 
         foreach ($fieldDefinitions as $fieldDefinition) {
+            if ($this->isExcludedField($objectClass->getName(), $fieldDefinition->getName())) {
+                continue;
+            }
+
             $fieldDefinitionAdapter = $this->getFieldDefinitionAdapter($fieldDefinition, $objectClass->getAllowInherit());
             list($key, $mappingEntry) = $fieldDefinitionAdapter->getESMapping();
             $mappingProperties[$key] = $mappingEntry;
@@ -414,6 +422,10 @@ class Service
         $data = $this->getCoreFieldsIndexData($object);
 
         foreach ($object->getClass()->getFieldDefinitions() as $key => $fieldDefinition) {
+            if ($this->isExcludedField($object->getClassName(), $key)) {
+                continue;
+            }
+
             $fieldDefinitionAdapter = $this->getFieldDefinitionAdapter($fieldDefinition, $object->getClass()->getAllowInherit());
             $data[$key] = $fieldDefinitionAdapter->getIndexData($object);
         }
@@ -779,5 +791,24 @@ class Service
         }
 
         return $ids;
+    }
+
+    /**
+     * @param string $className
+     * @param string $fieldName
+     * @return bool
+     */
+    protected function isExcludedField(string $className, string $fieldName): bool
+    {
+        $excludeFields = $this->elasticSearchConfigService->getIndexConfiguration('exclude_fields');
+
+        if (
+            isset($excludeFields[$className])
+            && in_array($fieldName, $excludeFields[$className])
+        ) {
+            return true;
+        }
+
+        return false;
     }
 }
