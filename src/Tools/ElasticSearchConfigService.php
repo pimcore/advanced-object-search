@@ -90,11 +90,7 @@ class ElasticSearchConfigService implements LoggerAwareInterface
      */
     public function getIndexConfiguration(string $key)
     {
-        if (isset($this->indexConfiguration[$key])) {
-            return $this->indexConfiguration[$key];
-        }
-
-        return null;
+        return $this->indexConfiguration[$key] ?? null;
     }
 
     /**
