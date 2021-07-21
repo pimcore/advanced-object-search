@@ -802,13 +802,7 @@ class Service
     {
         $excludeFields = $this->elasticSearchConfigService->getIndexConfiguration('exclude_fields');
 
-        if (
-            isset($excludeFields[$className])
-            && in_array($fieldName, $excludeFields[$className])
-        ) {
-            return true;
-        }
-
-        return false;
+        return isset($excludeFields[$className])
+            && in_array($fieldName, $excludeFields[$className]);
     }
 }
