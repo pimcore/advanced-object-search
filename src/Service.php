@@ -796,6 +796,7 @@ class Service
     /**
      * @param string $className
      * @param string $fieldName
+     *
      * @return bool
      */
     protected function isExcludedField(string $className, string $fieldName): bool
