@@ -57,7 +57,7 @@ class Configuration implements ConfigurationInterface
                             ->useAttributeAsKey('class')
                                 ->prototype('scalar')
                             ->end()
-                            ->arrayPrototype('es_hosts')
+                            ->arrayPrototype('fields')
                                 ->prototype('scalar')->end()
                             ->end()
                         ->end()
