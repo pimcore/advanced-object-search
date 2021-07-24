@@ -308,6 +308,7 @@ class Service
     /**
      * updates mapping for given Object class
      *  - update mapping without recreating index
+     *  - remove index if Object class added to excluding list
      *  - if that fails, delete and create index and try update mapping again and resets update queue
      *  - if that also fails, throws exception
      *
@@ -315,6 +316,17 @@ class Service
      */
     public function updateMapping(ClassDefinition $classDefinition)
     {
+        if ($this->isExcludedClass($classDefinition->getName())) {
+            if ($this->esClient->indices()->exists(['index' => $this->getIndexName($classDefinition->getName())])) {
+                try {
+                    $this->deleteIndex($classDefinition);
+                } catch (\Exception $e) {
+                    $this->logger->debug($e);
+                }
+            }
+            return true;
+        } 
+
         if (!$this->esClient->indices()->exists(['index' => $this->getIndexName($classDefinition->getName())])) {
             $this->createIndex($classDefinition);
         }
@@ -448,9 +460,15 @@ class Service
      *
      * @param Concrete $object
      * @param bool $ignoreUpdateQueue - if true doesn't fillup update queue for children objects
+     * 
+     * @return bool
      */
     public function doUpdateIndexData(Concrete $object, $ignoreUpdateQueue = false)
     {
+        if ($this->isExcludedClass($object->getClassName())) {
+            return true;
+        }
+
         $params = [
             'index' => $this->getIndexName($object->getClassName()),
             'type' => '_doc',
@@ -482,6 +500,8 @@ class Service
             //sets all children as dirty
             $this->fillupUpdateQueue($object);
         }
+
+        return true;
     }
 
     /**
@@ -791,6 +811,19 @@ class Service
         }
 
         return $ids;
+    }
+
+    /**
+     * @param string $className
+     *
+     * @return bool
+     */
+    protected function isExcludedClass(string $className): bool
+    {
+        $excludeClasses = $this->elasticSearchConfigService->getIndexConfiguration('exclude_classes');
+
+        return isset($excludeClasses)
+            && in_array($className, $excludeClasses);
     }
 
     /**
