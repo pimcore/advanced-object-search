@@ -55,7 +55,7 @@ class Configuration implements ConfigurationInterface
                         ->end()
                         ->arrayNode('exclude_classes')
                             ->prototype('scalar')->end()
-                            ->info('List of class names for excluded from elasticsearchh')
+                            ->info('List of exculded class namefrom Elasticsearch index')
                         ->end()
                         ->arrayNode('exclude_fields')
                             ->useAttributeAsKey('class')
