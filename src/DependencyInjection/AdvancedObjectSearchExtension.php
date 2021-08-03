@@ -50,6 +50,11 @@ class AdvancedObjectSearchExtension extends ConfigurableExtension implements Pre
 
         $container->setParameter('pimcore.advanced_object_search.index_name_prefix', $config['index_name_prefix']);
         $container->setParameter('pimcore.advanced_object_search.es_hosts', $config['es_hosts']);
+
+        $container->setParameter(
+            'pimcore.advanced_object_search.index_configuration',
+            $config['index_configuration']
+        );
     }
 
     /**

@@ -25,6 +25,7 @@ services:
         arguments:
             $hosts: '%pimcore.advanced_object_search.es_hosts%'
             $indexNamePrefix: '%pimcore.advanced_object_search.index_name_prefix%'
+            $indexConfiguration: '%pimcore.advanced_object_search.index_configuration%'
         calls:
             - [setLogger, ['@logger']]
         tags:

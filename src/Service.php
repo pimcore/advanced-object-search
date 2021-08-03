@@ -81,6 +81,11 @@ class Service
     protected $indexNamePrefix;
 
     /**
+     * @var ElasticSearchConfigService
+     */
+    protected $elasticSearchConfigService;
+
+    /**
      * Service constructor.
      *
      * @param LoggerInterface $logger
@@ -107,6 +112,7 @@ class Service
         $this->eventDispatcher = $eventDispatcher;
         $this->translator = $translator;
         $this->indexNamePrefix = $elasticSearchConfigService->getIndexNamePrefix();
+        $this->elasticSearchConfigService = $elasticSearchConfigService;
     }
 
     /**
@@ -150,6 +156,10 @@ class Service
         );
 
         foreach ($fieldDefinitions as $fieldDefinition) {
+            if ($this->isExcludedField($definition->getName(), $fieldDefinition->getName())) {
+                continue;
+            }
+
             $fieldDefinitionAdapter = $this->getFieldDefinitionAdapter($fieldDefinition, $allowInheritance);
             $fieldSelectionInformationEntries = array_merge($fieldSelectionInformationEntries, $fieldDefinitionAdapter->getFieldSelectionInformation());
         }
@@ -272,6 +282,10 @@ class Service
         );
 
         foreach ($fieldDefinitions as $fieldDefinition) {
+            if ($this->isExcludedField($objectClass->getName(), $fieldDefinition->getName())) {
+                continue;
+            }
+
             $fieldDefinitionAdapter = $this->getFieldDefinitionAdapter($fieldDefinition, $objectClass->getAllowInherit());
             list($key, $mappingEntry) = $fieldDefinitionAdapter->getESMapping();
             $mappingProperties[$key] = $mappingEntry;
@@ -294,6 +308,7 @@ class Service
     /**
      * updates mapping for given Object class
      *  - update mapping without recreating index
+     *  - remove index if Object class added to excluding list
      *  - if that fails, delete and create index and try update mapping again and resets update queue
      *  - if that also fails, throws exception
      *
@@ -301,6 +316,17 @@ class Service
      */
     public function updateMapping(ClassDefinition $classDefinition)
     {
+        if ($this->isExcludedClass($classDefinition->getName())) {
+            if ($this->esClient->indices()->exists(['index' => $this->getIndexName($classDefinition->getName())])) {
+                try {
+                    $this->deleteIndex($classDefinition);
+                } catch (\Exception $e) {
+                    $this->logger->debug($e);
+                }
+            }
+            return true;
+        } 
+
         if (!$this->esClient->indices()->exists(['index' => $this->getIndexName($classDefinition->getName())])) {
             $this->createIndex($classDefinition);
         }
@@ -354,21 +380,29 @@ class Service
 
         try {
             $this->logger->info("Creating index $indexName for class " . $classDefinition->getName());
-            $body = [
-                'settings' => [
-                    'index' => [
-                        'mapping' => [
-                            'nested_fields' => [
-                                'limit' => 200
-                            ],
-                            'total_fields' => [
-                                'limit' => 100000
+
+            $response = $this->esClient->indices()->create([
+                'index' => $indexName,
+                'body' => [
+                    'settings' => [
+                        'index' => [
+                            'mapping' => [
+                                'nested_fields' => [
+                                    'limit' => (int) $this->elasticSearchConfigService->getIndexConfiguration(
+                                        'nested_fields_limit'
+                                    )
+                                ],
+                                'total_fields' => [
+                                    'limit' => (int) $this->elasticSearchConfigService->getIndexConfiguration(
+                                        'total_fields_limit'
+                                    )
+                                ]
                             ]
                         ]
                     ]
                 ]
-            ];
-            $response = $this->esClient->indices()->create(['index' => $indexName, 'body' => $body]);
+            ]);
+
             $this->logger->debug(json_encode($response));
         } catch (\Exception $e) {
             $this->logger->error($e);
@@ -400,6 +434,10 @@ class Service
         $data = $this->getCoreFieldsIndexData($object);
 
         foreach ($object->getClass()->getFieldDefinitions() as $key => $fieldDefinition) {
+            if ($this->isExcludedField($object->getClassName(), $key)) {
+                continue;
+            }
+
             $fieldDefinitionAdapter = $this->getFieldDefinitionAdapter($fieldDefinition, $object->getClass()->getAllowInherit());
             $data[$key] = $fieldDefinitionAdapter->getIndexData($object);
         }
@@ -422,9 +460,15 @@ class Service
      *
      * @param Concrete $object
      * @param bool $ignoreUpdateQueue - if true doesn't fillup update queue for children objects
+     * 
+     * @return bool
      */
     public function doUpdateIndexData(Concrete $object, $ignoreUpdateQueue = false)
     {
+        if ($this->isExcludedClass($object->getClassName())) {
+            return true;
+        }
+
         $params = [
             'index' => $this->getIndexName($object->getClassName()),
             'type' => '_doc',
@@ -456,6 +500,8 @@ class Service
             //sets all children as dirty
             $this->fillupUpdateQueue($object);
         }
+
+        return true;
     }
 
     /**
@@ -765,5 +811,32 @@ class Service
         }
 
         return $ids;
+    }
+
+    /**
+     * @param string $className
+     *
+     * @return bool
+     */
+    protected function isExcludedClass(string $className): bool
+    {
+        $excludeClasses = $this->elasticSearchConfigService->getIndexConfiguration('exclude_classes');
+
+        return isset($excludeClasses)
+            && in_array($className, $excludeClasses);
+    }
+
+    /**
+     * @param string $className
+     * @param string $fieldName
+     *
+     * @return bool
+     */
+    protected function isExcludedField(string $className, string $fieldName): bool
+    {
+        $excludeFields = $this->elasticSearchConfigService->getIndexConfiguration('exclude_fields');
+
+        return isset($excludeFields[$className])
+            && in_array($fieldName, $excludeFields[$className]);
     }
 }
