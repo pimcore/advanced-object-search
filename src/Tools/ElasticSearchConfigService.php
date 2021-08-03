@@ -86,6 +86,7 @@ class ElasticSearchConfigService implements LoggerAwareInterface
 
     /**
      * @param string $key
+     *
      * @return mixed
      */
     public function getIndexConfiguration(string $key)

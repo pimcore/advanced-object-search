@@ -324,8 +324,9 @@ class Service
                     $this->logger->debug($e);
                 }
             }
+
             return true;
-        } 
+        }
 
         if (!$this->esClient->indices()->exists(['index' => $this->getIndexName($classDefinition->getName())])) {
             $this->createIndex($classDefinition);
@@ -460,7 +461,7 @@ class Service
      *
      * @param Concrete $object
      * @param bool $ignoreUpdateQueue - if true doesn't fillup update queue for children objects
-     * 
+     *
      * @return bool
      */
     public function doUpdateIndexData(Concrete $object, $ignoreUpdateQueue = false)
