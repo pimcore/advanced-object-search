@@ -31,11 +31,13 @@ pimcore.bundle.advancedObjectSearch = Class.create(pimcore.plugin.admin, {
         if(searchMenu && perspectiveCfg.inToolbar("search.advancedObjectSearch") && user.isAllowed("bundle_advancedsearch_search")) {
             pimcore.bundle.advancedObjectSearch.helper.rebuildEsSearchMenu();
             pimcore.bundle.advancedObjectSearch.helper.initializeStatusIcon();
-
         }
+    },
 
-        if(pimcore.bundle && pimcore.bundle.perspectiveeditor && pimcore.bundle.perspectiveeditor.MenuItemPermissionHelper) {
-            pimcore.bundle.perspectiveeditor.MenuItemPermissionHelper.permissions.toolbar.search.push('items.advancedObjectSearch');
+    onPerspectiveEditorLoadPermissions: function (context, menu, permissions) {
+        if(context == 'toolbar' && menu == 'search' &&
+            permissions[context][menu].indexOf('items.advancedObjectSearch') == -1) {
+            permissions[context][menu].push('items.advancedObjectSearch');
         }
     }
 });
