@@ -28,7 +28,7 @@ class CalculatedValue extends DefaultAdapter implements FieldDefinitionAdapterIn
     protected function doGetIndexDataValue($object, $ignoreInheritance = false)
     {
         $name = $this->fieldDefinition->getName();
-        $value = $object->getValueForFieldName($name);
+        $value = $this->loadRawDataFromContainer($object, $name);
 
         return (string) $value;
     }
