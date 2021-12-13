@@ -478,7 +478,7 @@ class Service
 
         try {
             $indexDocument = $this->esClient->get($params);
-            $originalChecksum = $indexDocument['_source']['o_checksum'];
+            $originalChecksum = $indexDocument['_source']['o_checksum'] ?? -1;
         } catch (\Exception $e) {
             $this->logger->debug($e->getMessage());
             $originalChecksum = -1;
