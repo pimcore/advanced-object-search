@@ -188,6 +188,7 @@ class Service
 
         return [
             'o_id' => $object->getId(),
+            'o_index' => $object->getIndex(),
             'o_creationDate' => $date->setTimestamp($object->getCreationDate())->format(\DateTime::ISO8601),
             'o_modificationDate' => $date->setTimestamp($object->getModificationDate())->format(\DateTime::ISO8601),
             'o_published' => $object->getPublished(),

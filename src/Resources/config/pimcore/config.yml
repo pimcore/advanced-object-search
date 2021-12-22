@@ -43,6 +43,11 @@ advanced_object_search:
             title: ID
             fieldDefinition: Pimcore\Model\DataObject\ClassDefinition\Data\Numeric
         -
+            field: o_index
+            type: long
+            title: Index
+            fieldDefinition: Pimcore\Model\DataObject\ClassDefinition\Data\Numeric
+        -
             field: o_creationDate
             type: date
             title: creationdate
