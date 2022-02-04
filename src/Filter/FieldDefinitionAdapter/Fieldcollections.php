@@ -59,6 +59,9 @@ class Fieldcollections extends DefaultAdapter implements FieldDefinitionAdapterI
              * @var $fieldCollectionDefinition Fieldcollection\Definition
              */
             $fieldCollectionDefinition = Fieldcollection\Definition::getByKey($fieldCollectionKey);
+            if (!$fieldCollectionDefinition) {
+                continue;
+            }
 
             $childMappingProperties = [];
             foreach ($fieldCollectionDefinition->getFieldDefinitions() as $field) {
