@@ -26,10 +26,15 @@ pimcore.bundle.advancedObjectSearch.searchConfig.fieldConditionPanel.checkbox = 
             }
         );
 
+        let value = 'must';
+        if (this.data.filterEntryData === false) {
+            value = 'must_not';
+        }
+
         return Ext.create('Ext.panel.Panel', {
             layout: 'hbox',
             items: [
-                this.getOperatorCombobox(this.data.operator),
+                this.getOperatorCombobox(value),
                 this.inheritanceField
             ]
         });
