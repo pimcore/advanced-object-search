@@ -107,7 +107,7 @@ class ManyToOneRelation extends DefaultAdapter implements FieldDefinitionAdapter
 
             $boolQuery = new BoolQuery();
 
-            if ($fieldFilter['id']) {
+            if (!empty($fieldFilter['id'])) {
                 $idArray = $fieldFilter['id'];
                 if (!is_array($idArray)) {
                     $idArray = [$idArray];
