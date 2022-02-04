@@ -49,6 +49,9 @@ class Objectbricks extends DefaultAdapter implements FieldDefinitionAdapterInter
 
         foreach ($allowedTypes as $objectBrickDefinitionKey) {
             $objectBrickDefinition = Definition::getByKey($objectBrickDefinitionKey);
+            if (!$objectBrickDefinition) {
+                continue;
+            }
 
             $childMappingProperties = [];
             foreach ($objectBrickDefinition->getFieldDefinitions() as $field) {
