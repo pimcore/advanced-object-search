@@ -43,7 +43,7 @@ class IndexUpdateListener
         ) {
             return;
         }
-        
+
         $inheritanceBackup = AbstractObject::getGetInheritedValues();
         AbstractObject::setGetInheritedValues(true);
 
