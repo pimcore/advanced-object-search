@@ -573,30 +573,53 @@ class Service
     public function processUpdateQueue($limit = 200)
     {
         $workerId = uniqid();
+        $entries = $this->initUpdateQueue($workerId, $limit);
+        if(!empty($entries)) {
+            return $this->doProcessUpdateQueue($workerId, $entries);
+        }
+        return 0;
+    }
+
+    /**
+     * @param string $workerId
+     * @param int $limit
+     * @return array
+     * @throws \Doctrine\DBAL\Driver\Exception
+     * @throws \Doctrine\DBAL\Exception
+     */
+    public function initUpdateQueue(string $workerId, int $limit = 200): array {
+
         $workerTimestamp = time();
         $db = \Pimcore\Db::get();
 
         $db->executeQuery('UPDATE ' . Installer::QUEUE_TABLE_NAME . ' SET worker_id = ?, worker_timestamp = ? WHERE in_queue = 1 AND (ISNULL(worker_timestamp) OR worker_timestamp < ?) LIMIT ' . intval($limit),
             [$workerId, $workerTimestamp, $workerTimestamp - 3000]);
 
-        $entries = $db->fetchCol('SELECT o_id FROM ' . Installer::QUEUE_TABLE_NAME . ' WHERE worker_id = ?', [$workerId]);
+        return $db->fetchCol('SELECT o_id FROM ' . Installer::QUEUE_TABLE_NAME . ' WHERE worker_id = ?', [$workerId]);
 
-        if ($entries) {
-            foreach ($entries as $objectId) {
-                $this->logger->info("Worker $workerId updating index for element " . $objectId);
-                $object = Concrete::getById($objectId);
-                if ($object) {
-                    $this->doUpdateIndexData($object);
-                } else {
-                    // Object no longer exists, remove from queue
-                    $db->executeQuery('DELETE FROM ' . Installer::QUEUE_TABLE_NAME . ' WHERE o_id = ?', [$objectId]);
-                }
+    }
+
+    /**
+     * @param string $workerId
+     * @param array $entries
+     * @return int
+     * @throws \Doctrine\DBAL\Exception
+     */
+    public function doProcessUpdateQueue(string $workerId, array $entries): int {
+        $db = \Pimcore\Db::get();
+
+        foreach ($entries as $objectId) {
+            $this->logger->info("Worker $workerId updating index for element " . $objectId);
+            $object = Concrete::getById($objectId);
+            if ($object) {
+                $this->doUpdateIndexData($object);
+            } else {
+                // Object no longer exists, remove from queue
+                $db->executeQuery('DELETE FROM ' . Installer::QUEUE_TABLE_NAME . ' WHERE o_id = ?', [$objectId]);
             }
-
-            return count($entries);
-        } else {
-            return 0;
         }
+
+        return count($entries);
     }
 
     /**
