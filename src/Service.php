@@ -574,21 +574,24 @@ class Service
     {
         $workerId = uniqid();
         $entries = $this->initUpdateQueue($workerId, $limit);
-        if(!empty($entries)) {
+        if (!empty($entries)) {
             return $this->doProcessUpdateQueue($workerId, $entries);
         }
+
         return 0;
     }
 
     /**
      * @param string $workerId
      * @param int $limit
+     *
      * @return array
+     *
      * @throws \Doctrine\DBAL\Driver\Exception
      * @throws \Doctrine\DBAL\Exception
      */
-    public function initUpdateQueue(string $workerId, int $limit = 200): array {
-
+    public function initUpdateQueue(string $workerId, int $limit = 200): array
+    {
         $workerTimestamp = time();
         $db = \Pimcore\Db::get();
 
@@ -596,16 +599,18 @@ class Service
             [$workerId, $workerTimestamp, $workerTimestamp - 3000]);
 
         return $db->fetchCol('SELECT o_id FROM ' . Installer::QUEUE_TABLE_NAME . ' WHERE worker_id = ?', [$workerId]);
-
     }
 
     /**
      * @param string $workerId
      * @param array $entries
+     *
      * @return int
+     *
      * @throws \Doctrine\DBAL\Exception
      */
-    public function doProcessUpdateQueue(string $workerId, array $entries): int {
+    public function doProcessUpdateQueue(string $workerId, array $entries): int
+    {
         $db = \Pimcore\Db::get();
 
         foreach ($entries as $objectId) {
