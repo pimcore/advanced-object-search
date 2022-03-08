@@ -15,6 +15,8 @@
 
 namespace AdvancedObjectSearchBundle\DependencyInjection;
 
+use AdvancedObjectSearchBundle\Maintenance\UpdateQueueProcessor;
+use AdvancedObjectSearchBundle\Messenger\QueueHandler;
 use Symfony\Component\Config\FileLocator;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Extension\PrependExtensionInterface;
@@ -50,15 +52,20 @@ class AdvancedObjectSearchExtension extends ConfigurableExtension implements Pre
 
         $container->setParameter('pimcore.advanced_object_search.index_name_prefix', $config['index_name_prefix']);
         $container->setParameter('pimcore.advanced_object_search.es_hosts', $config['es_hosts']);
-        $container->setParameter('pimcore.advanced_object_search.messenger_queue_processing.activated', $config['messenger_queue_processing']['activated']);
-        $container->setParameter('pimcore.advanced_object_search.messenger_queue_processing.worker_count_lifetime', $config['messenger_queue_processing']['worker_count_lifetime']);
-        $container->setParameter('pimcore.advanced_object_search.messenger_queue_processing.worker_item_count', $config['messenger_queue_processing']['worker_item_count']);
-        $container->setParameter('pimcore.advanced_object_search.messenger_queue_processing.worker_count', $config['messenger_queue_processing']['worker_count']);
 
         $container->setParameter(
             'pimcore.advanced_object_search.index_configuration',
             $config['index_configuration']
         );
+
+        $definition = $container->getDefinition(QueueHandler::class);
+        $definition->setArgument('$workerCountLifeTime', $config['messenger_queue_processing']['worker_count_lifetime']);
+        $definition->setArgument('$workerItemCount', $config['messenger_queue_processing']['worker_item_count']);
+        $definition->setArgument('$workerCount', $config['messenger_queue_processing']['worker_count']);
+
+        $definition = $container->getDefinition(UpdateQueueProcessor::class);
+        $definition->setArgument('$messengerQueueActivated', $config['messenger_queue_processing']['activated']);
+
     }
 
     /**
