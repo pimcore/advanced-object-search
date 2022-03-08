@@ -59,7 +59,6 @@ class AdvancedObjectSearchExtension extends ConfigurableExtension implements Pre
             'pimcore.advanced_object_search.index_configuration',
             $config['index_configuration']
         );
-
     }
 
     /**

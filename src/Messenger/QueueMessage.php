@@ -17,7 +17,6 @@ namespace AdvancedObjectSearchBundle\Messenger;
 
 class QueueMessage
 {
-
     public function __construct(protected string $workerId, protected array $entries)
     {
     }
@@ -37,5 +36,4 @@ class QueueMessage
     {
         return $this->entries;
     }
-
 }

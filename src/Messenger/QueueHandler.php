@@ -21,8 +21,7 @@ use Symfony\Component\Messenger\MessageBusInterface;
 
 class QueueHandler
 {
-
-    CONST IMPORTER_WORKER_COUNT_TMP_STORE_KEY = 'ADVANCED-OBJECT-SEARCH::worker-count';
+    const IMPORTER_WORKER_COUNT_TMP_STORE_KEY = 'ADVANCED-OBJECT-SEARCH::worker-count';
 
     protected Service $queueService;
     protected MessageBusInterface $messageBus;
@@ -50,15 +49,15 @@ class QueueHandler
         $this->dispatchMessages();
     }
 
-    public function dispatchMessages() {
-
+    public function dispatchMessages()
+    {
         $workerCount = TmpStore::get(self::IMPORTER_WORKER_COUNT_TMP_STORE_KEY)?->getData() ?? 0;
 
         $addWorkers = true;
-        while($addWorkers && $workerCount < $this->workerCount) {
+        while ($addWorkers && $workerCount < $this->workerCount) {
             $workerId = uniqid();
             $entries = $this->queueService->initUpdateQueue($workerId, $this->workerItemCount);
-            if(!empty($entries)) {
+            if (!empty($entries)) {
                 $this->messageBus->dispatch(new QueueMessage($workerId, $entries));
                 $workerCount++;
                 TmpStore::set(self::IMPORTER_WORKER_COUNT_TMP_STORE_KEY, $workerCount, null, $this->workerCountLifeTime);

@@ -36,7 +36,6 @@ class UpdateQueueProcessor implements TaskInterface
      */
     protected QueueHandler $queueHandler;
 
-
     /**
      * @param Service $service
      * @param bool $messengerQueueActivated
@@ -49,10 +48,9 @@ class UpdateQueueProcessor implements TaskInterface
         $this->queueHandler = $queueHandler;
     }
 
-
     public function execute()
     {
-        if($this->messengerQueueActivated) {
+        if ($this->messengerQueueActivated) {
             $this->queueHandler->dispatchMessages();
         } else {
             $this->service->processUpdateQueue(500);
