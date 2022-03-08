@@ -55,6 +55,8 @@ just activate it as follows.
         activated: true
  ```
 
+If activated, the processing is kicked off automatically with the `advancedobjectsearch_update_queue` maintenance task.
+
 Messages are dispatched via `pimcore_index_queues` transport. So make sure, you have
 workers processing this transport when activating the messenger based queue processing. 
 
