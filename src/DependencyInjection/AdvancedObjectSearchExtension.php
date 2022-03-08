@@ -65,7 +65,6 @@ class AdvancedObjectSearchExtension extends ConfigurableExtension implements Pre
 
         $definition = $container->getDefinition(UpdateQueueProcessor::class);
         $definition->setArgument('$messengerQueueActivated', $config['messenger_queue_processing']['activated']);
-
     }
 
     /**
