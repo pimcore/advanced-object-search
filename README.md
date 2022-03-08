@@ -44,8 +44,19 @@ Functions in Pimcore console.
 For details see documentation directly in Pimcore console.
 
 
-### Pimcore Maintenance
-With every Pimcore maintenance call, 500 entries of update queue are processed.
+### Pimcore Maintenance & Symfony Messenger
+By default, with every Pimcore maintenance call, 500 entries of update queue are processed.
+As an alternative, you also can activate symfony messenger to process the update queue. For that,
+just activate it as follows.
+
+```yml 
+ advanced_object_search:
+    messenger_queue_processing:
+        activated: true
+ ```
+
+Messages are dispatched via `pimcore_index_queues` transport. So make sure, you have
+workers processing this transport when activating the messenger based queue processing. 
 
 
 ## API Methods

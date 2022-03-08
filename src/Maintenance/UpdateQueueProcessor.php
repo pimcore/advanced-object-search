@@ -15,6 +15,7 @@
 
 namespace AdvancedObjectSearchBundle\Maintenance;
 
+use AdvancedObjectSearchBundle\Messenger\QueueHandler;
 use AdvancedObjectSearchBundle\Service;
 use Pimcore\Maintenance\TaskInterface;
 
@@ -23,15 +24,38 @@ class UpdateQueueProcessor implements TaskInterface
     /**
      * @var Service
      */
-    protected $service;
+    protected Service $service;
 
-    public function __construct(Service $service)
+    /**
+     * @var bool
+     */
+    protected bool $messengerQueueActivated;
+
+    /**
+     * @var QueueHandler
+     */
+    protected QueueHandler $queueHandler;
+
+
+    /**
+     * @param Service $service
+     * @param bool $messengerQueueActivated
+     * @param QueueHandler $queueHandler
+     */
+    public function __construct(Service $service, bool $messengerQueueActivated, QueueHandler $queueHandler)
     {
         $this->service = $service;
+        $this->messengerQueueActivated = $messengerQueueActivated;
+        $this->queueHandler = $queueHandler;
     }
+
 
     public function execute()
     {
-        $this->service->processUpdateQueue(500);
+        if($this->messengerQueueActivated) {
+            $this->queueHandler->dispatchMessages();
+        } else {
+            $this->service->processUpdateQueue(500);
+        }
     }
 }

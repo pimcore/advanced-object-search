@@ -55,6 +55,8 @@ services:
             - { name: kernel.event_listener, event: pimcore.class.postDelete, method: deleteIndex }
 
     AdvancedObjectSearchBundle\Maintenance\UpdateQueueProcessor:
+        arguments:
+            $messengerQueueActivated: '%pimcore.advanced_object_search.messenger_queue_processing.activated%'
         tags:
             - { name: pimcore.maintenance.task, type: advancedobjectsearch_update_queue }
 
@@ -162,3 +164,12 @@ services:
     AdvancedObjectSearchBundle\Command\ProcessUpdateQueueCommand: ~
     AdvancedObjectSearchBundle\Command\ReindexCommand: ~
     AdvancedObjectSearchBundle\Command\UpdateMappingCommand: ~
+
+
+    AdvancedObjectSearchBundle\Messenger\QueueHandler:
+        arguments:
+            $workerCountLifeTime: '%pimcore.advanced_object_search.messenger_queue_processing.worker_count_lifetime%'
+            $workerItemCount: '%pimcore.advanced_object_search.messenger_queue_processing.worker_item_count%'
+            $workerCount: '%pimcore.advanced_object_search.messenger_queue_processing.worker_count%'
+        tags:
+            - { name: messenger.message_handler }

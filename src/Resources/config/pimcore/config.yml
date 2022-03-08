@@ -1,3 +1,15 @@
+framework:
+    messenger:
+        transports:
+            pimcore_index_queues:
+                dsn: 'doctrine://default'
+                options:
+                    queue_name: pimcore_index_queues
+
+        routing:
+            'AdvancedObjectSearchBundle\Messenger\QueueMessage': pimcore_index_queues
+
+
 advanced_object_search:
     index_configuration:
         nested_fields_limit: 200
