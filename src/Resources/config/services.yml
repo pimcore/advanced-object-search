@@ -162,3 +162,8 @@ services:
     AdvancedObjectSearchBundle\Command\ProcessUpdateQueueCommand: ~
     AdvancedObjectSearchBundle\Command\ReindexCommand: ~
     AdvancedObjectSearchBundle\Command\UpdateMappingCommand: ~
+
+
+    AdvancedObjectSearchBundle\Messenger\QueueHandler:
+        tags:
+            - { name: messenger.message_handler }
