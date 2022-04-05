@@ -155,6 +155,8 @@ class AdminController extends \Pimcore\Bundle\AdminBundle\Controller\AdminContro
             }
 
             $list->setCondition(implode(' AND ', $conditionFilters));
+
+            /* @phpstan-ignore-next-line */
             $eventDispatcher->dispatch(new FilterListingEvent($list), AdvancedObjectSearchEvents::LISTING_FILER);
 
             $list->load();

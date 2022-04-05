@@ -15,7 +15,6 @@
 
 namespace AdvancedObjectSearchBundle;
 
-use AdvancedObjectSearchBundle\Migrations\PimcoreX\Version20210305134111;
 use AdvancedObjectSearchBundle\Model\SavedSearch;
 use Pimcore\Db\Connection;
 use Pimcore\Extension\Bundle\Installer\SettingsStoreAwareInstaller;
@@ -124,6 +123,6 @@ class Installer extends SettingsStoreAwareInstaller
 
     public function getLastMigrationVersionClassName(): ?string
     {
-        return Version20210305134111::class;
+        return "AdvancedObjectSearchBundle\\Migrations\\PimcoreX\\Version20210305134111";
     }
 }

@@ -731,7 +731,7 @@ class Service
     /**
      * @param string $classId
      * @param array $filters
-     * @param BuilderInterface|string $fullTextQuery
+     * @param BuilderInterface<|string $fullTextQuery
      * @param int $from
      * @param int $size
      *
