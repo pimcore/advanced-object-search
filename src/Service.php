@@ -734,7 +734,9 @@ class Service
      * @param BuilderInterface|string $fullTextQuery
      * @param int $from
      * @param int $size
+     *
      * @return array|callable
+     *
      * @throws \Exception
      */
     public function doFilter($classId, array $filters, $fullTextQuery, $from = null, $size = null)

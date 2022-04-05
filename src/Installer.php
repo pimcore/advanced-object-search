@@ -18,7 +18,6 @@ namespace AdvancedObjectSearchBundle;
 use AdvancedObjectSearchBundle\Migrations\PimcoreX\Version20210305134111;
 use AdvancedObjectSearchBundle\Model\SavedSearch;
 use Pimcore\Db\Connection;
-use Pimcore\Db\ConnectionInterface;
 use Pimcore\Extension\Bundle\Installer\SettingsStoreAwareInstaller;
 use Pimcore\Model\User\Permission\Definition;
 

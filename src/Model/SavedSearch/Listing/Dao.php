@@ -23,7 +23,6 @@ use Pimcore\Model;
  */
 class Dao extends Model\Listing\Dao\AbstractDao
 {
-
     /**
      * Loads a list of tags for the specifies parameters, returns an array of Element\Tag elements
      *
