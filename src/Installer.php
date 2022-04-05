@@ -123,6 +123,6 @@ class Installer extends SettingsStoreAwareInstaller
 
     public function getLastMigrationVersionClassName(): ?string
     {
-        return "AdvancedObjectSearchBundle\\Migrations\\PimcoreX\\Version20210305134111";
+        return 'AdvancedObjectSearchBundle\\Migrations\\PimcoreX\\Version20210305134111';
     }
 }
