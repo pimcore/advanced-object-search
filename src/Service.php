@@ -751,7 +751,7 @@ class Service
             $search->addQuery(new QueryStringQuery($fullTextQuery));
         }
 
-        $this->eventDispatcher->dispatch(new FilterSearchEvent($search), AdvancedObjectSearchEvents::ELASITIC_FILTER);
+        $this->eventDispatcher->dispatch(new FilterSearchEvent($search), AdvancedObjectSearchEvents::ELASITIC_FILTER); // @phpstan-ignore-line
 
         if ($size) {
             $search->setSize($size);
