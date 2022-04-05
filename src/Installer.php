@@ -17,6 +17,8 @@ namespace AdvancedObjectSearchBundle;
 
 use AdvancedObjectSearchBundle\Migrations\PimcoreX\Version20210305134111;
 use AdvancedObjectSearchBundle\Model\SavedSearch;
+use Pimcore\Db\Connection;
+use Pimcore\Db\ConnectionInterface;
 use Pimcore\Extension\Bundle\Installer\SettingsStoreAwareInstaller;
 use Pimcore\Model\User\Permission\Definition;
 
@@ -43,6 +45,9 @@ class Installer extends SettingsStoreAwareInstaller
 
     public function install()
     {
+        /**
+         * @var Connection $db
+         */
         $db = \Pimcore\Db::get();
         $currentSchema = $db->getSchemaManager()->createSchema();
         $schema = $db->getSchemaManager()->createSchema();
@@ -84,6 +89,9 @@ class Installer extends SettingsStoreAwareInstaller
 
     public function uninstall()
     {
+        /**
+         * @var Connection $db
+         */
         $db = \Pimcore\Db::get();
         $currentSchema = $db->getSchemaManager()->createSchema();
         $schema = $db->getSchemaManager()->createSchema();

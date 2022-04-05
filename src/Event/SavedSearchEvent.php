@@ -31,7 +31,7 @@ class SavedSearchEvent extends Event
     }
 
     /**
-     * @return Search
+     * @return SavedSearch
      */
     public function getSavedSearch(): SavedSearch
     {

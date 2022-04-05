@@ -20,7 +20,7 @@ use Elasticsearch\Client;
 class EsClientFactory
 {
     /**
-     * @var Client
+     * @var null|Client
      */
     protected static $esClient = null;
 

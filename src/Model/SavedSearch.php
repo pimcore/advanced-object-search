@@ -19,6 +19,9 @@ use AdvancedObjectSearchBundle\Event\SavedSearchEvent;
 use AdvancedObjectSearchBundle\Event\SavedSearchEvents;
 use Pimcore\Model;
 
+/**
+ * @method SavedSearch\Dao getDao()
+ */
 class SavedSearch extends Model\AbstractModel
 {
     /**
@@ -42,7 +45,7 @@ class SavedSearch extends Model\AbstractModel
     public $description;
 
     /**
-     * @var Model\User
+     * @var null|Model\User
      */
     public $owner;
 
@@ -74,9 +77,9 @@ class SavedSearch extends Model\AbstractModel
     /**
      * @static
      *
-     * @param $id
+     * @param int $id
      *
-     * @return SavedSearch
+     * @return null|SavedSearch
      */
     public static function getById($id)
     {
@@ -169,7 +172,7 @@ class SavedSearch extends Model\AbstractModel
     }
 
     /**
-     * @return Model\User
+     * @return null|Model\User
      */
     public function getOwner()
     {

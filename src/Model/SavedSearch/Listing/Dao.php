@@ -18,8 +18,12 @@ namespace AdvancedObjectSearchBundle\Model\SavedSearch\Listing;
 use AdvancedObjectSearchBundle\Model\SavedSearch;
 use Pimcore\Model;
 
+/**
+ * @property SavedSearch\Listing $model
+ */
 class Dao extends Model\Listing\Dao\AbstractDao
 {
+
     /**
      * Loads a list of tags for the specifies parameters, returns an array of Element\Tag elements
      *
@@ -50,6 +54,8 @@ class Dao extends Model\Listing\Dao\AbstractDao
 
     public function getTotalCount()
     {
+        $amount = 0;
+
         try {
             $amount = (int) $this->db->fetchOne('SELECT COUNT(*) as amount FROM ' . $this->db->quoteIdentifier(SavedSearch\Dao::TABLE_NAME) . ' ' . $this->getCondition(), $this->model->getConditionVariables());
         } catch (\Exception $e) {

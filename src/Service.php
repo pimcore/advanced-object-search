@@ -41,7 +41,7 @@ use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 class Service
 {
     /**
-     * @var User
+     * @var null|User
      */
     protected $user;
 
@@ -170,7 +170,7 @@ class Service
     /**
      * returns index name for given class name
      *
-     * @param $classname string
+     * @param string $classname
      *
      * @return string
      */
@@ -207,7 +207,7 @@ class Service
     }
 
     /**
-     * @param null $fieldName
+     * @param string|null $fieldName
      *
      * @return array
      */
@@ -221,7 +221,7 @@ class Service
     }
 
     /**
-     * @param $name
+     * @param string $name
      * @param array $data
      *
      * @return ClassDefinition\Data
@@ -707,7 +707,7 @@ class Service
     /**
      * checks filter entry and creates FilterEntry object if necessary
      *
-     * @param $filterEntry
+     * @param array|FilterEntry $filterEntry
      *
      * @return FilterEntry
      *
@@ -729,11 +729,13 @@ class Service
     }
 
     /**
-     * @param $classId
-     * @param FilterEntry $filters
-     * @param string|BuilderInterface $fullTextQuery
-     *
-     * @return array
+     * @param string $classId
+     * @param array $filters
+     * @param BuilderInterface|string $fullTextQuery
+     * @param int $from
+     * @param int $size
+     * @return array|callable
+     * @throws \Exception
      */
     public function doFilter($classId, array $filters, $fullTextQuery, $from = null, $size = null)
     {

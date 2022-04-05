@@ -57,7 +57,7 @@ interface FieldDefinitionAdapterInterface
     public function getIndexData($object);
 
     /**
-     * @param $fieldFilter - see concrete implementations for format
+     * @param array $fieldFilter - see concrete implementations for format
      * @param string $path - sub path for nested objects (only needed internally)
      * @param bool $ignoreInheritance - if true inheritance is not considered during query
      *
@@ -66,7 +66,7 @@ interface FieldDefinitionAdapterInterface
     public function getQueryPart($fieldFilter, $ignoreInheritance = false, $path = '');
 
     /**
-     * @param $fieldFilter - see concrete implementations for format
+     * @param mixed $fieldFilter - see concrete implementations for format
      * @param bool $ignoreInheritance - if true inheritance is not considered during query
      * @param string $path - sub path for nested objects (only needed internally)
      *

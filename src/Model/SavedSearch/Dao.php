@@ -15,14 +15,18 @@
 
 namespace AdvancedObjectSearchBundle\Model\SavedSearch;
 
+use AdvancedObjectSearchBundle\Model\SavedSearch;
 use Pimcore\Model;
 
+/**
+ * @property SavedSearch $model
+ */
 class Dao extends Model\Dao\AbstractDao
 {
     const TABLE_NAME = 'bundle_advancedobjectsearch_savedsearch';
 
     /**
-     * @param $id
+     * @param int $id
      *
      * @throws \Exception
      */

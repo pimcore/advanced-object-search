@@ -60,7 +60,7 @@ class Datetime extends Numeric implements FieldDefinitionAdapterInterface
     }
 
     /**
-     * @param $fieldFilter
+     * @param array|string $fieldFilter
      *
      * filter field format as follows:
      *   - simple date like

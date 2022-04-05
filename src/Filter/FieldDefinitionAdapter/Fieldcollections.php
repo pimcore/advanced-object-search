@@ -56,7 +56,7 @@ class Fieldcollections extends DefaultAdapter implements FieldDefinitionAdapterI
 
         foreach ($allowedTypes as $fieldCollectionKey) {
             /**
-             * @var $fieldCollectionDefinition Fieldcollection\Definition
+             * @var null|Fieldcollection\Definition $fieldCollectionDefinition
              */
             $fieldCollectionDefinition = Fieldcollection\Definition::getByKey($fieldCollectionKey);
             if (!$fieldCollectionDefinition) {
@@ -86,7 +86,7 @@ class Fieldcollections extends DefaultAdapter implements FieldDefinitionAdapterI
     }
 
     /**
-     * @param $fieldFilter
+     * @param array $fieldFilter
      *
      * filter field format as follows:
      *      [
@@ -159,7 +159,7 @@ class Fieldcollections extends DefaultAdapter implements FieldDefinitionAdapterI
 
             foreach ($fieldCollectionItems->getItems() as $item) {
                 /**
-                 * @var $item \Pimcore\Model\DataObject\Fieldcollection\Data\AbstractData
+                 * @var \Pimcore\Model\DataObject\Fieldcollection\Data\AbstractData $item
                  */
                 $definition = Fieldcollection\Definition::getByKey($item->getType());
 

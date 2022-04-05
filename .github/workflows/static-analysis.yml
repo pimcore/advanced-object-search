@@ -1,0 +1,59 @@
+name: "Static Analysis"
+
+on:
+    pull_request:
+        branches:
+            - "[0-9]+.[0-9]+"
+            - "[0-9]+.x"
+    push:
+        branches:
+            - "[0-9]+.[0-9]+"
+            - "[0-9]+.x"
+
+jobs:
+    static-analysis-phpstan:
+        name: "Static Analysis with PHPStan"
+        runs-on: "ubuntu-20.04"
+        continue-on-error: ${{ matrix.experimental }}
+        strategy:
+            matrix:
+                include:
+                    - { php-version: "7.4", dependencies: "lowest", pimcore_version: "", phpstan_args: "", experimental: false }
+                    - { php-version: "8.0", dependencies: "highest", pimcore_version: "", phpstan_args: "", experimental: false }
+                    - { php-version: "8.1", dependencies: "highest", pimcore_version: "", phpstan_args: "", experimental: false }
+                    - { php-version: "8.1", dependencies: "highest", pimcore_version: "10.x-dev", phpstan_args: "", experimental: false }
+        steps:
+            - name: "Checkout code"
+              uses: "actions/checkout@v2"
+
+            - name: "Install PHP"
+              uses: "shivammathur/setup-php@v2"
+              with:
+                  coverage: "none"
+                  php-version: "${{ matrix.php-version }}"
+
+            - name: "Setup Pimcore environment"
+              run: |
+                  .github/ci/scripts/setup-pimcore-environment.sh
+
+            - name: "Add private pimcore packages"
+              run: |
+                  composer config --global --auth http-basic.pimcore.repo.repman.io token ${{ secrets.COMPOSER_PIMCORE_REPO_TOKEN }}
+                  composer config repositories.enterprise composer https://pimcore.repo.repman.io
+
+            - name: "Update Pimcore version"
+              env:
+                  PIMCORE_VERSION: "${{ matrix.pimcore_version }}"
+              run: |
+                  if [ ! -z "$PIMCORE_VERSION" ]; then
+                        composer require --no-update pimcore/pimcore:${PIMCORE_VERSION}
+                  fi                  
+                  
+
+            - name: "Install dependencies with Composer"
+              uses: "ramsey/composer-install@v1"
+              with:
+                  dependency-versions: "${{ matrix.dependencies }}"
+
+            - name: "Run a static analysis with phpstan/phpstan"
+              run: "vendor/bin/phpstan analyse ${{ matrix.phpstan_args }} -c phpstan.neon --memory-limit=-1"

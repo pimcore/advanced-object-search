@@ -1,0 +1,10 @@
+parameters:
+    level: 4
+    reportUnmatchedIgnoredErrors: false
+    paths:
+        - src
+    bootstrapFiles:
+        - phpstan-bootstrap.php
+    excludePaths:
+        - src/Migrations/*
+        - src/Tests/*

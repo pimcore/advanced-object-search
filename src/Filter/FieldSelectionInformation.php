@@ -37,9 +37,9 @@ class FieldSelectionInformation
     /**
      * FieldSelectionInformation constructor.
      *
-     * @param $fieldName
-     * @param $fieldLabel
-     * @param $fieldType
+     * @param string $fieldName
+     * @param string $fieldLabel
+     * @param string $fieldType
      * @param array $context
      */
     public function __construct($fieldName, $fieldLabel, $fieldType, $context = [])
