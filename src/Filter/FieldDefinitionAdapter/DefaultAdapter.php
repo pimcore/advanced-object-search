@@ -138,10 +138,10 @@ class DefaultAdapter implements FieldDefinitionAdapterInterface
     }
 
     /**
-     * @param $object
+     * @param mixed $object
      * @param bool $ignoreInheritance
      *
-     * @return string
+     * @return mixed
      */
     protected function doGetIndexDataValue($object, $ignoreInheritance = false)
     {
@@ -215,7 +215,7 @@ class DefaultAdapter implements FieldDefinitionAdapterInterface
     }
 
     /**
-     * @param $fieldFilter
+     * @param array $fieldFilter
      *
      * filter field format as follows:
      *   - simple string like

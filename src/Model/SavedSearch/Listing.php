@@ -15,8 +15,13 @@
 
 namespace AdvancedObjectSearchBundle\Model\SavedSearch;
 
+use AdvancedObjectSearchBundle\Model\SavedSearch;
 use Pimcore\Model;
 
+/**
+ * @method SavedSearch[] load()
+ * @method int getTotalCount()
+ */
 class Listing extends Model\Listing\AbstractListing
 {
     /**
@@ -37,7 +42,7 @@ class Listing extends Model\Listing\AbstractListing
     }
 
     /**
-     * @param $savedSearches
+     * @param array $savedSearches
      *
      * @return $this
      */

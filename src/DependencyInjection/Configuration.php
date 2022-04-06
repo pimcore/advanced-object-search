@@ -33,6 +33,7 @@ class Configuration implements ConfigurationInterface
         $treeBuilder = new TreeBuilder('pimcore_advanced_object_search');
         $rootNode = $treeBuilder->getRootNode();
 
+        /* @phpstan-ignore-next-line */
         $rootNode
             ->children()
                 ->scalarNode('index_name_prefix')

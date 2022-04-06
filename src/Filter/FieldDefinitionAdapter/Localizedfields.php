@@ -92,7 +92,7 @@ class Localizedfields extends DefaultAdapter implements FieldDefinitionAdapterIn
     }
 
     /**
-     * @param $fieldFilter
+     * @param array $fieldFilter
      *
      * filter field format as follows:
      *  stdObject with language as key and languageFilter array as values like
@@ -106,7 +106,7 @@ class Localizedfields extends DefaultAdapter implements FieldDefinitionAdapterIn
      * @param bool $ignoreInheritance
      * @param string $path
      *
-     * @return BoolQuery
+     * @return BuilderInterface
      */
     public function getQueryPart($fieldFilter, $ignoreInheritance = false, $path = '')
     {

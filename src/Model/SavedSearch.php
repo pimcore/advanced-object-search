@@ -19,6 +19,9 @@ use AdvancedObjectSearchBundle\Event\SavedSearchEvent;
 use AdvancedObjectSearchBundle\Event\SavedSearchEvents;
 use Pimcore\Model;
 
+/**
+ * @method SavedSearch\Dao getDao()
+ */
 class SavedSearch extends Model\AbstractModel
 {
     /**
@@ -42,7 +45,7 @@ class SavedSearch extends Model\AbstractModel
     public $description;
 
     /**
-     * @var Model\User
+     * @var null|Model\User
      */
     public $owner;
 
@@ -74,9 +77,9 @@ class SavedSearch extends Model\AbstractModel
     /**
      * @static
      *
-     * @param $id
+     * @param int $id
      *
-     * @return SavedSearch
+     * @return null|SavedSearch
      */
     public static function getById($id)
     {
@@ -92,20 +95,20 @@ class SavedSearch extends Model\AbstractModel
 
     public function save()
     {
-        \Pimcore::getEventDispatcher()->dispatch(new SavedSearchEvent($this), SavedSearchEvents::PRE_SAVE);
+        \Pimcore::getEventDispatcher()->dispatch(new SavedSearchEvent($this), SavedSearchEvents::PRE_SAVE); // @phpstan-ignore-line
 
         $this->getDao()->save();
 
-        \Pimcore::getEventDispatcher()->dispatch(new SavedSearchEvent($this), SavedSearchEvents::POST_SAVE);
+        \Pimcore::getEventDispatcher()->dispatch(new SavedSearchEvent($this), SavedSearchEvents::POST_SAVE); // @phpstan-ignore-line
     }
 
     public function delete()
     {
-        \Pimcore::getEventDispatcher()->dispatch(new SavedSearchEvent($this), SavedSearchEvents::PRE_DELETE);
+        \Pimcore::getEventDispatcher()->dispatch(new SavedSearchEvent($this), SavedSearchEvents::PRE_DELETE); // @phpstan-ignore-line
 
         $this->getDao()->delete();
 
-        \Pimcore::getEventDispatcher()->dispatch(new SavedSearchEvent($this), SavedSearchEvents::POST_DELETE);
+        \Pimcore::getEventDispatcher()->dispatch(new SavedSearchEvent($this), SavedSearchEvents::POST_DELETE); // @phpstan-ignore-line
     }
 
     /**
@@ -169,7 +172,7 @@ class SavedSearch extends Model\AbstractModel
     }
 
     /**
-     * @return Model\User
+     * @return null|Model\User
      */
     public function getOwner()
     {

@@ -62,7 +62,7 @@ class Numeric extends DefaultAdapter implements FieldDefinitionAdapterInterface
     }
 
     /**
-     * @param $fieldFilter
+     * @param array|mixed $fieldFilter
      *
      * filter field format as follows:
      *   - simple number like
