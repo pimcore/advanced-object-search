@@ -790,6 +790,9 @@ class Service
             throw new \Exception('User not allowed to search for objects');
         } else {
             $forbiddenObjectPaths = \Pimcore\Model\Element\Service::findForbiddenPaths('object', $this->user);
+            if (isset($forbiddenObjectPaths['forbidden'])) {
+                $forbiddenObjectPaths = array_keys($forbiddenObjectPaths['forbidden']);
+            }
             if (count($forbiddenObjectPaths) > 0) {
                 $boolFilter = new BoolQuery();
 
