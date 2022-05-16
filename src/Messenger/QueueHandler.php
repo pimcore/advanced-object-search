@@ -45,6 +45,7 @@ class QueueHandler
         if ($entry instanceof TmpStore) {
             $workerCount = $entry->getData() ?? 0;
         }
+
         return $workerCount;
     }
 
