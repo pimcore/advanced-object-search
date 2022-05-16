@@ -42,7 +42,11 @@ class QueueHandler
     {
         $this->queueService->doProcessUpdateQueue($message->getWorkerId(), $message->getEntries());
 
-        $workerCount = TmpStore::get(self::IMPORTER_WORKER_COUNT_TMP_STORE_KEY)?->getData() ?? 0;
+        $workerCount = 0;
+        $entry = TmpStore::get(self::IMPORTER_WORKER_COUNT_TMP_STORE_KEY);
+        if($entry instanceof TmpStore) {
+            $workerCount = $entry->getData() ?? 0;
+        }
         $workerCount--;
         TmpStore::set(self::IMPORTER_WORKER_COUNT_TMP_STORE_KEY, $workerCount, null, $this->workerCountLifeTime);
 

@@ -17,9 +17,20 @@ namespace AdvancedObjectSearchBundle\Messenger;
 
 class QueueMessage
 {
-    public function __construct(protected string $workerId, protected array $entries)
+
+    protected string $workerId;
+    protected array $entries;
+
+    /**
+     * @param string $workerId
+     * @param array $entries
+     */
+    public function __construct(string $workerId, array $entries)
     {
+        $this->workerId = $workerId;
+        $this->entries = $entries;
     }
+
 
     /**
      * @return string
