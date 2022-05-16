@@ -23,6 +23,9 @@ use ONGR\ElasticsearchDSL\Query\TermLevel\TermQuery;
 use Pimcore\Model\DataObject\AbstractObject;
 use Pimcore\Model\DataObject\Concrete;
 
+/**
+ * @property \Pimcore\Model\DataObject\ClassDefinition\Data\Select $fieldDefinition
+ */
 class Select extends DefaultAdapter implements FieldDefinitionAdapterInterface
 {
     /**
@@ -79,7 +82,7 @@ class Select extends DefaultAdapter implements FieldDefinitionAdapterInterface
     }
 
     /**
-     * @param $fieldFilter
+     * @param array $fieldFilter
      *
      * filter field format as follows:
      *   - simple string like

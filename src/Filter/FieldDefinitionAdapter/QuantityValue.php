@@ -24,6 +24,9 @@ use ONGR\ElasticsearchDSL\Query\TermLevel\TermQuery;
 use Pimcore\Model\DataObject\AbstractObject;
 use Pimcore\Model\DataObject\Concrete;
 
+/**
+ * @property \Pimcore\Model\DataObject\ClassDefinition\Data\QuantityValue $fieldDefinition
+ */
 class QuantityValue extends Numeric implements FieldDefinitionAdapterInterface
 {
     /**
@@ -85,7 +88,7 @@ class QuantityValue extends Numeric implements FieldDefinitionAdapterInterface
     }
 
     /**
-     * @param $fieldFilter
+     * @param array $fieldFilter
      *
      * filter field format as follows:
      *   - simple array with number/unitID like

@@ -25,6 +25,9 @@ use Pimcore\Model\DataObject\AbstractObject;
 use Pimcore\Model\DataObject\ClassDefinition\Data;
 use Pimcore\Model\DataObject\Concrete;
 
+/**
+ * @property Data\Table $fieldDefinition
+ */
 class Table extends DefaultAdapter
 {
     /**
@@ -88,7 +91,7 @@ class Table extends DefaultAdapter
     }
 
     /**
-     * @param $object
+     * @param mixed $object
      * @param bool $ignoreInheritance
      *
      * @return string
@@ -166,7 +169,7 @@ class Table extends DefaultAdapter
     }
 
     /**
-     * @param $fieldFilter
+     * @param array $fieldFilter
      * @param bool $ignoreInheritance
      * @param string $path
      *

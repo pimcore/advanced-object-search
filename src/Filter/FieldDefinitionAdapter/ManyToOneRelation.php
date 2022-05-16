@@ -26,6 +26,9 @@ use Pimcore\Model\DataObject\AbstractObject;
 use Pimcore\Model\DataObject\Concrete;
 use Pimcore\Normalizer\NormalizerInterface;
 
+/**
+ * @property \Pimcore\Model\DataObject\ClassDefinition\Data\ManyToOneRelation $fieldDefinition
+ */
 class ManyToOneRelation extends DefaultAdapter implements FieldDefinitionAdapterInterface
 {
     /**
@@ -77,7 +80,7 @@ class ManyToOneRelation extends DefaultAdapter implements FieldDefinitionAdapter
     }
 
     /**
-     * @param $fieldFilter
+     * @param array|mixed $fieldFilter
      *
      * filter field format as follows:
      *   - simple array like

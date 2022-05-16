@@ -17,6 +17,10 @@
     "symfony/messenger": "^4.3 || ^5.2.0",
     "symfony/routing": "^4.3 || ^5.2.0"
   },
+  "require-dev": {
+    "phpstan/phpstan": "^1.2",
+    "elasticsearch/elasticsearch": "^6 | ^7"
+  },
   "autoload": {
     "psr-4": {
       "AdvancedObjectSearchBundle\\": "src/"

@@ -36,6 +36,14 @@ class IndexUpdateListener
 
     public function updateObject(DataObjectEvent $event)
     {
+        //do not update index when auto save or only saving version
+        if (
+            ($event->hasArgument('isAutoSave') && $event->getArgument('isAutoSave')) ||
+            ($event->hasArgument('saveVersionOnly') && $event->getArgument('saveVersionOnly'))
+        ) {
+            return;
+        }
+
         $inheritanceBackup = AbstractObject::getGetInheritedValues();
         AbstractObject::setGetInheritedValues(true);
 

@@ -129,7 +129,7 @@ class AdminController extends \Pimcore\Bundle\AdminBundle\Controller\AdminContro
             $ids = $service->extractIdsFromResult($results);
 
             /**
-             * @var $list \Pimcore\Model\DataObject\Listing
+             * @var \Pimcore\Model\DataObject\Listing $list
              */
             $list = new $listClass();
             $list->setObjectTypes(['object', 'folder', 'variant']);
@@ -138,7 +138,7 @@ class AdminController extends \Pimcore\Bundle\AdminBundle\Controller\AdminContro
             if (!$this->getAdminUser()->isAdmin()) {
                 $userIds = $this->getAdminUser()->getRoles();
                 $userIds[] = $this->getAdminUser()->getId();
-                $conditionFilters[] .= ' (
+                $conditionFilters[] = ' (
                                                     (select list from users_workspaces_object where userId in (' . implode(',', $userIds) . ') and LOCATE(CONCAT(o_path,o_key),cpath)=1  ORDER BY LENGTH(cpath) DESC LIMIT 1)=1
                                                     OR
                                                     (select list from users_workspaces_object where userId in (' . implode(',', $userIds) . ') and LOCATE(cpath,CONCAT(o_path,o_key))=1  ORDER BY LENGTH(cpath) DESC LIMIT 1)=1
@@ -155,6 +155,8 @@ class AdminController extends \Pimcore\Bundle\AdminBundle\Controller\AdminContro
             }
 
             $list->setCondition(implode(' AND ', $conditionFilters));
+
+            /* @phpstan-ignore-next-line */
             $eventDispatcher->dispatch(new FilterListingEvent($list), AdvancedObjectSearchEvents::LISTING_FILER);
 
             $list->load();
@@ -331,10 +333,8 @@ class AdminController extends \Pimcore\Bundle\AdminBundle\Controller\AdminContro
             $conditionParams[] = '%' . $query . '%';
         }
 
-        if (count($conditionParts) > 0) {
-            $condition = implode(' AND ', $conditionParts);
-            $searcherList->setCondition($condition, $conditionParams);
-        }
+        $condition = implode(' AND ', $conditionParts);
+        $searcherList->setCondition($condition, $conditionParams);
 
         $searcherList->setOffset($offset);
         $searcherList->setLimit($limit);
@@ -523,7 +523,6 @@ class AdminController extends \Pimcore\Bundle\AdminBundle\Controller\AdminContro
     }
 
     /**
-     * @param Request $request
      * @Route("/get-roles")
      */
     public function getRolesAction()

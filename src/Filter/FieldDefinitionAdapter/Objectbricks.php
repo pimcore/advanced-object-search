@@ -76,7 +76,7 @@ class Objectbricks extends DefaultAdapter implements FieldDefinitionAdapterInter
     }
 
     /**
-     * @param $fieldFilter
+     * @param array $fieldFilter
      *
      * filter field format as follows:
      *      [

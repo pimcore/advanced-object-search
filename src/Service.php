@@ -41,7 +41,7 @@ use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 class Service
 {
     /**
-     * @var User
+     * @var null|User
      */
     protected $user;
 
@@ -170,7 +170,7 @@ class Service
     /**
      * returns index name for given class name
      *
-     * @param $classname string
+     * @param string $classname
      *
      * @return string
      */
@@ -208,7 +208,7 @@ class Service
     }
 
     /**
-     * @param null $fieldName
+     * @param string|null $fieldName
      *
      * @return array
      */
@@ -222,7 +222,7 @@ class Service
     }
 
     /**
-     * @param $name
+     * @param string $name
      * @param array $data
      *
      * @return ClassDefinition\Data
@@ -736,7 +736,7 @@ class Service
     /**
      * checks filter entry and creates FilterEntry object if necessary
      *
-     * @param $filterEntry
+     * @param array|FilterEntry $filterEntry
      *
      * @return FilterEntry
      *
@@ -758,11 +758,15 @@ class Service
     }
 
     /**
-     * @param $classId
-     * @param FilterEntry $filters
-     * @param string|BuilderInterface $fullTextQuery
+     * @param string $classId
+     * @param array $filters
+     * @param BuilderInterface|string $fullTextQuery
+     * @param int $from
+     * @param int $size
      *
-     * @return array
+     * @return array|callable
+     *
+     * @throws \Exception
      */
     public function doFilter($classId, array $filters, $fullTextQuery, $from = null, $size = null)
     {
@@ -776,7 +780,7 @@ class Service
             $search->addQuery(new QueryStringQuery($fullTextQuery));
         }
 
-        $this->eventDispatcher->dispatch(new FilterSearchEvent($search), AdvancedObjectSearchEvents::ELASITIC_FILTER);
+        $this->eventDispatcher->dispatch(new FilterSearchEvent($search), AdvancedObjectSearchEvents::ELASITIC_FILTER); // @phpstan-ignore-line
 
         if ($size) {
             $search->setSize($size);
@@ -815,6 +819,9 @@ class Service
             throw new \Exception('User not allowed to search for objects');
         } else {
             $forbiddenObjectPaths = \Pimcore\Model\Element\Service::findForbiddenPaths('object', $this->user);
+            if (isset($forbiddenObjectPaths['forbidden'])) {   // @phpstan-ignore-line
+                $forbiddenObjectPaths = array_keys($forbiddenObjectPaths['forbidden']);
+            }
             if (count($forbiddenObjectPaths) > 0) {
                 $boolFilter = new BoolQuery();
 
