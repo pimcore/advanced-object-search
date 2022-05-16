@@ -17,7 +17,6 @@ namespace AdvancedObjectSearchBundle\Messenger;
 
 class QueueMessage
 {
-
     protected string $workerId;
     protected array $entries;
 
@@ -30,7 +29,6 @@ class QueueMessage
         $this->workerId = $workerId;
         $this->entries = $entries;
     }
-
 
     /**
      * @return string

@@ -44,7 +44,7 @@ class QueueHandler
 
         $workerCount = 0;
         $entry = TmpStore::get(self::IMPORTER_WORKER_COUNT_TMP_STORE_KEY);
-        if($entry instanceof TmpStore) {
+        if ($entry instanceof TmpStore) {
             $workerCount = $entry->getData() ?? 0;
         }
         $workerCount--;
