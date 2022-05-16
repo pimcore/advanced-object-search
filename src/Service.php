@@ -584,11 +584,7 @@ class Service
     /**
      * @param string $workerId
      * @param int $limit
-     *
      * @return array
-     *
-     * @throws \Doctrine\DBAL\Driver\Exception
-     * @throws \Doctrine\DBAL\Exception
      */
     public function initUpdateQueue(string $workerId, int $limit = 200): array
     {
@@ -606,8 +602,6 @@ class Service
      * @param array $entries
      *
      * @return int
-     *
-     * @throws \Doctrine\DBAL\Exception
      */
     public function doProcessUpdateQueue(string $workerId, array $entries): int
     {
