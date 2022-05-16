@@ -584,6 +584,7 @@ class Service
     /**
      * @param string $workerId
      * @param int $limit
+     *
      * @return array
      */
     public function initUpdateQueue(string $workerId, int $limit = 200): array
