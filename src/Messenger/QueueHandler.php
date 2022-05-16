@@ -38,15 +38,21 @@ class QueueHandler
         $this->workerCount = $workerCount;
     }
 
-    public function __invoke(QueueMessage $message)
+    protected function getWorkerCount(): int
     {
-        $this->queueService->doProcessUpdateQueue($message->getWorkerId(), $message->getEntries());
-
         $workerCount = 0;
         $entry = TmpStore::get(self::IMPORTER_WORKER_COUNT_TMP_STORE_KEY);
         if ($entry instanceof TmpStore) {
             $workerCount = $entry->getData() ?? 0;
         }
+        return $workerCount;
+    }
+
+    public function __invoke(QueueMessage $message)
+    {
+        $this->queueService->doProcessUpdateQueue($message->getWorkerId(), $message->getEntries());
+
+        $workerCount = $this->getWorkerCount();
         $workerCount--;
         TmpStore::set(self::IMPORTER_WORKER_COUNT_TMP_STORE_KEY, $workerCount, null, $this->workerCountLifeTime);
 
@@ -55,7 +61,7 @@ class QueueHandler
 
     public function dispatchMessages()
     {
-        $workerCount = TmpStore::get(self::IMPORTER_WORKER_COUNT_TMP_STORE_KEY)?->getData() ?? 0;
+        $workerCount = $this->getWorkerCount();
 
         $addWorkers = true;
         while ($addWorkers && $workerCount < $this->workerCount) {
