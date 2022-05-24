@@ -14,3 +14,4 @@ advanced_object_search:
                 - productName
                 - productNumber
 ```
+Please Note: Currently is not possible to exclude any specific field under a structured fieldset like `Object Bricks` and `Field collections`, but it is only possible to exclude the field entirely for a specific class. 
