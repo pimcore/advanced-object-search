@@ -156,7 +156,7 @@ class Service
         );
 
         foreach ($fieldDefinitions as $fieldDefinition) {
-            if ($this->isExcludedField($definition->getName(), $fieldDefinition->getName())) {
+            if ($definition instanceof ClassDefinition && $this->isExcludedField($definition->getName(), $fieldDefinition->getName())) {
                 continue;
             }
 
