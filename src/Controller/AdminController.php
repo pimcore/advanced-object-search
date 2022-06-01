@@ -264,7 +264,7 @@ class AdminController extends \Pimcore\Bundle\AdminBundle\Controller\AdminContro
         $savedSearch->setDescription($data->settings->description);
         $savedSearch->setCategory($data->settings->category);
         $savedSearch->setSharedUserIds(array_merge($data->settings->shared_users, $data->settings->shared_roles));
-        $savedSearch->setShareGlobally($data->settings->share_globally && $this->getAdminUser()->isAdmin());
+        $savedSearch->setShareGlobally($this->getAdminUser()->isAdmin() && $data->settings->share_globally);
 
         $config = ['classId' => $data->classId, 'gridConfig' => $data->gridConfig, 'conditions' => $data->conditions];
         $savedSearch->setConfig(json_encode($config));
