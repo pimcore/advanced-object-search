@@ -38,7 +38,6 @@ class QueueHandler
         $this->workerCount = $workerCount;
     }
 
-
     public function __invoke(QueueMessage $message)
     {
         $this->queueService->doProcessUpdateQueue($message->getWorkerId(), $message->getEntries());
@@ -65,7 +64,6 @@ class QueueHandler
             }
         }
     }
-
 
     private function addMessage(string $messageId)
     {
