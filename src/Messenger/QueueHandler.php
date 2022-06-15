@@ -55,9 +55,8 @@ class QueueHandler
             $workerId = uniqid();
             $entries = $this->queueService->initUpdateQueue($workerId, $this->workerItemCount);
             if (!empty($entries)) {
-                $this->messageBus->dispatch(new QueueMessage($workerId, $entries));
-
                 $this->addMessage($workerId);
+                $this->messageBus->dispatch(new QueueMessage($workerId, $entries));
                 $dispatchedMessageCount = $this->getMessageCount();
             } else {
                 $addWorkers = false;
