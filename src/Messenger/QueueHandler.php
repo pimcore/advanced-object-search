@@ -38,43 +38,50 @@ class QueueHandler
         $this->workerCount = $workerCount;
     }
 
-    protected function getWorkerCount(): int
-    {
-        $workerCount = 0;
-        $entry = TmpStore::get(self::IMPORTER_WORKER_COUNT_TMP_STORE_KEY);
-        if ($entry instanceof TmpStore) {
-            $workerCount = $entry->getData() ?? 0;
-        }
-
-        return $workerCount;
-    }
-
     public function __invoke(QueueMessage $message)
     {
         $this->queueService->doProcessUpdateQueue($message->getWorkerId(), $message->getEntries());
 
-        $workerCount = $this->getWorkerCount();
-        $workerCount--;
-        TmpStore::set(self::IMPORTER_WORKER_COUNT_TMP_STORE_KEY, $workerCount, null, $this->workerCountLifeTime);
-
+        $this->removeMessage($message->getWorkerId());
         $this->dispatchMessages();
     }
 
     public function dispatchMessages()
     {
-        $workerCount = $this->getWorkerCount();
+        $dispatchedMessageCount = $this->getMessageCount();
 
         $addWorkers = true;
-        while ($addWorkers && $workerCount < $this->workerCount) {
+        while ($addWorkers && $dispatchedMessageCount < $this->workerCount) {
             $workerId = uniqid();
             $entries = $this->queueService->initUpdateQueue($workerId, $this->workerItemCount);
             if (!empty($entries)) {
+                $this->addMessage($workerId);
                 $this->messageBus->dispatch(new QueueMessage($workerId, $entries));
-                $workerCount++;
-                TmpStore::set(self::IMPORTER_WORKER_COUNT_TMP_STORE_KEY, $workerCount, null, $this->workerCountLifeTime);
+                $dispatchedMessageCount = $this->getMessageCount();
             } else {
                 $addWorkers = false;
             }
         }
+    }
+
+    private function addMessage(string $messageId)
+    {
+        TmpStore::set(self::IMPORTER_WORKER_COUNT_TMP_STORE_KEY . $messageId, true, self::IMPORTER_WORKER_COUNT_TMP_STORE_KEY, $this->workerCountLifeTime);
+    }
+
+    private function removeMessage(string $messageId)
+    {
+        TmpStore::delete(self::IMPORTER_WORKER_COUNT_TMP_STORE_KEY . $messageId);
+    }
+
+    private function getMessageCount(): int
+    {
+        $ids = TmpStore::getIdsByTag(self::IMPORTER_WORKER_COUNT_TMP_STORE_KEY);
+        $runningWorkers = [];
+        foreach ($ids as $id) {
+            $runningWorkers[] = TmpStore::get($id);
+        }
+
+        return count(array_filter($runningWorkers));
     }
 }
