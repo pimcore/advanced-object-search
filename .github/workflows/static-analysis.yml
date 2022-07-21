@@ -23,7 +23,7 @@ jobs:
                     - { php-version: "7.4", dependencies: "lowest", pimcore_version: "", phpstan_args: "", experimental: false }
                     - { php-version: "8.0", dependencies: "highest", pimcore_version: "", phpstan_args: "", experimental: false }
                     - { php-version: "8.1", dependencies: "highest", pimcore_version: "", phpstan_args: "", experimental: false }
-                    - { php-version: "8.1", dependencies: "highest", pimcore_version: "10.x-dev", phpstan_args: "", experimental: false }
+                    - { php-version: "8.1", dependencies: "highest", pimcore_version: "11.x-dev", phpstan_args: "", experimental: false }
         steps:
             - name: "Checkout code"
               uses: "actions/checkout@v2"
@@ -43,7 +43,7 @@ jobs:
                   PIMCORE_VERSION: "${{ matrix.pimcore_version }}"
               run: |
                   if [ ! -z "$PIMCORE_VERSION" ]; then
-                        composer require --no-update pimcore/pimcore:${PIMCORE_VERSION}
+                        composer require --no-update pimcore/pimcore:"${PIMCORE_VERSION} as 10.99.9"
                   fi                  
 
             # TODO remove when removing Pimcore 6.9 support
