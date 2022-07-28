@@ -82,7 +82,7 @@ class Select extends DefaultAdapter implements FieldDefinitionAdapterInterface
     }
 
     /**
-     * @param array $fieldFilter
+     * @param string $fieldFilter
      *
      * filter field format as follows:
      *   - simple string like
