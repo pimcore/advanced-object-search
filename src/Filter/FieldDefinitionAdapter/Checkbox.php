@@ -104,7 +104,7 @@ class Checkbox extends DefaultAdapter implements FieldDefinitionAdapterInterface
     }
 
     /**
-     * @param string $fieldFilter
+     * @param bool $fieldFilter
      *
      * filter field format as follows:
      *   - simple boolean like
