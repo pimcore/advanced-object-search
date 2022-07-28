@@ -195,7 +195,7 @@ class Table extends DefaultAdapter
 
                     $boolQuery->add(new NestedQuery($fieldsPath, $innerBoolQuery), BoolQuery::SHOULD);
                 }
-                $boolQuery->addParameter('minimum_should_match', 1);
+                $boolQuery->addParameter('minimum_should_match', '1'    );
             }
 
             return $boolQuery;
