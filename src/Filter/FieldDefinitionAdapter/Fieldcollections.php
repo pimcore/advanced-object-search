@@ -159,7 +159,7 @@ class Fieldcollections extends DefaultAdapter implements FieldDefinitionAdapterI
 
             foreach ($fieldCollectionItems->getItems() as $item) {
                 /**
-                 * @var \Pimcore\Model\DataObject\Fieldcollection\Data\AbstractData $item
+                 * @var \Pimcore\Model\DataObject\Concrete $item
                  */
                 $definition = Fieldcollection\Definition::getByKey($item->getType());
 
