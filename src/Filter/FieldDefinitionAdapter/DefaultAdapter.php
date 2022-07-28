@@ -26,6 +26,7 @@ use Pimcore\Localization\LocaleServiceInterface;
 use Pimcore\Model\DataObject\AbstractObject;
 use Pimcore\Model\DataObject\ClassDefinition\Data;
 use Pimcore\Model\DataObject\Concrete;
+use Pimcore\Model\DataObject\Fieldcollection\Data\AbstractData;
 use Pimcore\Model\DataObject\Localizedfield;
 use Pimcore\Normalizer\NormalizerInterface;
 
@@ -215,7 +216,7 @@ class DefaultAdapter implements FieldDefinitionAdapterInterface
     }
 
     /**
-     * @param array $fieldFilter
+     * @param array | string $fieldFilter
      *
      * filter field format as follows:
      *   - simple string like
