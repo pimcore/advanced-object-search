@@ -216,7 +216,7 @@ class DefaultAdapter implements FieldDefinitionAdapterInterface
     }
 
     /**
-     * @param array | string $fieldFilter
+     * @param array|string|int|bool $fieldFilter
      *
      * filter field format as follows:
      *   - simple string like
