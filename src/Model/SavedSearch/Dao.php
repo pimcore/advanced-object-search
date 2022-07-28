@@ -32,7 +32,7 @@ class Dao extends Model\Dao\AbstractDao
      */
     public function getById($id)
     {
-        $data = $this->db->fetchAssociative('SELECT * FROM ' . $this->db->quoteIdentifier(self::TABLE_NAME) . ' WHERE id = ?', [$id]);
+        $data = $this->db->fetchRow('SELECT * FROM ' . $this->db->quoteIdentifier(self::TABLE_NAME) . ' WHERE id = ?', [$id]);
         if (!$data['id']) {
             throw new \Exception('SavedSearch item with id ' . $id . ' not found');
         }
