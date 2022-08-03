@@ -132,7 +132,7 @@ class ManyToOneRelation extends DefaultAdapter implements FieldDefinitionAdapter
 
                     $boolQuery->add(new NestedQuery($path, $innerBoolQuery), BoolQuery::SHOULD);
                 }
-                $boolQuery->addParameter('minimum_should_match', 1);
+                $boolQuery->addParameter('minimum_should_match', '1');
             } else {
                 $boolQuery->add(new ExistsQuery($path . '.notavailablefield'));
             }
