@@ -12,6 +12,7 @@ framework:
 
 advanced_object_search:
     index_configuration:
+        elements_per_loop: 100
         nested_fields_limit: 200
         total_fields_limit: 100000
 
