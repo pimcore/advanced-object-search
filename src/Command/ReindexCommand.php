@@ -23,6 +23,14 @@ use Symfony\Component\Console\Output\OutputInterface;
 
 class ReindexCommand extends ServiceAwareCommand
 {
+    protected ?array $indexConfiguration = null;
+
+    public function __construct(array $indexConfiguration)
+    {
+        $this->indexConfiguration = $indexConfiguration;
+        parent::__construct();
+    }
+
     protected function configure()
     {
         $this
@@ -47,7 +55,7 @@ class ReindexCommand extends ServiceAwareCommand
         }
 
         $classes = array_filter($classes);
-        $elementsPerLoop = 100;
+        $elementsPerLoop = $this->indexConfiguration['elements_per_loop'];
 
         foreach ($classes as $class) {
             $listClassName = '\\Pimcore\\Model\\DataObject\\' . ucfirst($class->getName()) . '\\Listing';

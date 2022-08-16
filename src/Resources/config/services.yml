@@ -160,7 +160,9 @@ services:
 
     # auto-register all commands as services
     AdvancedObjectSearchBundle\Command\ProcessUpdateQueueCommand: ~
-    AdvancedObjectSearchBundle\Command\ReindexCommand: ~
+    AdvancedObjectSearchBundle\Command\ReindexCommand:
+        arguments:
+            - '%pimcore.advanced_object_search.index_configuration%'
     AdvancedObjectSearchBundle\Command\UpdateMappingCommand: ~
 
 
