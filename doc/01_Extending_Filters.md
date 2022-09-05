@@ -155,7 +155,7 @@ pimcore.bundle.AppBundle.Bundle = Class.create({
         document.addEventListener(pimcore.events.onAdvancedObjectSearchResult, this.onAdvancedObjectSearchResult.bind(this));
     },
 
-    onAdvancedObjectSearchResult: function () {
+    onAdvancedObjectSearchResult: function (e) {
         let extensionBag = e.detail.extensionBag;
         // here you can register all the extension that you implement
         extensionBag.addExtension(new pimcore.bundle.AppBundle.AdvancedObjectSearch.Extension.ArticleNumber());

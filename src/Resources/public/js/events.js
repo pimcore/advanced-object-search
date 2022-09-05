@@ -12,7 +12,7 @@
  */
 
 /**
- * before permissions are loaded
- * context, menu and permissions are passed as parameters
+ * on search result initialize
+ * extensionBag is passed as parameters
  */
 pimcore.events.onAdvancedObjectSearchResult = "pimcore.advancedObjectSearch.result.initialize";
