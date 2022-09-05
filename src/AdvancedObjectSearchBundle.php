@@ -47,6 +47,7 @@ class AdvancedObjectSearchBundle extends AbstractPimcoreBundle
     {
         return [
             '/bundles/advancedobjectsearch/js/startup.js',
+            '/bundles/advancedobjectsearch/js/events.js',
             '/bundles/advancedobjectsearch/js/selector.js',
             '/bundles/advancedobjectsearch/js/helper.js',
             '/bundles/advancedobjectsearch/js/searchConfigPanel.js',

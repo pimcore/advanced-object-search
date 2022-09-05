@@ -145,16 +145,18 @@ of the pimcore plugin of your bundle.
 
 ```js
 pimcore.registerNS("pimcore.bundle.AppBundle.*");
-pimcore.bundle.AppBundle.Bundle = Class.create(pimcore.plugin.admin, {
+
+pimcore.bundle.AppBundle.Bundle = Class.create({
     getClassName: function() {
         return "pimcore.bundle.AppBundle.Bundle";
     },
 
     initialize: function() {
-        pimcore.plugin.broker.registerPlugin(this);
+        document.addEventListener(pimcore.events.onAdvancedObjectSearchResult, this.onAdvancedObjectSearchResult.bind(this));
     },
 
-    onAdvancedObjectSearchResult: function (extensionBag) {
+    onAdvancedObjectSearchResult: function () {
+        let extensionBag = e.detail.extensionBag;
         // here you can register all the extension that you implement
         extensionBag.addExtension(new pimcore.bundle.AppBundle.AdvancedObjectSearch.Extension.ArticleNumber());
     }
