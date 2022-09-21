@@ -23,7 +23,7 @@ jobs:
                     - { php-version: "7.4", dependencies: "lowest", pimcore_version: "", phpstan_args: "", experimental: false }
                     - { php-version: "8.0", dependencies: "highest", pimcore_version: "", phpstan_args: "", experimental: false }
                     - { php-version: "8.1", dependencies: "highest", pimcore_version: "", phpstan_args: "", experimental: false }
-                    - { php-version: "8.1", dependencies: "highest", pimcore_version: "11.x-dev", phpstan_args: "", experimental: true }
+                    #- { php-version: "8.1", dependencies: "highest", pimcore_version: "11.x-dev", phpstan_args: "", experimental: true }
         steps:
             - name: "Checkout code"
               uses: "actions/checkout@v2"
@@ -53,7 +53,7 @@ jobs:
                   composer config --no-plugins allow-plugins.ocramius/package-versions true                    
 
             - name: "Install dependencies with Composer"
-              uses: "ramsey/composer-install@v1"
+              uses: "ramsey/composer-install@v2"
               with:
                   dependency-versions: "${{ matrix.dependencies }}"
 
