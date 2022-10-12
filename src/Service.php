@@ -294,7 +294,6 @@ class Service
 
         $mappingParams = [
             'index' => $this->getIndexName($objectClass->getName()),
-            'include_type_name' => false,
             'body' => [
                 '_source' => [
                     'enabled' => true
