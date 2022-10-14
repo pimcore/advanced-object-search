@@ -21,8 +21,8 @@ use AdvancedObjectSearchBundle\Filter\FieldDefinitionAdapter\FieldDefinitionAdap
 use AdvancedObjectSearchBundle\Filter\FieldSelectionInformation;
 use AdvancedObjectSearchBundle\Filter\FilterEntry;
 use AdvancedObjectSearchBundle\Tools\ElasticSearchConfigService;
-use Elasticsearch\Client;
-use Elasticsearch\Common\Exceptions\Missing404Exception;
+use Elastic\Elasticsearch\Client;
+use Elastic\Elasticsearch\Exception\ClientResponseException;
 use ONGR\ElasticsearchDSL\BuilderInterface;
 use ONGR\ElasticsearchDSL\Query\Compound\BoolQuery;
 use ONGR\ElasticsearchDSL\Query\FullText\QueryStringQuery;
@@ -317,18 +317,18 @@ class Service
     public function updateMapping(ClassDefinition $classDefinition)
     {
         if ($this->isExcludedClass($classDefinition->getName())) {
-            if ($this->esClient->indices()->exists(['index' => $this->getIndexName($classDefinition->getName())])) {
+            if ($this->esClient->indices()->exists(['index' => $this->getIndexName($classDefinition->getName())])->asBool()) {
                 try {
                     $this->deleteIndex($classDefinition);
                 } catch (\Exception $e) {
-                    $this->logger->debug($e);
+                    $this->logger->error($e);
                 }
             }
 
             return true;
         }
 
-        if (!$this->esClient->indices()->exists(['index' => $this->getIndexName($classDefinition->getName())])) {
+        if (!$this->esClient->indices()->exists(['index' => $this->getIndexName($classDefinition->getName())])->asBool()) {
             $this->createIndex($classDefinition);
         }
 
@@ -361,7 +361,6 @@ class Service
     {
         $mapping = $this->generateMapping($classDefinition);
         $response = $this->esClient->indices()->putMapping($mapping);
-        $this->logger->debug(json_encode($response));
     }
 
     /**
@@ -376,7 +375,7 @@ class Service
         try {
             $this->deleteIndex($classDefinition);
         } catch (\Exception $e) {
-            $this->logger->debug($e);
+            $this->logger->error($e);
         }
 
         try {
@@ -404,7 +403,6 @@ class Service
                 ]
             ]);
 
-            $this->logger->debug(json_encode($response));
         } catch (\Exception $e) {
             $this->logger->error($e);
         }
@@ -419,8 +417,7 @@ class Service
     {
         $indexName = $this->getIndexName($classDefinition->getName());
         $this->logger->info("Deleting index $indexName for class " . $classDefinition->getName());
-        $response = $this->esClient->indices()->delete(['index' => $indexName]);
-        $this->logger->debug(json_encode($response));
+        $this->esClient->indices()->delete(['index' => $indexName]);
     }
 
     /**
@@ -487,9 +484,8 @@ class Service
         $indexUpdateParams = $this->getIndexData($object);
 
         if ($indexUpdateParams['body']['o_checksum'] != $originalChecksum) {
-            $response = $this->esClient->index($indexUpdateParams);
             $this->logger->info('Updates es index for data object ' . $object->getId());
-            $this->logger->debug(json_encode($response));
+            $this->esClient->index($indexUpdateParams);
         } else {
             $this->logger->info('Not updating index for data object ' . $object->getId() . ' - nothing has changed.');
         }
@@ -537,11 +533,14 @@ class Service
         ];
 
         try {
-            $response = $this->esClient->delete($params);
             $this->logger->info('Deleting data object ' . $object->getId() . ' from es index.');
-            $this->logger->debug(json_encode($response));
-        } catch (Missing404Exception $e) {
-            $this->logger->info('Cannot delete data object ' . $object->getId() . ' from es index because not found.');
+            $response = $this->esClient->delete($params);
+        } catch (ClientResponseException $e) {
+            if($e->getCode() === 404) {
+                $this->logger->info('Cannot delete data object ' . $object->getId() . ' from es index because not found.');
+            } else {
+                throw $e;
+            }
         }
     }
 
@@ -796,7 +795,7 @@ class Service
 
         $this->logger->info('Filter-Params: ' . json_encode($params));
 
-        return $this->esClient->search($params);
+        return $this->esClient->search($params)->asArray();
     }
 
     /**

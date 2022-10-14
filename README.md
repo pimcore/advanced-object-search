@@ -1,24 +1,52 @@
 # Advanced Object Search via Elasticsearch
 
 Advanced Object Search bundle provides advanced object search in 
-Pimcore backend powered by Elasticsearch v7/v8. 
+Pimcore backend powered by Elasticsearch v8. 
 
 ## Integration into Pimcore
 
 ### Installation and Configuration
-- Installer creates all necessary tables. 
-- Before starting, setup following configurations in symfony configuration tree: 
+Installer creates all necessary tables. 
+
+#### Configure Elasticsearch Client 
+Elasticsearch client configuration takes place via [Pimcore Elasticsearch Client Bundle](https://) and has to parts. 
+1) Configuring an elasticsearch client. 
+2) Defining what client should be used by advanced object search. 
+
+```yaml
+
+# Configure an elasticsearch client 
+pimcore_elasticsearch_client:
+    es_clients:
+        default:
+            hosts: ['elastic:9200']
+            username: 'elastic'
+            password: 'somethingsecret'
+            logger_channel: 'pimcore.elasicsearch'        
+
+
+# Define what client should be used by advanced object search 
+advanced_object_search:
+    es_client_name: default  # default is default value here, just need to be specified when other client should be used.
+```
+
+If nothing is configured, a default client connecting to `localhost:9200` is used. 
+
+
+#### Configure Advanced Object Search
+Before starting, setup at least following configuration in symfony configuration tree: 
 
 ```yml
 advanced_object_search:
     # Prefix for index names
-    index_name_prefix: 'advanced_object_search_'   
-    
-    # List of elasticsearch hosts
-    es_hosts:
-        - 'localhost'
+    index_name_prefix: 'advanced_object_search_'
 ```
-- call Pimcore command `advanced-object-search:update-mapping` for creating mappings and `advanced-object-search:re-index` for indexing data for the first time. 
+
+For further configuration options follow the docs and the inline description of the configuration tree. 
+
+#### Initial Indexing
+Call Pimcore command `advanced-object-search:update-mapping` for creating mappings and `advanced-object-search:re-index` 
+for indexing data for the first time. 
 
 
 ### GUI
@@ -223,8 +251,7 @@ If you want custom filters in the result tab directly without having to create a
 read [here on how to extend the result tab with custom filters.](./doc/01_Extending_Filters.md).
 
 
-## Supported Elastic Search Versions
-- ElasticSearch 7
+## Supported Elasticsearch Versions
 - ElasticSearch 8
 
 
@@ -242,8 +269,9 @@ read [here on how to extend the result tab with custom filters.](./doc/01_Extend
 
 #### Upgrade to Pimcore X
 - Update to latest (allowed) bundle version in Pimcore 6.9 and execute all migrations.
-- Make sure you are using ElsaticSearch 7. 
+- Make sure you are using ElasticSearch 7. 
 - Then update to Pimcore X.
 
 ### Upgrade to v5.0.0
-- Removed Elasticsearch v6 support
+- Removed Elasticsearch v6 and v7 support
+- Changed elasticsearch client configuration
