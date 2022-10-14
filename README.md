@@ -9,9 +9,9 @@ Pimcore backend powered by Elasticsearch v8.
 Installer creates all necessary tables. 
 
 #### Configure Elasticsearch Client 
-Elasticsearch client configuration takes place via [Pimcore Elasticsearch Client Bundle](https://) and has to parts. 
+Elasticsearch client configuration takes place via [Pimcore Elasticsearch Client Bundle](https://github.com/pimcore/elasticsearch-client) and has two parts. 
 1) Configuring an elasticsearch client. 
-2) Defining what client should be used by advanced object search. 
+2) Define the client to be used by advanced object search. 
 
 ```yaml
 
@@ -25,7 +25,7 @@ pimcore_elasticsearch_client:
             logger_channel: 'pimcore.elasicsearch'        
 
 
-# Define what client should be used by advanced object search 
+# Define the client to be used by advanced object search
 advanced_object_search:
     es_client_name: default  # default is default value here, just need to be specified when other client should be used.
 ```
