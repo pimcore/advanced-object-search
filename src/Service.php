@@ -402,7 +402,6 @@ class Service
                     ]
                 ]
             ]);
-
         } catch (\Exception $e) {
             $this->logger->error($e);
         }
@@ -536,7 +535,7 @@ class Service
             $this->logger->info('Deleting data object ' . $object->getId() . ' from es index.');
             $response = $this->esClient->delete($params);
         } catch (ClientResponseException $e) {
-            if($e->getCode() === 404) {
+            if ($e->getCode() === 404) {
                 $this->logger->info('Cannot delete data object ' . $object->getId() . ' from es index because not found.');
             } else {
                 throw $e;
