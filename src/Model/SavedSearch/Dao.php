@@ -64,7 +64,7 @@ class Dao extends Model\Dao\AbstractDao
                 }
             }
 
-            Helper::insertOrUpdate($this->db,self::TABLE_NAME, $data);
+            Helper::insertOrUpdate($this->db, self::TABLE_NAME, $data);
 
             $lastInsertId = $this->db->lastInsertId();
             if (!$this->model->getId() && $lastInsertId) {
