@@ -16,6 +16,7 @@
 namespace AdvancedObjectSearchBundle\Model\SavedSearch\Listing;
 
 use AdvancedObjectSearchBundle\Model\SavedSearch;
+use Doctrine\DBAL\Exception;
 use Pimcore\Model;
 
 /**
@@ -27,10 +28,11 @@ class Dao extends Model\Listing\Dao\AbstractDao
      * Loads a list of tags for the specifies parameters, returns an array of Element\Tag elements
      *
      * @return array
+     * @throws Exception
      */
     public function load()
     {
-        $searchIds = $this->db->fetchCol('SELECT id FROM ' . $this->db->quoteIdentifier(SavedSearch\Dao::TABLE_NAME) . ' ' . $this->getCondition() . $this->getOrder() . $this->getOffsetLimit(), $this->model->getConditionVariables());
+        $searchIds = $this->db->fetchFirstColumn('SELECT id FROM ' . $this->db->quoteIdentifier(SavedSearch\Dao::TABLE_NAME) . ' ' . $this->getCondition() . $this->getOrder() . $this->getOffsetLimit(), $this->model->getConditionVariables());
 
         $searches = [];
         foreach ($searchIds as $id) {
@@ -44,11 +46,13 @@ class Dao extends Model\Listing\Dao\AbstractDao
         return $searches;
     }
 
+    /**
+     * @throws Exception
+     */
     public function loadIdList()
     {
-        $searchIds = $this->db->fetchCol('SELECT id FROM ' . $this->db->quoteIdentifier(SavedSearch\Dao::TABLE_NAME) . ' ' . $this->getCondition() . $this->getGroupBy() . $this->getOrder() . $this->getOffsetLimit(), $this->model->getConditionVariables());
+        return $this->db->fetchFirstColumn('SELECT id FROM ' . $this->db->quoteIdentifier(SavedSearch\Dao::TABLE_NAME) . ' ' . $this->getCondition() . $this->getGroupBy() . $this->getOrder() . $this->getOffsetLimit(), $this->model->getConditionVariables());
 
-        return $searchIds;
     }
 
     public function getTotalCount()

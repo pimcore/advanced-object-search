@@ -21,6 +21,7 @@ use AdvancedObjectSearchBundle\Filter\FieldDefinitionAdapter\FieldDefinitionAdap
 use AdvancedObjectSearchBundle\Filter\FieldSelectionInformation;
 use AdvancedObjectSearchBundle\Filter\FilterEntry;
 use AdvancedObjectSearchBundle\Tools\ElasticSearchConfigService;
+use Doctrine\DBAL\Exception;
 use Elasticsearch\Client;
 use Elasticsearch\Common\Exceptions\Missing404Exception;
 use ONGR\ElasticsearchDSL\BuilderInterface;
@@ -510,13 +511,14 @@ class Service
      * Updates object queue - either inserts entry (if not exists) or updates in_queue flag to false
      *
      * @param Concrete $object
+     * @throws Exception
      */
     protected function updateUpdateQueueForDataObject(Concrete $object)
     {
         $db = \Pimcore\Db::get();
 
         //add object to update queue (if not exists) or set in_queue to false
-        $currentEntry = $db->fetchRow('SELECT in_queue FROM ' . Installer::QUEUE_TABLE_NAME . ' WHERE o_id = ?', [$object->getId()]);
+        $currentEntry = $db->fetchAssociative('SELECT in_queue FROM ' . Installer::QUEUE_TABLE_NAME . ' WHERE o_id = ?', [$object->getId()]);
         if (!$currentEntry) {
             $db->insert(Installer::QUEUE_TABLE_NAME, ['o_id' => $object->getId(), 'classId' => $object->getClassId()]);
         } elseif ($currentEntry['in_queue']) {
@@ -550,12 +552,13 @@ class Service
      * fills update queue based on path of given object -> for all sub objects
      *
      * @param Concrete $object
+     * @throws Exception
      */
     public function fillupUpdateQueue(Concrete $object)
     {
         $db = \Pimcore\Db::get();
         //need check, if there are sub objects because update on empty result set is too slow
-        $objects = $db->fetchCol('SELECT o_id FROM objects WHERE o_path LIKE ?', [$object->getFullPath() . '/%']);
+        $objects = $db->fetchFirstColumn('SELECT o_id FROM objects WHERE o_path LIKE ?', [$object->getFullPath() . '/%']);
         if ($objects) {
             $updateStatement = 'UPDATE ' . Installer::QUEUE_TABLE_NAME . ' SET in_queue = 1 WHERE o_id IN ('.implode(',', $objects).')';
             $db->executeQuery($updateStatement);
@@ -586,6 +589,7 @@ class Service
      * @param int $limit
      *
      * @return array
+     * @throws Exception
      */
     public function initUpdateQueue(string $workerId, int $limit = 200): array
     {
@@ -595,7 +599,7 @@ class Service
         $db->executeQuery('UPDATE ' . Installer::QUEUE_TABLE_NAME . ' SET worker_id = ?, worker_timestamp = ? WHERE in_queue = 1 AND (ISNULL(worker_timestamp) OR worker_timestamp < ?) LIMIT ' . intval($limit),
             [$workerId, $workerTimestamp, $workerTimestamp - 3000]);
 
-        return $db->fetchCol('SELECT o_id FROM ' . Installer::QUEUE_TABLE_NAME . ' WHERE worker_id = ?', [$workerId]);
+        return $db->fetchFirstColumn('SELECT o_id FROM ' . Installer::QUEUE_TABLE_NAME . ' WHERE worker_id = ?', [$workerId]);
     }
 
     /**
