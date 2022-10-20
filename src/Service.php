@@ -511,6 +511,7 @@ class Service
      * Updates object queue - either inserts entry (if not exists) or updates in_queue flag to false
      *
      * @param Concrete $object
+     *
      * @throws Exception
      */
     protected function updateUpdateQueueForDataObject(Concrete $object)
@@ -552,6 +553,7 @@ class Service
      * fills update queue based on path of given object -> for all sub objects
      *
      * @param Concrete $object
+     *
      * @throws Exception
      */
     public function fillupUpdateQueue(Concrete $object)
@@ -589,6 +591,7 @@ class Service
      * @param int $limit
      *
      * @return array
+     *
      * @throws Exception
      */
     public function initUpdateQueue(string $workerId, int $limit = 200): array

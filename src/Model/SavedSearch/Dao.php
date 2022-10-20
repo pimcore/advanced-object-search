@@ -16,8 +16,8 @@
 namespace AdvancedObjectSearchBundle\Model\SavedSearch;
 
 use AdvancedObjectSearchBundle\Model\SavedSearch;
-use Pimcore\Model;
 use Pimcore\Db\Helper;
+use Pimcore\Model;
 
 /**
  * @property SavedSearch $model

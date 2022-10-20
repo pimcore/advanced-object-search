@@ -32,6 +32,7 @@ class Version20210305134111 extends AbstractPimcoreMigration
 
     /**
      * @param Schema $schema
+     *
      * @throws \Doctrine\DBAL\Exception
      */
     public function up(Schema $schema)

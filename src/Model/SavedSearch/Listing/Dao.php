@@ -28,6 +28,7 @@ class Dao extends Model\Listing\Dao\AbstractDao
      * Loads a list of tags for the specifies parameters, returns an array of Element\Tag elements
      *
      * @return array
+     *
      * @throws Exception
      */
     public function load()
@@ -52,7 +53,6 @@ class Dao extends Model\Listing\Dao\AbstractDao
     public function loadIdList()
     {
         return $this->db->fetchFirstColumn('SELECT id FROM ' . $this->db->quoteIdentifier(SavedSearch\Dao::TABLE_NAME) . ' ' . $this->getCondition() . $this->getGroupBy() . $this->getOrder() . $this->getOffsetLimit(), $this->model->getConditionVariables());
-
     }
 
     public function getTotalCount()
