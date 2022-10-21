@@ -85,20 +85,11 @@ pimcore.bundle.advancedObjectSearch.helper = {
         var notificationMenu = pimcore.globalmanager.get("layout_toolbar")["notificationMenu"];
 
         if(notificationMenu) {
-            // Pimcore 6
             var statusIcon = new Ext.menu.Item({
                 text: t("bundle_advancedObjectSearch_updating_index"),
                 iconCls: 'pimcore_bundle_nav_icon_advancedObjectSearch'
             });
             notificationMenu.add(statusIcon);
-        } else {
-            // Pimcore 5
-            var statusBar = Ext.get("pimcore_status");
-            var statusIcon = Ext.get(statusBar.insertHtml('afterBegin',
-                '<div id="pimcore_bundle_advancedObjectSearch_toolbar" data-menu-tooltip="'
-                + t("bundle_advancedObjectSearch_updating_index") + '"></div>'));
-
-            pimcore.helpers.initMenuTooltips();
         }
 
         this.checkIndexStatus(statusIcon);
