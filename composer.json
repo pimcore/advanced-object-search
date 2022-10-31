@@ -7,7 +7,7 @@
   },
   "require": {
     "ongr/elasticsearch-dsl": "^7.0",
-    "pimcore/pimcore": "^10.0",
+    "pimcore/pimcore": "^10.5",
     "symfony/config": "^5.2.0",
     "symfony/console": "^5.2.0",
     "symfony/dependency-injection": "^5.2.0",
