@@ -43,12 +43,6 @@ pimcore.bundle.advancedObjectSearch.searchConfig.resultAbstractPanel = Class.cre
     }
 });
 
-/**
- * https://github.com/pimcore/advanced-object-search/issues/64
- * TODO pimcore.object.helpers.gridcolumnconfig for BC reasons, to be removed with next major version
- */
-if (pimcore.object.helpers.gridcolumnconfig) {
-    pimcore.bundle.advancedObjectSearch.searchConfig.resultAbstractPanel.addMethods(pimcore.object.helpers.gridcolumnconfig);
-} else {
-    pimcore.bundle.advancedObjectSearch.searchConfig.resultAbstractPanel.addMethods(pimcore.element.helpers.gridColumnConfig);
-}
+
+pimcore.bundle.advancedObjectSearch.searchConfig.resultAbstractPanel.addMethods(pimcore.element.helpers.gridColumnConfig);
+
