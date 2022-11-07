@@ -32,11 +32,13 @@ class Version20210305134111 extends AbstractPimcoreMigration
 
     /**
      * @param Schema $schema
+     *
+     * @throws \Doctrine\DBAL\Exception
      */
     public function up(Schema $schema)
     {
         $db = Db::get();
-        $entry = $db->fetchRow(
+        $entry = $db->fetchAssociative(
             'SELECT * FROM pimcore_migrations WHERE migration_set = ? AND version = ?',
             ['AdvancedObjectSearchBundle', '00000001']
         );
