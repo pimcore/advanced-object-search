@@ -50,10 +50,5 @@ jobs:
               with:
                   dependency-versions: "${{ matrix.dependencies }}"
 
-            - name: "Run a static analysis with phpstan/phpstan (highest)"
-              if: ${{ matrix.dependencies == 'highest' }}
-              run: "vendor/bin/phpstan analyse --memory-limit=-1 -c phpstan-highest.neon""
-
-            - name: "Run a static analysis with phpstan/phpstan (lowest)"
-              if: ${{ matrix.dependencies == 'lowest' }}
-              run: "vendor/bin/phpstan analyse --memory-limit=-1 -c phpstan-lowest.neon"
+            - name: "Run a static analysis with phpstan/phpstan"
+              run: "vendor/bin/phpstan analyse ${{ matrix.phpstan_args }} -c phpstan.neon --memory-limit=-1"

@@ -50,10 +50,14 @@ class Installer extends SettingsStoreAwareInstaller
 
         // TODO: remove this when dropping support for dbal v2/pimcore 10.5, and supporting min DBAL 3.5/4+
         if (method_exists($db, 'getSchemeManager')) {
+            /* @phpstan-ignore-next-line */
             $currentSchema = $db->getSchemaManager()->createSchema();
+            /* @phpstan-ignore-next-line */
             $schema = $db->getSchemaManager()->createSchema();
         } else {
+            /* @phpstan-ignore-next-line */
             $currentSchema = $db->createSchemaManager()->introspectSchema();
+            /* @phpstan-ignore-next-line */
             $schema = $db->createSchemaManager()->introspectSchema();
         }
 
@@ -101,10 +105,14 @@ class Installer extends SettingsStoreAwareInstaller
 
         // TODO: remove this when dropping support for dbal v2/pimcore 10.5, and supporting min DBAL 3.5/4+
         if (method_exists($db, 'getSchemeManager')) {
+            /* @phpstan-ignore-next-line */
             $currentSchema = $db->getSchemaManager()->createSchema();
+            /* @phpstan-ignore-next-line */
             $schema = $db->getSchemaManager()->createSchema();
         } else {
+            /* @phpstan-ignore-next-line */
             $currentSchema = $db->createSchemaManager()->introspectSchema();
+            /* @phpstan-ignore-next-line */
             $schema = $db->createSchemaManager()->introspectSchema();
         }
 
