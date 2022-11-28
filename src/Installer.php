@@ -130,7 +130,7 @@ class Installer extends SettingsStoreAwareInstaller
         parent::uninstall();
     }
 
-    public function needsReloadAfterInstall()
+    public function needsReloadAfterInstall(): bool
     {
         return true;
     }

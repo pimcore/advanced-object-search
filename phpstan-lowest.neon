@@ -1,0 +1,10 @@
+includes:
+    - phpstan.neon
+
+parameters:
+	reportUnmatchedIgnoredErrors: false
+	ignoreErrors:
+		-
+			message: "#Call to an undefined static method Doctrine\\\\DBAL\\\\Connection\\:\\:createSchemaManager\\(\\)\\.#"
+			count: 4
+			path: src/Installer.php
