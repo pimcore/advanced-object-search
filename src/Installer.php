@@ -47,8 +47,15 @@ class Installer extends SettingsStoreAwareInstaller
          * @var Connection $db
          */
         $db = \Pimcore\Db::get();
-        $currentSchema = $db->createSchemaManager()->introspectSchema();
-        $schema = $db->createSchemaManager()->introspectSchema();
+
+        // TODO: remove this when dropping support for dbal v2/pimcore 10.5, and supporting min DBAL 3.5/4+
+        if (method_exists($db, 'getSchemeManager')) {
+            $currentSchema = $db->getSchemaManager()->createSchema();
+            $schema = $db->getSchemaManager()->createSchema();
+        }else{
+            $currentSchema = $db->createSchemaManager()->introspectSchema();
+            $schema = $db->createSchemaManager()->introspectSchema();
+        }
 
         if (! $schema->hasTable(self::QUEUE_TABLE_NAME)) {
             $queueTable = $schema->createTable(self::QUEUE_TABLE_NAME);
@@ -91,8 +98,15 @@ class Installer extends SettingsStoreAwareInstaller
          * @var Connection $db
          */
         $db = \Pimcore\Db::get();
-        $currentSchema = $db->getSchemaManager()->createSchema();
-        $schema = $db->getSchemaManager()->createSchema();
+
+        // TODO: remove this when dropping support for dbal v2/pimcore 10.5, and supporting min DBAL 3.5/4+
+        if (method_exists($db, 'getSchemeManager')) {
+            $currentSchema = $db->getSchemaManager()->createSchema();
+            $schema = $db->getSchemaManager()->createSchema();
+        }else{
+            $currentSchema = $db->createSchemaManager()->introspectSchema();
+            $schema = $db->createSchemaManager()->introspectSchema();
+        }
 
         $tables = [
             self::QUEUE_TABLE_NAME,
