@@ -16,7 +16,7 @@
 namespace AdvancedObjectSearchBundle;
 
 use AdvancedObjectSearchBundle\Model\SavedSearch;
-use Pimcore\Db\Connection;
+use Doctrine\DBAL\Connection;
 use Pimcore\Extension\Bundle\Installer\SettingsStoreAwareInstaller;
 use Pimcore\Model\User\Permission\Definition;
 
@@ -47,8 +47,8 @@ class Installer extends SettingsStoreAwareInstaller
          * @var Connection $db
          */
         $db = \Pimcore\Db::get();
-        $currentSchema = $db->getSchemaManager()->createSchema();
-        $schema = $db->getSchemaManager()->createSchema();
+        $currentSchema = $db->createSchemaManager()->introspectSchema();
+        $schema = $db->createSchemaManager()->introspectSchema();
 
         if (! $schema->hasTable(self::QUEUE_TABLE_NAME)) {
             $queueTable = $schema->createTable(self::QUEUE_TABLE_NAME);

@@ -33,7 +33,7 @@ class AdvancedObjectSearchBundle extends AbstractPimcoreBundle
     /**
      * @inheritDoc
      */
-    public function getCssPaths()
+    public function getCssPaths(): array
     {
         return [
             '/bundles/advancedobjectsearch/css/admin.css'
@@ -43,7 +43,7 @@ class AdvancedObjectSearchBundle extends AbstractPimcoreBundle
     /**
      * @inheritDoc
      */
-    public function getJsPaths()
+    public function getJsPaths(): array
     {
         return [
             '/bundles/advancedobjectsearch/js/startup.js',
@@ -88,7 +88,7 @@ class AdvancedObjectSearchBundle extends AbstractPimcoreBundle
     /**
      * @return Installer
      */
-    public function getInstaller()
+    public function getInstaller(): Installer
     {
         return $this->container->get(Installer::class);
     }

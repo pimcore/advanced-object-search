@@ -31,7 +31,7 @@ class Dao extends Model\Listing\Dao\AbstractDao
      *
      * @throws Exception
      */
-    public function load()
+    public function load(): array
     {
         $searchIds = $this->db->fetchFirstColumn('SELECT id FROM ' . $this->db->quoteIdentifier(SavedSearch\Dao::TABLE_NAME) . ' ' . $this->getCondition() . $this->getOrder() . $this->getOffsetLimit(), $this->model->getConditionVariables());
 
@@ -55,7 +55,7 @@ class Dao extends Model\Listing\Dao\AbstractDao
         return $this->db->fetchFirstColumn('SELECT id FROM ' . $this->db->quoteIdentifier(SavedSearch\Dao::TABLE_NAME) . ' ' . $this->getCondition() . $this->getGroupBy() . $this->getOrder() . $this->getOffsetLimit(), $this->model->getConditionVariables());
     }
 
-    public function getTotalCount()
+    public function getTotalCount(): int
     {
         $amount = 0;
 
