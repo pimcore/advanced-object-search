@@ -6,7 +6,7 @@
     "sort-packages": true
   },
   "require": {
-    "ongr/elasticsearch-dsl": "^7.0",
+    "handcraftedinthealps/elasticsearch-dsl": "^7.0",
     "pimcore/pimcore": "^10.5 || ^11",
     "symfony/config": "^5.2.0 || ^6.1",
     "symfony/console": "^5.2.0 || ^6.1",
