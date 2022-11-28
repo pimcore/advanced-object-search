@@ -52,7 +52,7 @@ class Installer extends SettingsStoreAwareInstaller
         if (method_exists($db, 'getSchemeManager')) {
             $currentSchema = $db->getSchemaManager()->createSchema();
             $schema = $db->getSchemaManager()->createSchema();
-        }else{
+        } else {
             $currentSchema = $db->createSchemaManager()->introspectSchema();
             $schema = $db->createSchemaManager()->introspectSchema();
         }
@@ -103,7 +103,7 @@ class Installer extends SettingsStoreAwareInstaller
         if (method_exists($db, 'getSchemeManager')) {
             $currentSchema = $db->getSchemaManager()->createSchema();
             $schema = $db->getSchemaManager()->createSchema();
-        }else{
+        } else {
             $currentSchema = $db->createSchemaManager()->introspectSchema();
             $schema = $db->createSchemaManager()->introspectSchema();
         }
