@@ -93,6 +93,6 @@ advanced_object_search:
             title: path
             fieldDefinition: Pimcore\Model\DataObject\ClassDefinition\Data\Input
         -
-            field: type
+            field: className
             title: classname
             type: keyword

@@ -194,7 +194,7 @@ class Service
             'modificationDate' => $date->setTimestamp($object->getModificationDate())->format(\DateTime::ISO8601),
             'published' => $object->getPublished(),
             'type' => $object->getType(),
-            'type' => $object->getClassName(),
+            'className' => $object->getClassName(),
             'key' => $object->getKey(),
             'path' => $object->getPath()
         ];
