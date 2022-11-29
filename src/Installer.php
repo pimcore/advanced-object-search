@@ -52,12 +52,12 @@ class Installer extends SettingsStoreAwareInstaller
 
         if (! $schema->hasTable(self::QUEUE_TABLE_NAME)) {
             $queueTable = $schema->createTable(self::QUEUE_TABLE_NAME);
-            $queueTable->addColumn('o_id', 'bigint', ['default' => 0, 'notnull' => true]);
+            $queueTable->addColumn('id', 'bigint', ['default' => 0, 'notnull' => true]);
             $queueTable->addColumn('classId', 'integer', ['notnull' => false]);
             $queueTable->addColumn('in_queue', 'boolean', ['notnull' => false]);
             $queueTable->addColumn('worker_timestamp', 'bigint', ['length' => 20, 'notnull' => false]);
             $queueTable->addColumn('worker_id', 'string', ['length' => 20, 'notnull' => false]);
-            $queueTable->setPrimaryKey(['o_id']);
+            $queueTable->setPrimaryKey(['id']);
         }
 
         if (! $schema->hasTable(SavedSearch\Dao::TABLE_NAME)) {

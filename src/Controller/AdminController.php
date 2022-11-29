@@ -139,16 +139,16 @@ class AdminController extends \Pimcore\Bundle\AdminBundle\Controller\AdminContro
                 $userIds = $this->getAdminUser()->getRoles();
                 $userIds[] = $this->getAdminUser()->getId();
                 $conditionFilters[] = ' (
-                                                    (select list from users_workspaces_object where userId in (' . implode(',', $userIds) . ') and LOCATE(CONCAT(o_path,o_key),cpath)=1  ORDER BY LENGTH(cpath) DESC LIMIT 1)=1
+                                                    (select list from users_workspaces_object where userId in (' . implode(',', $userIds) . ') and LOCATE(CONCAT(path,key),cpath)=1  ORDER BY LENGTH(cpath) DESC LIMIT 1)=1
                                                     OR
-                                                    (select list from users_workspaces_object where userId in (' . implode(',', $userIds) . ') and LOCATE(cpath,CONCAT(o_path,o_key))=1  ORDER BY LENGTH(cpath) DESC LIMIT 1)=1
+                                                    (select list from users_workspaces_object where userId in (' . implode(',', $userIds) . ') and LOCATE(cpath,CONCAT(path,key))=1  ORDER BY LENGTH(cpath) DESC LIMIT 1)=1
                                                  )';
             }
 
             if (!empty($ids)) {
-                $conditionFilters[] = 'o_id IN (' . implode(',', $ids) . ')';
-                //$list->setCondition("o_id IN (" . implode(",", $ids) . ")");
-                $list->setOrderKey(' FIELD(o_id, ' . implode(',', $ids) . ')', false);
+                $conditionFilters[] = 'id IN (' . implode(',', $ids) . ')';
+                //$list->setCondition("id IN (" . implode(",", $ids) . ")");
+                $list->setOrderKey(' FIELD(id, ' . implode(',', $ids) . ')', false);
             } else {
                 $conditionFilters[] = '1=2';
                 //$list->setCondition("1=2");
@@ -193,8 +193,8 @@ class AdminController extends \Pimcore\Bundle\AdminBundle\Controller\AdminContro
         $listClass = '\\Pimcore\\Model\\DataObject\\' . ucfirst($className) . '\\Listing';
         $list = new $listClass();
         $list->setObjectTypes(['object', 'folder', 'variant']);
-        $list->setCondition('o_id IN (' . implode(',', $ids) . ')');
-        $list->setOrderKey(' FIELD(o_id, ' . implode(',', $ids) . ')', false);
+        $list->setCondition('id IN (' . implode(',', $ids) . ')');
+        $list->setOrderKey(' FIELD(id, ' . implode(',', $ids) . ')', false);
 
         if ($request->get('objecttype')) {
             $list->setObjectTypes([$request->get('objecttype')]);
