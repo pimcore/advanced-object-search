@@ -36,7 +36,7 @@ class Listing extends Model\Listing\AbstractListing
      *
      * @return bool
      */
-    public function isValidOrderKey($key)
+    public function isValidOrderKey($key): bool
     {
         return true;
     }

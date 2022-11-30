@@ -16,7 +16,7 @@
 namespace AdvancedObjectSearchBundle;
 
 use AdvancedObjectSearchBundle\Model\SavedSearch;
-use Pimcore\Db\Connection;
+use Doctrine\DBAL\Connection;
 use Pimcore\Extension\Bundle\Installer\SettingsStoreAwareInstaller;
 use Pimcore\Model\User\Permission\Definition;
 
@@ -47,8 +47,19 @@ class Installer extends SettingsStoreAwareInstaller
          * @var Connection $db
          */
         $db = \Pimcore\Db::get();
-        $currentSchema = $db->getSchemaManager()->createSchema();
-        $schema = $db->getSchemaManager()->createSchema();
+
+        // TODO: remove this when dropping support for dbal v2/pimcore 10.5, and supporting min DBAL 3.5/4+
+        if (method_exists($db, 'getSchemeManager')) {
+            /* @phpstan-ignore-next-line */
+            $currentSchema = $db->getSchemaManager()->createSchema();
+            /* @phpstan-ignore-next-line */
+            $schema = $db->getSchemaManager()->createSchema();
+        } else {
+            /* @phpstan-ignore-next-line */
+            $currentSchema = $db->createSchemaManager()->introspectSchema();
+            /* @phpstan-ignore-next-line */
+            $schema = $db->createSchemaManager()->introspectSchema();
+        }
 
         if (! $schema->hasTable(self::QUEUE_TABLE_NAME)) {
             $queueTable = $schema->createTable(self::QUEUE_TABLE_NAME);
@@ -91,8 +102,19 @@ class Installer extends SettingsStoreAwareInstaller
          * @var Connection $db
          */
         $db = \Pimcore\Db::get();
-        $currentSchema = $db->getSchemaManager()->createSchema();
-        $schema = $db->getSchemaManager()->createSchema();
+
+        // TODO: remove this when dropping support for dbal v2/pimcore 10.5, and supporting min DBAL 3.5/4+
+        if (method_exists($db, 'getSchemeManager')) {
+            /* @phpstan-ignore-next-line */
+            $currentSchema = $db->getSchemaManager()->createSchema();
+            /* @phpstan-ignore-next-line */
+            $schema = $db->getSchemaManager()->createSchema();
+        } else {
+            /* @phpstan-ignore-next-line */
+            $currentSchema = $db->createSchemaManager()->introspectSchema();
+            /* @phpstan-ignore-next-line */
+            $schema = $db->createSchemaManager()->introspectSchema();
+        }
 
         $tables = [
             self::QUEUE_TABLE_NAME,
@@ -116,7 +138,7 @@ class Installer extends SettingsStoreAwareInstaller
         parent::uninstall();
     }
 
-    public function needsReloadAfterInstall()
+    public function needsReloadAfterInstall(): bool
     {
         return true;
     }
