@@ -5,17 +5,19 @@
   "config": {
     "sort-packages": true
   },
+  "prefer-stable": true,
+  "minimum-stability": "dev",
   "require": {
-    "ongr/elasticsearch-dsl": "^7.0",
-    "pimcore/pimcore": "^10.5",
-    "symfony/config": "^5.2.0",
-    "symfony/console": "^5.2.0",
-    "symfony/dependency-injection": "^5.2.0",
-    "symfony/event-dispatcher": "^5.2.0",
-    "symfony/http-foundation": "^5.2.0",
-    "symfony/http-kernel": "^5.2.0",
-    "symfony/messenger": "^5.2.0",
-    "symfony/routing": "^5.2.0"
+    "handcraftedinthealps/elasticsearch-dsl": "^7.0",
+    "pimcore/pimcore": "^10.6 || ^11.0",
+    "symfony/config": "^5.2.0 || ^6.1",
+    "symfony/console": "^5.2.0 || ^6.1",
+    "symfony/dependency-injection": "^5.2.0 || ^6.1",
+    "symfony/event-dispatcher": "^5.2.0 || ^6.1",
+    "symfony/http-foundation": "^5.2.0 || ^6.1",
+    "symfony/http-kernel": "^5.2.0 || ^6.1",
+    "symfony/messenger": "^5.2.0 || ^6.1",
+    "symfony/routing": "^5.2.0 || ^6.1"
   },
   "require-dev": {
     "phpstan/phpstan": "^1.2",
