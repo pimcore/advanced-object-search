@@ -5,6 +5,8 @@
   "config": {
     "sort-packages": true
   },
+  "prefer-stable": true,
+  "minimum-stability": "dev",
   "require": {
     "handcraftedinthealps/elasticsearch-dsl": "^7.0",
     "pimcore/pimcore": "^10.6 || ^11.0",
