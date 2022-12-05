@@ -19,6 +19,7 @@ use AdvancedObjectSearchBundle\Model\SavedSearch;
 use Doctrine\DBAL\Connection;
 use Pimcore\Extension\Bundle\Installer\SettingsStoreAwareInstaller;
 use Pimcore\Model\User\Permission\Definition;
+use Pimcore\Model\DataObject\Service;
 
 class Installer extends SettingsStoreAwareInstaller
 {
@@ -61,19 +62,21 @@ class Installer extends SettingsStoreAwareInstaller
             $schema = $db->createSchemaManager()->introspectSchema();
         }
 
+        $idField = Service::getVersionDependentDatabaseColumnName('id');
+
         if (! $schema->hasTable(self::QUEUE_TABLE_NAME)) {
             $queueTable = $schema->createTable(self::QUEUE_TABLE_NAME);
-            $queueTable->addColumn('id', 'bigint', ['default' => 0, 'notnull' => true]);
+            $queueTable->addColumn($idField, 'bigint', ['default' => 0, 'notnull' => true]);
             $queueTable->addColumn('classId', 'integer', ['notnull' => false]);
             $queueTable->addColumn('in_queue', 'boolean', ['notnull' => false]);
             $queueTable->addColumn('worker_timestamp', 'bigint', ['length' => 20, 'notnull' => false]);
             $queueTable->addColumn('worker_id', 'string', ['length' => 20, 'notnull' => false]);
-            $queueTable->setPrimaryKey(['id']);
+            $queueTable->setPrimaryKey([$idField]);
         }
 
         if (! $schema->hasTable(SavedSearch\Dao::TABLE_NAME)) {
             $savedSearchTable = $schema->createTable(SavedSearch\Dao::TABLE_NAME);
-            $savedSearchTable->addColumn('id', 'bigint', ['length' => 20, 'autoincrement' => true, 'notnull' => true]);
+            $savedSearchTable->addColumn($idField, 'bigint', ['length' => 20, 'autoincrement' => true, 'notnull' => true]);
             $savedSearchTable->addColumn('name', 'string', ['length' => 255, 'notnull' => false]);
             $savedSearchTable->addColumn('description', 'string', ['length' => 255, 'notnull' => false]);
             $savedSearchTable->addColumn('category', 'string', ['length' => 255, 'notnull' => false]);
@@ -83,7 +86,7 @@ class Installer extends SettingsStoreAwareInstaller
             $savedSearchTable->addColumn('shortCutUserIds', 'text', ['notnull' => false]);
             $savedSearchTable->addColumn('shareGlobally', 'boolean', ['default' => null, 'notnull' => false]);
             $savedSearchTable->addIndex(['shareGlobally'], 'shareGlobally');
-            $savedSearchTable->setPrimaryKey(['id']);
+            $savedSearchTable->setPrimaryKey([$idField]);
         }
 
         $sqlStatements = $currentSchema->getMigrateToSql($schema, $db->getDatabasePlatform());

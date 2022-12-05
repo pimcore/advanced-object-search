@@ -21,11 +21,13 @@ use AdvancedObjectSearchBundle\Model\SavedSearch;
 use AdvancedObjectSearchBundle\Service;
 use Pimcore\Bundle\AdminBundle\Helper\QueryParams;
 use Pimcore\Model\DataObject;
+use Pimcore\Model\DataObject\Service as DataObjectService;
 use Pimcore\Tool;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Session\Attribute\AttributeBagInterface;
 use Symfony\Component\Routing\Annotation\Route;
+
 
 /**
  * Class AdminController
@@ -135,20 +137,24 @@ class AdminController extends \Pimcore\Bundle\AdminBundle\Controller\AdminContro
             $list->setObjectTypes(['object', 'folder', 'variant']);
 
             $conditionFilters = [];
+            $idField = DataObjectService::getVersionDependentDatabaseColumnName('id');
+            $keyColumn = DataObjectService::getVersionDependentDatabaseColumnName('key');
+            $pathColumn = DataObjectService::getVersionDependentDatabaseColumnName('path');
             if (!$this->getAdminUser()->isAdmin()) {
                 $userIds = $this->getAdminUser()->getRoles();
                 $userIds[] = $this->getAdminUser()->getId();
+
                 $conditionFilters[] = ' (
-                                                    (select list from users_workspaces_object where userId in (' . implode(',', $userIds) . ') and LOCATE(CONCAT(path,key),cpath)=1  ORDER BY LENGTH(cpath) DESC LIMIT 1)=1
+                                                    (select list from users_workspaces_object where userId in (' . implode(',', $userIds) . ') and LOCATE(CONCAT('. $keyColumn .', ' . $pathColumn . '),cpath)=1  ORDER BY LENGTH(cpath) DESC LIMIT 1)=1
                                                     OR
-                                                    (select list from users_workspaces_object where userId in (' . implode(',', $userIds) . ') and LOCATE(cpath,CONCAT(path,key))=1  ORDER BY LENGTH(cpath) DESC LIMIT 1)=1
+                                                    (select list from users_workspaces_object where userId in (' . implode(',', $userIds) . ') and LOCATE(cpath,CONCAT('. $keyColumn .', ' . $pathColumn . '))=1  ORDER BY LENGTH(cpath) DESC LIMIT 1)=1
                                                  )';
             }
 
             if (!empty($ids)) {
-                $conditionFilters[] = 'id IN (' . implode(',', $ids) . ')';
-                //$list->setCondition("id IN (" . implode(",", $ids) . ")");
-                $list->setOrderKey(' FIELD(id, ' . implode(',', $ids) . ')', false);
+                $conditionFilters[] = $idField . ' IN (' . implode(',', $ids) . ')';
+                //$list->setCondition($idField . " IN (" . implode(",", $ids) . ")");
+                $list->setOrderKey(' FIELD(' . $idField . ', ' . implode(',', $ids) . ')', false);
             } else {
                 $conditionFilters[] = '1=2';
                 //$list->setCondition("1=2");
@@ -193,8 +199,9 @@ class AdminController extends \Pimcore\Bundle\AdminBundle\Controller\AdminContro
         $listClass = '\\Pimcore\\Model\\DataObject\\' . ucfirst($className) . '\\Listing';
         $list = new $listClass();
         $list->setObjectTypes(['object', 'folder', 'variant']);
-        $list->setCondition('id IN (' . implode(',', $ids) . ')');
-        $list->setOrderKey(' FIELD(id, ' . implode(',', $ids) . ')', false);
+        $idField = DataObjectService::getVersionDependentDatabaseColumnName('id');
+        $list->setCondition($idField . ' IN (' . implode(',', $ids) . ')');
+        $list->setOrderKey(' FIELD('. $idField .', ' . implode(',', $ids) . ')', false);
 
         if ($request->get('objecttype')) {
             $list->setObjectTypes([$request->get('objecttype')]);
