@@ -77,13 +77,13 @@ class Datetime extends Numeric implements FieldDefinitionAdapterInterface
         if (is_array($fieldFilter)) {
             foreach ($fieldFilter as &$value) {
                 $datetime = new \DateTime($value);
-                $value = $datetime->format(\DateTime::ISO8601);
+                $value = $datetime->format(\DateTimeInterface::ISO8601);
             }
 
             return new RangeQuery($path . $this->fieldDefinition->getName() . $this->buildQueryFieldPostfix($ignoreInheritance), $fieldFilter);
         } else {
             $datetime = new \DateTime($fieldFilter);
-            $datetime = $datetime->format(\DateTime::ISO8601);
+            $datetime = $datetime->format(\DateTimeInterface::ISO8601);
 
             return new TermQuery($path . $this->fieldDefinition->getName() . $this->buildQueryFieldPostfix($ignoreInheritance), $datetime);
         }
@@ -106,7 +106,7 @@ class Datetime extends Numeric implements FieldDefinitionAdapterInterface
         $getter = 'get' . $this->fieldDefinition->getName();
         $valueObject = $object->$getter();
         if ($valueObject) {
-            $value = $valueObject->format(\DateTime::ISO8601);
+            $value = $valueObject->format(\DateTimeInterface::ISO8601);
         }
 
         if ($ignoreInheritance) {
