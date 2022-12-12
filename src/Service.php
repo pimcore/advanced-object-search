@@ -190,8 +190,8 @@ class Service
         return [
             'id' => $object->getId(),
             'index' => $object->getIndex(),
-            'creationDate' => $date->setTimestamp($object->getCreationDate())->format(\DateTime::ISO8601),
-            'modificationDate' => $date->setTimestamp($object->getModificationDate())->format(\DateTime::ISO8601),
+            'creationDate' => $date->setTimestamp($object->getCreationDate())->format(\DateTimeInterface::ISO8601),
+            'modificationDate' => $date->setTimestamp($object->getModificationDate())->format(\DateTimeInterface::ISO8601),
             'published' => $object->getPublished(),
             'type' => $object->getType(),
             'className' => $object->getClassName(),
