@@ -17,6 +17,8 @@ namespace AdvancedObjectSearchBundle\DependencyInjection;
 
 use AdvancedObjectSearchBundle\Maintenance\UpdateQueueProcessor;
 use AdvancedObjectSearchBundle\Messenger\QueueHandler;
+use AdvancedObjectSearchBundle\Service;
+use Pimcore\Bundle\ElasticsearchClientBundle\DependencyInjection\PimcoreElasticsearchClientExtension;
 use Symfony\Component\Config\FileLocator;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Extension\PrependExtensionInterface;
@@ -51,7 +53,6 @@ class AdvancedObjectSearchExtension extends ConfigurableExtension implements Pre
         $serviceLocator->setArgument(0, $arguments);
 
         $container->setParameter('pimcore.advanced_object_search.index_name_prefix', $config['index_name_prefix']);
-        $container->setParameter('pimcore.advanced_object_search.es_hosts', $config['es_hosts']);
 
         $container->setParameter(
             'pimcore.advanced_object_search.index_configuration',
@@ -65,6 +66,9 @@ class AdvancedObjectSearchExtension extends ConfigurableExtension implements Pre
 
         $definition = $container->getDefinition(UpdateQueueProcessor::class);
         $definition->setArgument('$messengerQueueActivated', $config['messenger_queue_processing']['activated']);
+
+        $definition = $container->getDefinition(Service::class);
+        $definition->setArgument('$esClient', new Reference(PimcoreElasticsearchClientExtension::CLIENT_SERVICE_PREFIX . $config['es_client_name']));
     }
 
     /**
