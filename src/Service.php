@@ -417,7 +417,15 @@ class Service
     {
         $indexName = $this->getIndexName($classDefinition->getName());
         $this->logger->info("Deleting index $indexName for class " . $classDefinition->getName());
-        $this->esClient->indices()->delete(['index' => $indexName]);
+        try {
+            $this->esClient->indices()->delete(['index' => $indexName]);
+        } catch (ClientResponseException $e) {
+            if ($e->getCode() === 404) {
+                $this->logger->info('Cannot delete index ' . $indexName . ' because it doesn\'t exist.');
+            } else {
+                throw $e;
+            }
+        }
     }
 
     /**
