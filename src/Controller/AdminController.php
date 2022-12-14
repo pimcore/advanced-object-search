@@ -147,7 +147,7 @@ class AdminController extends \Pimcore\Bundle\AdminBundle\Controller\AdminContro
                 $conditionFilters[] = ' (
                                                     (select list from users_workspaces_object where userId in (' . implode(',', $userIds) . ') and LOCATE(CONCAT('. $keyColumn .', ' . $pathColumn . '),cpath)=1  ORDER BY LENGTH(cpath) DESC LIMIT 1)=1
                                                     OR
-                                                    (select list from users_workspaces_object where userId in (' . implode(',', $userIds) . ') and LOCATE(cpath,CONCAT('. $keyColumn .', ' . $pathColumn . '))=1  ORDER BY LENGTH(cpath) DESC LIMIT 1)=1
+                                                    (select list from users_workspaces_object where userId in (' . implode(',', $userIds) . ') and LOCATE(cpath,CONCAT('. $pathColumn .', ' . $keyColumn . '))=1  ORDER BY LENGTH(cpath) DESC LIMIT 1)=1
                                                  )';
             }
 
