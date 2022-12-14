@@ -33,6 +33,7 @@ use Pimcore\Bundle\AdminBundle\Security\User\TokenStorageUserResolver;
 use Pimcore\Model\DataObject\ClassDefinition;
 use Pimcore\Model\DataObject\Concrete;
 use Pimcore\Model\DataObject\Fieldcollection\Definition;
+use Pimcore\Model\DataObject\Service as DataObjectService;
 use Pimcore\Model\User;
 use Pimcore\Translation\Translator;
 use Psr\Container\ContainerInterface;
@@ -517,13 +518,13 @@ class Service
     protected function updateUpdateQueueForDataObject(Concrete $object)
     {
         $db = \Pimcore\Db::get();
-
+        $idField = DataObjectService::getVersionDependentDatabaseColumnName('id');
         //add object to update queue (if not exists) or set in_queue to false
-        $currentEntry = $db->fetchAssociative('SELECT in_queue FROM ' . Installer::QUEUE_TABLE_NAME . ' WHERE id = ?', [$object->getId()]);
+        $currentEntry = $db->fetchAssociative('SELECT in_queue FROM ' . Installer::QUEUE_TABLE_NAME . ' WHERE `'. $idField .'` = ?', [$object->getId()]);
         if (!$currentEntry) {
-            $db->insert(Installer::QUEUE_TABLE_NAME, ['id' => $object->getId(), 'classId' => $object->getClassId()]);
+            $db->insert(Installer::QUEUE_TABLE_NAME, [$idField => $object->getId(), 'classId' => $object->getClassId()]);
         } elseif ($currentEntry['in_queue']) {
-            $db->executeQuery('UPDATE ' . Installer::QUEUE_TABLE_NAME . ' SET in_queue = 0, worker_timestamp = 0, worker_id = null WHERE id = ?', [$object->getId()]);
+            $db->executeQuery('UPDATE ' . Installer::QUEUE_TABLE_NAME . ' SET in_queue = 0, worker_timestamp = 0, worker_id = null WHERE `'. $idField .'` = ?', [$object->getId()]);
         }
     }
 
@@ -559,10 +560,11 @@ class Service
     public function fillupUpdateQueue(Concrete $object)
     {
         $db = \Pimcore\Db::get();
+        $idField = DataObjectService::getVersionDependentDatabaseColumnName('id');
         //need check, if there are sub objects because update on empty result set is too slow
-        $objects = $db->fetchFirstColumn('SELECT id FROM objects WHERE path LIKE ?', [$object->getFullPath() . '/%']);
+        $objects = $db->fetchFirstColumn('SELECT `'. $idField .'` FROM objects WHERE path LIKE ?', [$object->getFullPath() . '/%']);
         if ($objects) {
-            $updateStatement = 'UPDATE ' . Installer::QUEUE_TABLE_NAME . ' SET in_queue = 1 WHERE id IN ('.implode(',', $objects).')';
+            $updateStatement = 'UPDATE ' . Installer::QUEUE_TABLE_NAME . ' SET in_queue = 1 WHERE `'. $idField .'` IN ('.implode(',', $objects).')';
             $db->executeQuery($updateStatement);
         }
     }
@@ -598,11 +600,13 @@ class Service
     {
         $workerTimestamp = time();
         $db = \Pimcore\Db::get();
+        $idField = DataObjectService::getVersionDependentDatabaseColumnName('id');
+
 
         $db->executeQuery('UPDATE ' . Installer::QUEUE_TABLE_NAME . ' SET worker_id = ?, worker_timestamp = ? WHERE in_queue = 1 AND (ISNULL(worker_timestamp) OR worker_timestamp < ?) LIMIT ' . intval($limit),
             [$workerId, $workerTimestamp, $workerTimestamp - 3000]);
 
-        return $db->fetchFirstColumn('SELECT id FROM ' . Installer::QUEUE_TABLE_NAME . ' WHERE worker_id = ?', [$workerId]);
+        return $db->fetchFirstColumn('SELECT `'. $idField .'` FROM ' . Installer::QUEUE_TABLE_NAME . ' WHERE worker_id = ?', [$workerId]);
     }
 
     /**
@@ -614,6 +618,8 @@ class Service
     public function doProcessUpdateQueue(string $workerId, array $entries): int
     {
         $db = \Pimcore\Db::get();
+        $idField = DataObjectService::getVersionDependentDatabaseColumnName('id');
+
 
         foreach ($entries as $objectId) {
             $this->logger->info("Worker $workerId updating index for element " . $objectId);
@@ -622,7 +628,7 @@ class Service
                 $this->doUpdateIndexData($object);
             } else {
                 // Object no longer exists, remove from queue
-                $db->executeQuery('DELETE FROM ' . Installer::QUEUE_TABLE_NAME . ' WHERE id = ?', [$objectId]);
+                $db->executeQuery('DELETE FROM ' . Installer::QUEUE_TABLE_NAME . ' WHERE `'. $idField .'` = ?', [$objectId]);
             }
         }
 
