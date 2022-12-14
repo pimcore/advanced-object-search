@@ -100,7 +100,8 @@ pimcore.bundle.advancedObjectSearch.searchConfig.ResultPanelExtensionBag = Class
             for (var i = 0; i < columns.length; i++) {
                 var column = columns[i];
 
-                if (column.isOperator && this._hasFieldRecursive(fieldname, column.attributes.childs)) {
+                //TODO remove childs, when drop pimcore X support
+                if (column.isOperator && this._hasFieldRecursive(fieldname, column.attributes.childs ?? column.attributes.children)) {
                     return true
                 } else if (column.attribute == fieldname || column.key == fieldname) {
                     return true;
@@ -127,7 +128,8 @@ pimcore.bundle.advancedObjectSearch.searchConfig.ResultPanelExtensionBag = Class
                 }
 
                 if (column.isOperator) {
-                    this._hasOperatorRecursive(config, column.attributes.childs);
+                    //TODO remove childs, when drop pimcore X support
+                    this._hasOperatorRecursive(config, column.attributes.childs ?? column.attributes.children);
                 }
             }
         } catch (exception) {
