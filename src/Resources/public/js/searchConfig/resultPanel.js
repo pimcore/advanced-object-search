@@ -31,7 +31,14 @@ pimcore.bundle.advancedObjectSearch.searchConfig.resultPanel = Class.create(pimc
 
         if(!this.portletMode) {
             this.extensionBag = new pimcore.bundle.advancedObjectSearch.searchConfig.ResultPanelExtensionBag(this, typeof gridConfigData != 'undefined' ? gridConfigData.predefinedFilter : null);
-            pimcore.plugin.broker.fireEvent("onAdvancedObjectSearchResult", this.extensionBag);
+
+            const advancedObjectSearchResult = new CustomEvent(pimcore.events.onAdvancedObjectSearchResult, {
+                detail: {
+                    extensionBag: this.extensionBag
+                }
+            });
+
+            document.dispatchEvent(advancedObjectSearchResult);
         }
     },
 

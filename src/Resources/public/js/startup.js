@@ -14,16 +14,17 @@
 
 pimcore.registerNS("pimcore.bundle.advancedObjectSearch");
 
-pimcore.bundle.advancedObjectSearch = Class.create(pimcore.plugin.admin, {
+pimcore.bundle.advancedObjectSearch = Class.create({
     getClassName: function() {
         return "pimcore.plugin.advancedObjectSearch";
     },
 
     initialize: function() {
-        pimcore.plugin.broker.registerPlugin(this);
+        document.addEventListener(pimcore.events.pimcoreReady, this.onPimcoreReady.bind(this));
+        document.addEventListener(pimcore.events.onPerspectiveEditorLoadPermissions, this.onPerspectiveEditorLoadPermissions.bind(this));
     },
- 
-    pimcoreReady: function (params,broker){
+
+    onPimcoreReady: function (e){
         var perspectiveCfg = pimcore.globalmanager.get("perspective");
         var user = pimcore.globalmanager.get("user");
 
@@ -34,7 +35,11 @@ pimcore.bundle.advancedObjectSearch = Class.create(pimcore.plugin.admin, {
         }
     },
 
-    onPerspectiveEditorLoadPermissions: function (context, menu, permissions) {
+    onPerspectiveEditorLoadPermissions: function (e) {
+        let context = e.detail.context;
+        let menu = e.detail.menu;
+        let permissions = e.detail.permissions;
+
         if(context == 'toolbar' && menu == 'search' &&
             permissions[context][menu].indexOf('items.advancedObjectSearch') == -1) {
             permissions[context][menu].push('items.advancedObjectSearch');
