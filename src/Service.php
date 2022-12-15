@@ -33,6 +33,7 @@ use Pimcore\Bundle\AdminBundle\Security\User\TokenStorageUserResolver;
 use Pimcore\Model\DataObject\ClassDefinition;
 use Pimcore\Model\DataObject\Concrete;
 use Pimcore\Model\DataObject\Fieldcollection\Definition;
+use Pimcore\Model\DataObject\Service as DataObjectService;
 use Pimcore\Model\User;
 use Pimcore\Translation\Translator;
 use Psr\Container\ContainerInterface;
@@ -188,13 +189,13 @@ class Service
         $date = new \DateTime();
 
         return [
-            'o_id' => $object->getId(),
-            'o_index' => $object->getIndex(),
-            'o_creationDate' => $date->setTimestamp($object->getCreationDate())->format(\DateTimeInterface::ISO8601),
-            'o_modificationDate' => $date->setTimestamp($object->getModificationDate())->format(\DateTimeInterface::ISO8601),
-            'o_published' => $object->getPublished(),
-            'o_type' => $object->getType(),
-            'type' => $object->getClassName(),
+            'id' => $object->getId(),
+            'index' => $object->getIndex(),
+            'creationDate' => $date->setTimestamp($object->getCreationDate())->format(\DateTimeInterface::ISO8601),
+            'modificationDate' => $date->setTimestamp($object->getModificationDate())->format(\DateTimeInterface::ISO8601),
+            'published' => $object->getPublished(),
+            'type' => $object->getType(),
+            'className' => $object->getClassName(),
             'key' => $object->getKey(),
             'path' => $object->getPath()
         ];
@@ -449,7 +450,7 @@ class Service
         }
 
         $checksum = crc32(json_encode($data));
-        $data['o_checksum'] = $checksum;
+        $data['checksum'] = $checksum;
 
         $params = [
             'index' => $this->getIndexName($object->getClassName()),
@@ -483,7 +484,7 @@ class Service
 
         try {
             $indexDocument = $this->esClient->get($params);
-            $originalChecksum = $indexDocument['_source']['o_checksum'] ?? -1;
+            $originalChecksum = $indexDocument['_source']['checksum'] ?? -1;
         } catch (\Exception $e) {
             $this->logger->debug($e->getMessage());
             $originalChecksum = -1;
@@ -491,7 +492,8 @@ class Service
 
         $indexUpdateParams = $this->getIndexData($object);
 
-        if ($indexUpdateParams['body']['o_checksum'] != $originalChecksum) {
+        if ($indexUpdateParams['body']['checksum'] != $originalChecksum) {
+            $response = $this->esClient->index($indexUpdateParams);
             $this->logger->info('Updates es index for data object ' . $object->getId());
             $this->esClient->index($indexUpdateParams);
         } else {
@@ -519,13 +521,13 @@ class Service
     protected function updateUpdateQueueForDataObject(Concrete $object)
     {
         $db = \Pimcore\Db::get();
-
+        $idField = DataObjectService::getVersionDependentDatabaseColumnName('id');
         //add object to update queue (if not exists) or set in_queue to false
-        $currentEntry = $db->fetchAssociative('SELECT in_queue FROM ' . Installer::QUEUE_TABLE_NAME . ' WHERE o_id = ?', [$object->getId()]);
+        $currentEntry = $db->fetchAssociative('SELECT in_queue FROM ' . Installer::QUEUE_TABLE_NAME . ' WHERE `'. $idField .'` = ?', [$object->getId()]);
         if (!$currentEntry) {
-            $db->insert(Installer::QUEUE_TABLE_NAME, ['o_id' => $object->getId(), 'classId' => $object->getClassId()]);
+            $db->insert(Installer::QUEUE_TABLE_NAME, [$idField => $object->getId(), 'classId' => $object->getClassId()]);
         } elseif ($currentEntry['in_queue']) {
-            $db->executeQuery('UPDATE ' . Installer::QUEUE_TABLE_NAME . ' SET in_queue = 0, worker_timestamp = 0, worker_id = null WHERE o_id = ?', [$object->getId()]);
+            $db->executeQuery('UPDATE ' . Installer::QUEUE_TABLE_NAME . ' SET in_queue = 0, worker_timestamp = 0, worker_id = null WHERE `'. $idField .'` = ?', [$object->getId()]);
         }
     }
 
@@ -564,10 +566,11 @@ class Service
     public function fillupUpdateQueue(Concrete $object)
     {
         $db = \Pimcore\Db::get();
+        $idField = DataObjectService::getVersionDependentDatabaseColumnName('id');
         //need check, if there are sub objects because update on empty result set is too slow
-        $objects = $db->fetchFirstColumn('SELECT o_id FROM objects WHERE o_path LIKE ?', [$object->getFullPath() . '/%']);
+        $objects = $db->fetchFirstColumn('SELECT `'. $idField .'` FROM objects WHERE path LIKE ?', [$object->getFullPath() . '/%']);
         if ($objects) {
-            $updateStatement = 'UPDATE ' . Installer::QUEUE_TABLE_NAME . ' SET in_queue = 1 WHERE o_id IN ('.implode(',', $objects).')';
+            $updateStatement = 'UPDATE ' . Installer::QUEUE_TABLE_NAME . ' SET in_queue = 1 WHERE `'. $idField .'` IN ('.implode(',', $objects).')';
             $db->executeQuery($updateStatement);
         }
     }
@@ -603,11 +606,13 @@ class Service
     {
         $workerTimestamp = time();
         $db = \Pimcore\Db::get();
+        $idField = DataObjectService::getVersionDependentDatabaseColumnName('id');
+
 
         $db->executeQuery('UPDATE ' . Installer::QUEUE_TABLE_NAME . ' SET worker_id = ?, worker_timestamp = ? WHERE in_queue = 1 AND (ISNULL(worker_timestamp) OR worker_timestamp < ?) LIMIT ' . intval($limit),
             [$workerId, $workerTimestamp, $workerTimestamp - 3000]);
 
-        return $db->fetchFirstColumn('SELECT o_id FROM ' . Installer::QUEUE_TABLE_NAME . ' WHERE worker_id = ?', [$workerId]);
+        return $db->fetchFirstColumn('SELECT `'. $idField .'` FROM ' . Installer::QUEUE_TABLE_NAME . ' WHERE worker_id = ?', [$workerId]);
     }
 
     /**
@@ -619,6 +624,8 @@ class Service
     public function doProcessUpdateQueue(string $workerId, array $entries): int
     {
         $db = \Pimcore\Db::get();
+        $idField = DataObjectService::getVersionDependentDatabaseColumnName('id');
+
 
         foreach ($entries as $objectId) {
             $this->logger->info("Worker $workerId updating index for element " . $objectId);
@@ -627,7 +634,7 @@ class Service
                 $this->doUpdateIndexData($object);
             } else {
                 // Object no longer exists, remove from queue
-                $db->executeQuery('DELETE FROM ' . Installer::QUEUE_TABLE_NAME . ' WHERE o_id = ?', [$objectId]);
+                $db->executeQuery('DELETE FROM ' . Installer::QUEUE_TABLE_NAME . ' WHERE `'. $idField .'` = ?', [$objectId]);
             }
         }
 

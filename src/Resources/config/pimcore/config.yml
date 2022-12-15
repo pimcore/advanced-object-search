@@ -51,33 +51,33 @@ advanced_object_search:
 
     core_fields_configuration:
         -
-            field: o_id
+            field: id
             type: long
             title: ID
             fieldDefinition: Pimcore\Model\DataObject\ClassDefinition\Data\Numeric
         -
-            field: o_index
+            field: index
             type: long
             title: Index
             fieldDefinition: Pimcore\Model\DataObject\ClassDefinition\Data\Numeric
         -
-            field: o_creationDate
+            field: creationDate
             type: date
             title: creationdate
             fieldDefinition: Pimcore\Model\DataObject\ClassDefinition\Data\Datetime
         -
-            field: o_modificationDate
+            field: modificationDate
             type: date
             title: modificationdate
             fieldDefinition: Pimcore\Model\DataObject\ClassDefinition\Data\Datetime
         -
-            field: o_published
+            field: published
             type: boolean
             title: published
             fieldDefinition: Pimcore\Model\DataObject\ClassDefinition\Data\Select
             values: { options: [{ key: 'Yes', value: true }, { key: 'No', value: false }] }
         -
-            field: o_type
+            field: type
             type: keyword
             title: type
             fieldDefinition: Pimcore\Model\DataObject\ClassDefinition\Data\Select
@@ -93,6 +93,6 @@ advanced_object_search:
             title: path
             fieldDefinition: Pimcore\Model\DataObject\ClassDefinition\Data\Input
         -
-            field: type
+            field: className
             title: classname
             type: keyword
