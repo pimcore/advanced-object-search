@@ -16,14 +16,9 @@ services:
         public: true
         tags: ['controller.service_arguments']
 
-    bundle.advanced_object_search.es_client:
-        class: Elasticsearch\Client
-        factory: ['AdvancedObjectSearchBundle\Tools\EsClientFactory', getESClient]
-
     AdvancedObjectSearchBundle\Tools\ElasticSearchConfigService:
         public: true
         arguments:
-            $hosts: '%pimcore.advanced_object_search.es_hosts%'
             $indexNamePrefix: '%pimcore.advanced_object_search.index_name_prefix%'
             $indexConfiguration: '%pimcore.advanced_object_search.index_configuration%'
         calls:
@@ -36,7 +31,6 @@ services:
 
     AdvancedObjectSearchBundle\Service:
         arguments:
-            $esClient: '@bundle.advanced_object_search.es_client'
             $filterLocator: '@bundle.advanced_object_search.filter_locator'
         calls:
             - [setCoreFieldsConfig, ['%advanced_object_search.core_fields_configuration%']]
