@@ -608,7 +608,6 @@ class Service
         $db = \Pimcore\Db::get();
         $idField = DataObjectService::getVersionDependentDatabaseColumnName('id');
 
-
         $db->executeQuery('UPDATE ' . Installer::QUEUE_TABLE_NAME . ' SET worker_id = ?, worker_timestamp = ? WHERE in_queue = 1 AND (ISNULL(worker_timestamp) OR worker_timestamp < ?) LIMIT ' . intval($limit),
             [$workerId, $workerTimestamp, $workerTimestamp - 3000]);
 
@@ -625,7 +624,6 @@ class Service
     {
         $db = \Pimcore\Db::get();
         $idField = DataObjectService::getVersionDependentDatabaseColumnName('id');
-
 
         foreach ($entries as $objectId) {
             $this->logger->info("Worker $workerId updating index for element " . $objectId);

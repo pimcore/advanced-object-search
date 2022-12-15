@@ -18,8 +18,8 @@ namespace AdvancedObjectSearchBundle;
 use AdvancedObjectSearchBundle\Model\SavedSearch;
 use Doctrine\DBAL\Connection;
 use Pimcore\Extension\Bundle\Installer\SettingsStoreAwareInstaller;
-use Pimcore\Model\User\Permission\Definition;
 use Pimcore\Model\DataObject\Service;
+use Pimcore\Model\User\Permission\Definition;
 
 class Installer extends SettingsStoreAwareInstaller
 {
