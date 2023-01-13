@@ -26,7 +26,7 @@ class Installer extends SettingsStoreAwareInstaller
     const QUEUE_TABLE_NAME = 'bundle_advancedobjectsearch_update_queue';
     const PERMISSION_KEY = 'bundle_advancedsearch_search';
 
-    protected function installPermissions()
+    protected function installPermissions(): void
     {
         $key = self::PERMISSION_KEY;
         $definition = Definition::getByKey($key);
@@ -42,7 +42,7 @@ class Installer extends SettingsStoreAwareInstaller
         }
     }
 
-    public function install()
+    public function install(): void
     {
         /**
          * @var Connection $db
@@ -99,7 +99,7 @@ class Installer extends SettingsStoreAwareInstaller
         parent::install();
     }
 
-    public function uninstall()
+    public function uninstall(): void
     {
         /**
          * @var Connection $db

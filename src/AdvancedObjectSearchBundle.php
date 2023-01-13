@@ -97,7 +97,7 @@ class AdvancedObjectSearchBundle extends AbstractPimcoreBundle implements Depend
         return $this->container->get(Installer::class);
     }
 
-    public static function registerDependentBundles(BundleCollection $collection)
+    public static function registerDependentBundles(BundleCollection $collection): void
     {
         $collection->addBundle(new PimcoreElasticsearchClientBundle());
     }
