@@ -48,7 +48,7 @@ class UpdateQueueProcessor implements TaskInterface
         $this->queueHandler = $queueHandler;
     }
 
-    public function execute()
+    public function execute(): void
     {
         if ($this->messengerQueueActivated) {
             $this->queueHandler->dispatchMessages();
