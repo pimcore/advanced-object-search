@@ -327,7 +327,10 @@ class AdminController extends \Pimcore\Bundle\AdminBundle\Controller\AdminContro
 
         //filter for query
         if (!empty($query)) {
-            $conditionParts[] = '(name LIKE ? OR description LIKE ? OR category LIKE ?)';
+            $conditionParts[] = sprintf('(%s LIKE ? OR %s LIKE ? OR category LIKE ?)',
+                $searcherList->quoteIdentifier('name'),
+                $searcherList->quoteIdentifier('description')
+            );
             $conditionParams[] = '%' . $query . '%';
             $conditionParams[] = '%' . $query . '%';
             $conditionParams[] = '%' . $query . '%';
