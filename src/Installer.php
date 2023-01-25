@@ -17,8 +17,9 @@ namespace AdvancedObjectSearchBundle;
 
 use AdvancedObjectSearchBundle\Model\SavedSearch;
 use Doctrine\DBAL\Connection;
+use Doctrine\DBAL\Exception;
+use Pimcore\Db;
 use Pimcore\Extension\Bundle\Installer\SettingsStoreAwareInstaller;
-use Pimcore\Model\DataObject\Service;
 use Pimcore\Model\User\Permission\Definition;
 
 class Installer extends SettingsStoreAwareInstaller
@@ -42,15 +43,18 @@ class Installer extends SettingsStoreAwareInstaller
         }
     }
 
+    /**
+     * @throws Exception
+     */
     public function install(): void
     {
         /**
          * @var Connection $db
          */
-        $db = \Pimcore\Db::get();
+        $db = Db::get();
 
         // TODO: remove this when dropping support for dbal v2/pimcore 10.5, and supporting min DBAL 3.5/4+
-        if (method_exists($db, 'getSchemeManager')) {
+        if (method_exists($db, 'getSchemaManager')) {
             /* @phpstan-ignore-next-line */
             $currentSchema = $db->getSchemaManager()->createSchema();
             /* @phpstan-ignore-next-line */
@@ -62,21 +66,19 @@ class Installer extends SettingsStoreAwareInstaller
             $schema = $db->createSchemaManager()->introspectSchema();
         }
 
-        $idField = Service::getVersionDependentDatabaseColumnName('id');
-
         if (! $schema->hasTable(self::QUEUE_TABLE_NAME)) {
             $queueTable = $schema->createTable(self::QUEUE_TABLE_NAME);
-            $queueTable->addColumn($idField, 'bigint', ['default' => 0, 'notnull' => true]);
+            $queueTable->addColumn('id', 'bigint', ['default' => 0, 'notnull' => true]);
             $queueTable->addColumn('classId', 'integer', ['notnull' => false]);
             $queueTable->addColumn('in_queue', 'boolean', ['notnull' => false]);
             $queueTable->addColumn('worker_timestamp', 'bigint', ['length' => 20, 'notnull' => false]);
             $queueTable->addColumn('worker_id', 'string', ['length' => 20, 'notnull' => false]);
-            $queueTable->setPrimaryKey([$idField]);
+            $queueTable->setPrimaryKey(['id']);
         }
 
         if (! $schema->hasTable(SavedSearch\Dao::TABLE_NAME)) {
             $savedSearchTable = $schema->createTable(SavedSearch\Dao::TABLE_NAME);
-            $savedSearchTable->addColumn($idField, 'bigint', ['length' => 20, 'autoincrement' => true, 'notnull' => true]);
+            $savedSearchTable->addColumn('id', 'bigint', ['length' => 20, 'autoincrement' => true, 'notnull' => true]);
             $savedSearchTable->addColumn('name', 'string', ['length' => 255, 'notnull' => false]);
             $savedSearchTable->addColumn('description', 'string', ['length' => 255, 'notnull' => false]);
             $savedSearchTable->addColumn('category', 'string', ['length' => 255, 'notnull' => false]);
@@ -86,12 +88,12 @@ class Installer extends SettingsStoreAwareInstaller
             $savedSearchTable->addColumn('shortCutUserIds', 'text', ['notnull' => false]);
             $savedSearchTable->addColumn('shareGlobally', 'boolean', ['default' => null, 'notnull' => false]);
             $savedSearchTable->addIndex(['shareGlobally'], 'shareGlobally');
-            $savedSearchTable->setPrimaryKey([$idField]);
+            $savedSearchTable->setPrimaryKey(['id']);
         }
 
         $sqlStatements = $currentSchema->getMigrateToSql($schema, $db->getDatabasePlatform());
         if (!empty($sqlStatements)) {
-            $db->exec(implode(';', $sqlStatements));
+            $db->executeStatement(implode(';', $sqlStatements));
         }
 
         $this->installPermissions();
@@ -99,15 +101,18 @@ class Installer extends SettingsStoreAwareInstaller
         parent::install();
     }
 
+    /**
+     * @throws Exception
+     */
     public function uninstall(): void
     {
         /**
          * @var Connection $db
          */
-        $db = \Pimcore\Db::get();
+        $db = Db::get();
 
         // TODO: remove this when dropping support for dbal v2/pimcore 10.5, and supporting min DBAL 3.5/4+
-        if (method_exists($db, 'getSchemeManager')) {
+        if (method_exists($db, 'getSchemaManager')) {
             /* @phpstan-ignore-next-line */
             $currentSchema = $db->getSchemaManager()->createSchema();
             /* @phpstan-ignore-next-line */
@@ -132,11 +137,11 @@ class Installer extends SettingsStoreAwareInstaller
 
         $sqlStatements = $currentSchema->getMigrateToSql($schema, $db->getDatabasePlatform());
         if (!empty($sqlStatements)) {
-            $db->exec(implode(';', $sqlStatements));
+            $db->executeStatement(implode(';', $sqlStatements));
         }
 
         $key = self::PERMISSION_KEY;
-        $db->exec("DELETE FROM users_permission_definitions WHERE `key` = '{$key}'");
+        $db->executeStatement("DELETE FROM users_permission_definitions WHERE `key` = '{$key}'");
 
         parent::uninstall();
     }
