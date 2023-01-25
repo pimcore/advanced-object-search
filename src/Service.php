@@ -21,15 +21,17 @@ use AdvancedObjectSearchBundle\Filter\FieldDefinitionAdapter\FieldDefinitionAdap
 use AdvancedObjectSearchBundle\Filter\FieldSelectionInformation;
 use AdvancedObjectSearchBundle\Filter\FilterEntry;
 use AdvancedObjectSearchBundle\Tools\ElasticSearchConfigService;
-use Doctrine\DBAL\Exception;
+use Doctrine\DBAL\Exception as DoctrineDbalException;
 use Elastic\Elasticsearch\Client;
 use Elastic\Elasticsearch\Exception\ClientResponseException;
+use Exception;
 use ONGR\ElasticsearchDSL\BuilderInterface;
 use ONGR\ElasticsearchDSL\Query\Compound\BoolQuery;
 use ONGR\ElasticsearchDSL\Query\FullText\QueryStringQuery;
 use ONGR\ElasticsearchDSL\Query\TermLevel\WildcardQuery;
 use ONGR\ElasticsearchDSL\Search;
 use Pimcore\Bundle\AdminBundle\Security\User\TokenStorageUserResolver;
+use Pimcore\Db;
 use Pimcore\Model\DataObject\ClassDefinition;
 use Pimcore\Model\DataObject\Concrete;
 use Pimcore\Model\DataObject\Fieldcollection\Definition;
@@ -124,11 +126,11 @@ class Service
      * @param bool $considerInheritance
      *
      * @return FieldDefinitionAdapterInterface
+     *
+     * @throws Exception
      */
     public function getFieldDefinitionAdapter(ClassDefinition\Data $fieldDefinition, bool $considerInheritance)
     {
-        $adapter = null;
-
         if ($this->filterLocator->has($fieldDefinition->fieldtype)) {
             $adapter = $this->filterLocator->get($fieldDefinition->fieldtype);
         } else {
@@ -294,7 +296,7 @@ class Service
             $mappingProperties[$key] = $mappingEntry;
         }
 
-        $mappingParams = [
+        return [
             'index' => $this->getIndexName($objectClass->getName()),
             'body' => [
                 '_source' => [
@@ -303,8 +305,6 @@ class Service
                 'properties' => $mappingProperties
             ]
         ];
-
-        return $mappingParams;
     }
 
     /**
@@ -315,6 +315,10 @@ class Service
      *  - if that also fails, throws exception
      *
      * @param ClassDefinition $classDefinition
+     *
+     * @return bool
+     *
+     * @throws Exception
      */
     public function updateMapping(ClassDefinition $classDefinition)
     {
@@ -322,7 +326,7 @@ class Service
             if ($this->esClient->indices()->exists(['index' => $this->getIndexName($classDefinition->getName())])->asBool()) {
                 try {
                     $this->deleteIndex($classDefinition);
-                } catch (\Exception $e) {
+                } catch (Exception $e) {
                     $this->logger->error($e);
                 }
             }
@@ -339,7 +343,7 @@ class Service
             $this->doUpdateMapping($classDefinition);
 
             return true;
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             $this->logger->info($e);
             //try recreating index
             $this->createIndex($classDefinition);
@@ -348,7 +352,7 @@ class Service
         $this->doUpdateMapping($classDefinition);
 
         //only reset update queue when index was recreated
-        $db = \Pimcore\Db::get();
+        $db = Db::get();
         $db->executeQuery('UPDATE ' . Installer::QUEUE_TABLE_NAME . ' SET in_queue = 1 WHERE classId = ?', [$classDefinition->getId()]);
 
         return true;
@@ -358,11 +362,13 @@ class Service
      * updates mapping for index - throws exception if not successful
      *
      * @param ClassDefinition $classDefinition
+     *
+     * @throws Exception
      */
     protected function doUpdateMapping(ClassDefinition $classDefinition)
     {
         $mapping = $this->generateMapping($classDefinition);
-        $response = $this->esClient->indices()->putMapping($mapping);
+        $this->esClient->indices()->putMapping($mapping);
     }
 
     /**
@@ -376,14 +382,14 @@ class Service
 
         try {
             $this->deleteIndex($classDefinition);
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             $this->logger->error($e);
         }
 
         try {
             $this->logger->info("Creating index $indexName for class " . $classDefinition->getName());
 
-            $response = $this->esClient->indices()->create([
+            $this->esClient->indices()->create([
                 'index' => $indexName,
                 'body' => [
                     'settings' => [
@@ -404,7 +410,7 @@ class Service
                     ]
                 ]
             ]);
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             $this->logger->error($e);
         }
     }
@@ -413,6 +419,8 @@ class Service
      * deletes index
      *
      * @param ClassDefinition $classDefinition
+     *
+     * @throws Exception
      */
     public function deleteIndex(ClassDefinition $classDefinition)
     {
@@ -435,6 +443,8 @@ class Service
      * @param Concrete $object
      *
      * @return array
+     *
+     * @throws Exception
      */
     public function getIndexData(Concrete $object)
     {
@@ -452,14 +462,12 @@ class Service
         $checksum = crc32(json_encode($data));
         $data['checksum'] = $checksum;
 
-        $params = [
+        return [
             'index' => $this->getIndexName($object->getClassName()),
             'type' => '_doc',
             'id' => $object->getId(),
             'body' => $data
         ];
-
-        return $params;
     }
 
     /**
@@ -469,6 +477,8 @@ class Service
      * @param bool $ignoreUpdateQueue - if true doesn't fillup update queue for children objects
      *
      * @return bool
+     *
+     * @throws Exception
      */
     public function doUpdateIndexData(Concrete $object, $ignoreUpdateQueue = false)
     {
@@ -485,7 +495,7 @@ class Service
         try {
             $indexDocument = $this->esClient->get($params);
             $originalChecksum = $indexDocument['_source']['checksum'] ?? -1;
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             $this->logger->debug($e->getMessage());
             $originalChecksum = -1;
         }
@@ -493,7 +503,7 @@ class Service
         $indexUpdateParams = $this->getIndexData($object);
 
         if ($indexUpdateParams['body']['checksum'] != $originalChecksum) {
-            $response = $this->esClient->index($indexUpdateParams);
+            $this->esClient->index($indexUpdateParams);
             $this->logger->info('Updates es index for data object ' . $object->getId());
             $this->esClient->index($indexUpdateParams);
         } else {
@@ -516,18 +526,17 @@ class Service
      *
      * @param Concrete $object
      *
-     * @throws Exception
+     * @throws DoctrineDbalException
      */
     protected function updateUpdateQueueForDataObject(Concrete $object)
     {
-        $db = \Pimcore\Db::get();
-        $idField = DataObjectService::getVersionDependentDatabaseColumnName('id');
+        $db = Db::get();
         //add object to update queue (if not exists) or set in_queue to false
-        $currentEntry = $db->fetchAssociative('SELECT in_queue FROM ' . Installer::QUEUE_TABLE_NAME . ' WHERE `'. $idField .'` = ?', [$object->getId()]);
+        $currentEntry = $db->fetchAssociative('SELECT in_queue FROM ' . Installer::QUEUE_TABLE_NAME . ' WHERE `id` = ?', [$object->getId()]);
         if (!$currentEntry) {
-            $db->insert(Installer::QUEUE_TABLE_NAME, [$idField => $object->getId(), 'classId' => $object->getClassId()]);
+            $db->insert(Installer::QUEUE_TABLE_NAME, ['id' => $object->getId(), 'classId' => $object->getClassId()]);
         } elseif ($currentEntry['in_queue']) {
-            $db->executeQuery('UPDATE ' . Installer::QUEUE_TABLE_NAME . ' SET in_queue = 0, worker_timestamp = 0, worker_id = null WHERE `'. $idField .'` = ?', [$object->getId()]);
+            $db->executeQuery('UPDATE ' . Installer::QUEUE_TABLE_NAME . ' SET in_queue = 0, worker_timestamp = 0, worker_id = null WHERE `id` = ?', [$object->getId()]);
         }
     }
 
@@ -535,6 +544,8 @@ class Service
      * Delete given object from index
      *
      * @param Concrete $object
+     *
+     * @throws Exception
      */
     public function doDeleteFromIndex(Concrete $object)
     {
@@ -546,7 +557,7 @@ class Service
 
         try {
             $this->logger->info('Deleting data object ' . $object->getId() . ' from es index.');
-            $response = $this->esClient->delete($params);
+            $this->esClient->delete($params);
         } catch (ClientResponseException $e) {
             if ($e->getCode() === 404) {
                 $this->logger->info('Cannot delete data object ' . $object->getId() . ' from es index because not found.');
@@ -561,16 +572,16 @@ class Service
      *
      * @param Concrete $object
      *
-     * @throws Exception
+     * @throws DoctrineDbalException
      */
     public function fillupUpdateQueue(Concrete $object)
     {
-        $db = \Pimcore\Db::get();
+        $db = Db::get();
         $idField = DataObjectService::getVersionDependentDatabaseColumnName('id');
         //need check, if there are sub objects because update on empty result set is too slow
-        $objects = $db->fetchFirstColumn('SELECT `'. $idField .'` FROM objects WHERE path LIKE ?', [$object->getFullPath() . '/%']);
+        $objects = $db->fetchFirstColumn('SELECT `'. $idField .'` FROM objects WHERE `path` LIKE ?', [$object->getFullPath() . '/%']);
         if ($objects) {
-            $updateStatement = 'UPDATE ' . Installer::QUEUE_TABLE_NAME . ' SET in_queue = 1 WHERE `'. $idField .'` IN ('.implode(',', $objects).')';
+            $updateStatement = 'UPDATE ' . Installer::QUEUE_TABLE_NAME . ' SET in_queue = 1 WHERE `id` IN ('.implode(',', $objects).')';
             $db->executeQuery($updateStatement);
         }
     }
@@ -582,6 +593,8 @@ class Service
      * @param int $limit
      *
      * @return int number of entries
+     *
+     * @throws DoctrineDbalException
      */
     public function processUpdateQueue($limit = 200)
     {
@@ -600,18 +613,17 @@ class Service
      *
      * @return array
      *
-     * @throws Exception
+     * @throws DoctrineDbalException
      */
     public function initUpdateQueue(string $workerId, int $limit = 200): array
     {
         $workerTimestamp = time();
-        $db = \Pimcore\Db::get();
-        $idField = DataObjectService::getVersionDependentDatabaseColumnName('id');
+        $db = Db::get();
 
         $db->executeQuery('UPDATE ' . Installer::QUEUE_TABLE_NAME . ' SET worker_id = ?, worker_timestamp = ? WHERE in_queue = 1 AND (ISNULL(worker_timestamp) OR worker_timestamp < ?) LIMIT ' . intval($limit),
             [$workerId, $workerTimestamp, $workerTimestamp - 3000]);
 
-        return $db->fetchFirstColumn('SELECT `'. $idField .'` FROM ' . Installer::QUEUE_TABLE_NAME . ' WHERE worker_id = ?', [$workerId]);
+        return $db->fetchFirstColumn('SELECT `id` FROM ' . Installer::QUEUE_TABLE_NAME . ' WHERE worker_id = ?', [$workerId]);
     }
 
     /**
@@ -619,11 +631,12 @@ class Service
      * @param array $entries
      *
      * @return int
+     *
+     * @throws DoctrineDbalException
      */
     public function doProcessUpdateQueue(string $workerId, array $entries): int
     {
-        $db = \Pimcore\Db::get();
-        $idField = DataObjectService::getVersionDependentDatabaseColumnName('id');
+        $db = Db::get();
 
         foreach ($entries as $objectId) {
             $this->logger->info("Worker $workerId updating index for element " . $objectId);
@@ -632,7 +645,7 @@ class Service
                 $this->doUpdateIndexData($object);
             } else {
                 // Object no longer exists, remove from queue
-                $db->executeQuery('DELETE FROM ' . Installer::QUEUE_TABLE_NAME . ' WHERE `'. $idField .'` = ?', [$objectId]);
+                $db->executeQuery('DELETE FROM ' . Installer::QUEUE_TABLE_NAME . ' WHERE `id` = ?', [$objectId]);
             }
         }
 
@@ -643,10 +656,12 @@ class Service
      * returns if update queue is empty
      *
      * @return bool
+     *
+     * @throws DoctrineDbalException
      */
     public function updateQueueEmpty()
     {
-        $db = \Pimcore\Db::get();
+        $db = Db::get();
         $count = $db->fetchOne('SELECT count(*) FROM ' . Installer::QUEUE_TABLE_NAME . ' WHERE in_queue = 1');
 
         return $count == 0;
@@ -679,6 +694,8 @@ class Service
      *  --> gets converted into BoolQuery with corresponding FilterEntry objects recursively
      *
      * @return \ONGR\ElasticsearchDSL\Search
+     *
+     * @throws Exception
      */
     public function getFilter(ClassDefinition $objectClass, array $filters)
     {
@@ -699,7 +716,7 @@ class Service
      *
      * @return BoolQuery
      *
-     * @throws \Exception
+     * @throws Exception
      */
     protected function doPopulateQuery(BoolQuery $query, ClassDefinition $objectClass, array $filters)
     {
@@ -752,7 +769,7 @@ class Service
      *
      * @return FilterEntry
      *
-     * @throws \Exception
+     * @throws Exception
      */
     public function buildFilterEntryObject($filterEntry)
     {
@@ -765,7 +782,7 @@ class Service
         } elseif ($filterEntry instanceof FilterEntry) {
             return $filterEntry;
         } else {
-            throw new \Exception('invalid filter entry: ' . print_r($filterEntry, true));
+            throw new Exception('invalid filter entry: ' . print_r($filterEntry, true));
         }
     }
 
@@ -778,7 +795,7 @@ class Service
      *
      * @return array|callable
      *
-     * @throws \Exception
+     * @throws Exception
      */
     public function doFilter($classId, array $filters, $fullTextQuery, $from = null, $size = null)
     {
@@ -822,13 +839,13 @@ class Service
      *
      * @param Search $search
      *
-     * @throws \Exception
+     * @throws Exception
      */
     protected function addPermissionsExcludeFilter(Search $search)
     {
         //exclude forbidden objects
         if (!$this->user->isAllowed('objects')) {
-            throw new \Exception('User not allowed to search for objects');
+            throw new Exception('User not allowed to search for objects');
         } else {
             $forbiddenObjectPaths = \Pimcore\Model\Element\Service::findForbiddenPaths('object', $this->user);
             if (isset($forbiddenObjectPaths['forbidden'])) {   // @phpstan-ignore-line
