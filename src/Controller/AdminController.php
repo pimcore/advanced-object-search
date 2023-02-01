@@ -20,6 +20,7 @@ use AdvancedObjectSearchBundle\Event\FilterListingEvent;
 use AdvancedObjectSearchBundle\Model\SavedSearch;
 use AdvancedObjectSearchBundle\Service;
 use Pimcore\Bundle\AdminBundle\Helper\QueryParams;
+use Pimcore\Db;
 use Pimcore\Model\DataObject;
 use Pimcore\Tool;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
@@ -313,6 +314,7 @@ class AdminController extends \Pimcore\Bundle\AdminBundle\Controller\AdminContro
         $offset = $offset ? $offset : 0;
         $limit = $limit ? $limit : 50;
 
+        $db = Db::get();
         $searcherList = new SavedSearch\Listing();
         $conditionParts = [];
         $conditionParams = [];
@@ -327,7 +329,11 @@ class AdminController extends \Pimcore\Bundle\AdminBundle\Controller\AdminContro
 
         //filter for query
         if (!empty($query)) {
-            $conditionParts[] = '(name LIKE ? OR description LIKE ? OR category LIKE ?)';
+            $conditionParts[] = sprintf('(%s LIKE ? OR %s LIKE ? OR %s LIKE ?)',
+                $db->quoteIdentifier('name'),
+                $db->quoteIdentifier('description'),
+                $db->quoteIdentifier('category')
+            );
             $conditionParams[] = '%' . $query . '%';
             $conditionParams[] = '%' . $query . '%';
             $conditionParams[] = '%' . $query . '%';
