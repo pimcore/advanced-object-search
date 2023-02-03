@@ -417,7 +417,7 @@ class AdminController extends \Pimcore\Bundle\AdminBundle\Controller\AdminContro
                 }
 
                 // store the saved search columns in the session, otherwise they won't work
-                Tool\Session::useSession(function (AttributeBagInterface $session) use ($helperColumns) {
+                Tool\Session::useBag($request->getSession(), function (AttributeBagInterface $session) use ($helperColumns) {
                     $existingColumns = $session->get('helpercolumns', []);
                     $helperColumns = array_merge($existingColumns, $helperColumns);
                     $session->set('helpercolumns', $helperColumns);
