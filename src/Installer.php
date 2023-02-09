@@ -60,7 +60,6 @@ class Installer extends SettingsStoreAwareInstaller
             }
         }
 
-
         /**
          * @var Connection $db
          */
