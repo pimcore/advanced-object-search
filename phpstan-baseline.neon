@@ -1,0 +1,19 @@
+parameters:
+	ignoreErrors:
+		-
+			message: "#^Class Pimcore\\\\Bundle\\\\SimpleBackendSearchBundle\\\\Installer not found.$#"
+			reportUnmatched: false
+			count: 1
+			path: src/Installer.php
+
+		-
+			message: "#^Instantiated class Pimcore\\\\Bundle\\\\SimpleBackendSearchBundle\\\\PimcoreSimpleBackendSearchBundle not found.$#"
+			reportUnmatched: false
+			count: 1
+			path: src/AdvancedObjectSearchBundle.php
+
+		-
+			message: "#^Class Pimcore\\\\Bundle\\\\SimpleBackendSearchBundle\\\\PimcoreSimpleBackendSearchBundle not found.$#"
+			reportUnmatched: false
+			count: 1
+			path: src/AdvancedObjectSearchBundle.php
