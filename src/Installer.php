@@ -49,6 +49,18 @@ class Installer extends SettingsStoreAwareInstaller
     public function install(): void
     {
         /**
+         * The simple backend search can be deactivated from Pimcore 11 on. But it is necessary for the advanced object search,
+         * so we have to make sure that it is activated & installed.
+         */
+        if (\Pimcore\Version::getMajorVersion() >= 11) {
+            $simpleBackendSearchInstaller = \Pimcore::getContainer()->get(\Pimcore\Bundle\SimpleBackendSearchBundle\Installer::class);
+
+            if (!$simpleBackendSearchInstaller->isInstalled()) {
+                $simpleBackendSearchInstaller->install();
+            }
+        }
+
+        /**
          * @var Connection $db
          */
         $db = Db::get();
