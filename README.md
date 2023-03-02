@@ -1,4 +1,8 @@
-# Advanced Object Search via Elasticsearch
+---
+title: Advanced Object Search
+---
+
+# Pimcore Advanced Object Search via Elasticsearch
 
 Advanced Object Search bundle provides advanced object search in 
 Pimcore backend powered by Elasticsearch v8. 
