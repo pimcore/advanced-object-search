@@ -45,7 +45,7 @@ class Time extends Datetime implements FieldDefinitionAdapterInterface
         $valueObject = $object->$getter();
         if ($valueObject) {
             $valueObject = new \DateTime('0000-01-01T' . $valueObject);
-            $value = $valueObject->format(\DateTimeInterface::ISO8601);
+            $value = $valueObject->format(\DateTimeInterface::ATOM);
         }
 
         if ($ignoreInheritance) {
