@@ -350,11 +350,15 @@ class AdminController extends UserAwareController
         $searcherList->setOffset($offset);
         $searcherList->setLimit($limit);
 
-        $sortingSettings = QueryParams::extractSortingSettings(array_merge($request->request->all(), $request->query->all()));
-        if ($sortingSettings['orderKey']) {
+        $sortingSettings = [];
+        if (class_exists(QueryParams::class)) {
+            $sortingSettings = QueryParams::extractSortingSettings(array_merge($request->request->all(), $request->query->all()));
+        }
+
+        if ($sortingSettings['orderKey'] ?? false) {
             $searcherList->setOrderKey($sortingSettings['orderKey']);
         }
-        if ($sortingSettings['order']) {
+        if ($sortingSettings['order'] ?? false) {
             $searcherList->setOrder($sortingSettings['order']);
         }
 
