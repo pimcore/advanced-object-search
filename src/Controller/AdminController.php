@@ -20,8 +20,8 @@ use AdvancedObjectSearchBundle\Event\FilterListingEvent;
 use AdvancedObjectSearchBundle\Model\SavedSearch;
 use AdvancedObjectSearchBundle\Service;
 use Pimcore\Bundle\AdminBundle\Helper\QueryParams;
-use Pimcore\Controller\UserAwareController;
 use Pimcore\Controller\Traits\JsonHelperTrait;
+use Pimcore\Controller\UserAwareController;
 use Pimcore\Db;
 use Pimcore\Model\DataObject;
 use Pimcore\Model\DataObject\Listing;
@@ -92,7 +92,7 @@ class AdminController extends UserAwareController
     /**
      * @Route("/grid-proxy")
      */
-    public function gridProxyAction(Request $request, Service $service, EventDispatcherInterface $eventDispatcher): JsonResponse|Response
+    public function gridProxyAction(Request $request, Service $service, EventDispatcherInterface $eventDispatcher): JsonResponse | Response
     {
         $requestedLanguage = $request->get('language');
         if ($requestedLanguage) {
