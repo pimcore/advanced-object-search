@@ -20,12 +20,17 @@ use AdvancedObjectSearchBundle\Event\FilterListingEvent;
 use AdvancedObjectSearchBundle\Model\SavedSearch;
 use AdvancedObjectSearchBundle\Service;
 use Pimcore\Bundle\AdminBundle\Helper\QueryParams;
+use Pimcore\Controller\UserAwareController;
+use Pimcore\Controller\Traits\JsonHelperTrait;
 use Pimcore\Db;
 use Pimcore\Model\DataObject;
+use Pimcore\Model\DataObject\Listing;
 use Pimcore\Model\DataObject\Service as DataObjectService;
 use Pimcore\Tool;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
+use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\Session\Attribute\AttributeBagInterface;
 use Symfony\Component\Routing\Annotation\Route;
 
@@ -34,13 +39,14 @@ use Symfony\Component\Routing\Annotation\Route;
  *
  * @Route("/admin")
  */
-class AdminController extends \Pimcore\Bundle\AdminBundle\Controller\AdminController
+class AdminController extends UserAwareController
 {
+    use JsonHelperTrait;
+
     /**
-     * @param Request $request
      * @Route("/get-fields")
      */
-    public function getFieldsAction(Request $request, Service $service)
+    public function getFieldsAction(Request $request, Service $service): JsonResponse
     {
         $type = strip_tags($request->get('type'));
 
@@ -56,7 +62,6 @@ class AdminController extends \Pimcore\Bundle\AdminBundle\Controller\AdminContro
             case 'fieldcollection':
                 $key = strip_tags($request->get('key'));
                 $definition = DataObject\Fieldcollection\Definition::getByKey($key);
-                $allowInheritance = false;
                 break;
 
             case 'objectbrick':
@@ -81,14 +86,13 @@ class AdminController extends \Pimcore\Bundle\AdminBundle\Controller\AdminContro
             $fields[] = $entry->toArray();
         }
 
-        return $this->adminJson(['data' => $fields]);
+        return $this->jsonResponse(['data' => $fields]);
     }
 
     /**
-     * @param Request $request
      * @Route("/grid-proxy")
      */
-    public function gridProxyAction(Request $request, Service $service, EventDispatcherInterface $eventDispatcher)
+    public function gridProxyAction(Request $request, Service $service, EventDispatcherInterface $eventDispatcher): JsonResponse|Response
     {
         $requestedLanguage = $request->get('language');
         if ($requestedLanguage) {
@@ -131,7 +135,7 @@ class AdminController extends \Pimcore\Bundle\AdminBundle\Controller\AdminContro
             $ids = $service->extractIdsFromResult($results);
 
             /**
-             * @var \Pimcore\Model\DataObject\Listing $list
+             * @var Listing $list
              */
             $list = new $listClass();
             $list->setObjectTypes(['object', 'folder', 'variant']);
@@ -140,9 +144,9 @@ class AdminController extends \Pimcore\Bundle\AdminBundle\Controller\AdminContro
             $idField = DataObjectService::getVersionDependentDatabaseColumnName('id');
             $keyColumn = DataObjectService::getVersionDependentDatabaseColumnName('key');
             $pathColumn = DataObjectService::getVersionDependentDatabaseColumnName('path');
-            if (!$this->getAdminUser()->isAdmin()) {
-                $userIds = $this->getAdminUser()->getRoles();
-                $userIds[] = $this->getAdminUser()->getId();
+            if (!$this->getPimcoreUser()->isAdmin()) {
+                $userIds = $this->getPimcoreUser()->getRoles();
+                $userIds[] = $this->getPimcoreUser()->getId();
 
                 $conditionFilters[] = ' (
                                                     (select list from users_workspaces_object where userId in (' . implode(',', $userIds) . ') and LOCATE(CONCAT('. $pathColumn .', ' . $keyColumn . '),cpath)=1  ORDER BY LENGTH(cpath) DESC LIMIT 1)=1
@@ -173,15 +177,14 @@ class AdminController extends \Pimcore\Bundle\AdminBundle\Controller\AdminContro
                 $objects[] = $o;
             }
 
-            return $this->adminJson(['data' => $objects, 'success' => true, 'total' => $total]);
+            return $this->jsonResponse(['data' => $objects, 'success' => true, 'total' => $total]);
         }
     }
 
     /**
-     * @param Request $request
      * @Route("/get-batch-jobs")
      */
-    public function getBatchJobsAction(Request $request, Service $service)
+    public function getBatchJobsAction(Request $request, Service $service): JsonResponse
     {
         if ($request->get('language')) {
             $request->setLocale($request->get('language'));
@@ -209,19 +212,18 @@ class AdminController extends \Pimcore\Bundle\AdminBundle\Controller\AdminContro
 
         $jobs = $list->loadIdList();
 
-        return $this->adminJson(['success' => true, 'jobs' => $jobs]);
+        return $this->jsonResponse(['success' => true, 'jobs' => $jobs]);
     }
 
-    protected function getCsvFile($fileHandle)
+    protected function getCsvFile(string $fileHandle): string
     {
         return PIMCORE_SYSTEM_TEMP_DIRECTORY . '/' . $fileHandle . '.csv';
     }
 
     /**
-     * @param Request $request
      * @Route("/get-export-jobs")
      */
-    public function getExportJobsAction(Request $request, Service $service)
+    public function getExportJobsAction(Request $request, Service $service): JsonResponse
     {
         if ($request->get('language')) {
             $request->setLocale($request->get('language'));
@@ -247,14 +249,13 @@ class AdminController extends \Pimcore\Bundle\AdminBundle\Controller\AdminContro
         $fileHandle = uniqid('export-');
         file_put_contents($this->getCsvFile($fileHandle), '');
 
-        return $this->adminJson(['success' => true, 'jobs' => $jobs, 'fileHandle' => $fileHandle]);
+        return $this->jsonResponse(['success' => true, 'jobs' => $jobs, 'fileHandle' => $fileHandle]);
     }
 
     /**
-     * @param Request $request
      * @Route("/save")
      */
-    public function saveAction(Request $request)
+    public function saveAction(Request $request): JsonResponse
     {
         $data = $request->get('data');
         $data = json_decode($data);
@@ -264,28 +265,27 @@ class AdminController extends \Pimcore\Bundle\AdminBundle\Controller\AdminContro
             $savedSearch = SavedSearch::getById($id);
         } else {
             $savedSearch = new SavedSearch();
-            $savedSearch->setOwner($this->getAdminUser());
+            $savedSearch->setOwner($this->getPimcoreUser());
         }
 
         $savedSearch->setName($data->settings->name);
         $savedSearch->setDescription($data->settings->description);
         $savedSearch->setCategory($data->settings->category);
         $savedSearch->setSharedUserIds(array_merge($data->settings->shared_users, $data->settings->shared_roles));
-        $savedSearch->setShareGlobally($this->getAdminUser()->isAdmin() && $data->settings->share_globally);
+        $savedSearch->setShareGlobally($this->getPimcoreUser()->isAdmin() && $data->settings->share_globally);
 
         $config = ['classId' => $data->classId, 'gridConfig' => $data->gridConfig, 'conditions' => $data->conditions];
         $savedSearch->setConfig(json_encode($config));
 
         $savedSearch->save();
 
-        return $this->adminJson(['success' => true, 'id' => $savedSearch->getId()]);
+        return $this->jsonResponse(['success' => true, 'id' => $savedSearch->getId()]);
     }
 
     /**
-     * @param Request $request
      * @Route("/delete")
      */
-    public function deleteAction(Request $request)
+    public function deleteAction(Request $request): JsonResponse
     {
         $id = intval($request->get('id'));
         $savedSearch = SavedSearch::getById($id);
@@ -293,19 +293,18 @@ class AdminController extends \Pimcore\Bundle\AdminBundle\Controller\AdminContro
         if ($savedSearch) {
             $savedSearch->delete();
 
-            return $this->adminJson(['success' => true, 'id' => $savedSearch->getId()]);
-        } else {
-            return $this->adminJson(['success' => false, 'message' => "Saved Search with $id not found."]);
+            return $this->jsonResponse(['success' => true, 'id' => $savedSearch->getId()]);
         }
+
+        return $this->jsonResponse(['success' => false, 'message' => "Saved Search with $id not found."]);
     }
 
     /**
-     * @param Request $request
      * @Route("/find")
      */
-    public function findAction(Request $request)
+    public function findAction(Request $request): JsonResponse
     {
-        $user = $this->getAdminUser();
+        $user = $this->getPimcoreUser();
 
         $query = $request->get('query');
         if ($query == '*') {
@@ -378,14 +377,13 @@ class AdminController extends \Pimcore\Bundle\AdminBundle\Controller\AdminContro
             $totalMatches = count($results);
         }
 
-        return $this->adminJson(['data' => $results, 'success' => true, 'total' => $totalMatches]);
+        return $this->jsonResponse(['data' => $results, 'success' => true, 'total' => $totalMatches]);
     }
 
     /**
-     * @param Request $request
      * @Route("/load-search")
      */
-    public function loadSearchAction(Request $request)
+    public function loadSearchAction(Request $request): JsonResponse
     {
         $id = intval($request->get('id'));
         $savedSearch = SavedSearch::getById($id);
@@ -400,7 +398,7 @@ class AdminController extends \Pimcore\Bundle\AdminBundle\Controller\AdminContro
                     if (!($column['isOperator'] ?? false)) {
                         $fieldDefinition = $classDefinition->getFieldDefinition($column['key']);
                         if ($fieldDefinition) {
-                            $width = isset($column['layout']['width']) ? $column['layout']['width'] : null;
+                            $width = $column['layout']['width'] ?? null;
                             $column['layout'] = json_decode(json_encode($fieldDefinition), true);
                             if ($width) {
                                 $column['layout']['width'] = $width;
@@ -424,7 +422,7 @@ class AdminController extends \Pimcore\Bundle\AdminBundle\Controller\AdminContro
                 }, 'pimcore_gridconfig');
             }
 
-            return $this->adminJson([
+            return $this->jsonResponse([
                 'id' => $savedSearch->getId(),
                 'classId' => $config['classId'],
                 'settings' => [
@@ -433,31 +431,30 @@ class AdminController extends \Pimcore\Bundle\AdminBundle\Controller\AdminContro
                     'category' => $savedSearch->getCategory(),
                     'sharedUserIds' => $savedSearch->getSharedUserIds(),
                     'shareGlobally' => $savedSearch->getShareGlobally(),
-                    'isOwner' => $savedSearch->getOwnerId() == $this->getAdminUser()->getId(),
-                    'hasShortCut' => $savedSearch->isInShortCutsForUser($this->getAdminUser())
+                    'isOwner' => $savedSearch->getOwnerId() == $this->getPimcoreUser()->getId(),
+                    'hasShortCut' => $savedSearch->isInShortCutsForUser($this->getPimcoreUser())
                 ],
                 'conditions' => $config['conditions'],
                 'gridConfig' => $config['gridConfig']
             ]);
-        } else {
-            return $this->adminJson(['success' => false, 'message' => "Saved Search with $id not found."]);
         }
+
+        return $this->jsonResponse(['success' => false, 'message' => "Saved Search with $id not found."]);
     }
 
     /**
-     * @param Request $request
      * @Route("/load-short-cuts")
      */
-    public function loadShortCutsAction(Request $request)
+    public function loadShortCutsAction(Request $request): JsonResponse
     {
         $list = new SavedSearch\Listing();
         $list->setCondition(
             '(shareGlobally = ? OR ownerId = ? OR sharedUserIds LIKE ?) AND shortCutUserIds LIKE ?',
             [
                 true,
-                $this->getAdminUser()->getId(),
-                '%,' . $this->getAdminUser()->getId() . ',%',
-                '%,' . $this->getAdminUser()->getId() . ',%'
+                $this->getPimcoreUser()->getId(),
+                '%,' . $this->getPimcoreUser()->getId() . ',%',
+                '%,' . $this->getPimcoreUser()->getId() . ',%'
             ]
         );
         $list->load();
@@ -470,19 +467,18 @@ class AdminController extends \Pimcore\Bundle\AdminBundle\Controller\AdminContro
             ];
         }
 
-        return $this->adminJson(['entries' => $entries]);
+        return $this->jsonResponse(['entries' => $entries]);
     }
 
     /**
-     * @param Request $request
      * @Route("/toggle-short-cut")
      */
-    public function toggleShortCutAction(Request $request)
+    public function toggleShortCutAction(Request $request): JsonResponse
     {
         $id = intval($request->get('id'));
         $savedSearch = SavedSearch::getById($id);
         if ($savedSearch) {
-            $user = $this->getAdminUser();
+            $user = $this->getPimcoreUser();
             if ($savedSearch->isInShortCutsForUser($user)) {
                 $savedSearch->removeShortCutForUser($user);
             } else {
@@ -490,17 +486,16 @@ class AdminController extends \Pimcore\Bundle\AdminBundle\Controller\AdminContro
             }
             $savedSearch->save();
 
-            return $this->adminJson(['success' => 'true', 'hasShortCut' => $savedSearch->isInShortCutsForUser($user)]);
-        } else {
-            return $this->adminJson(['success' => 'false']);
+            return $this->jsonResponse(['success' => 'true', 'hasShortCut' => $savedSearch->isInShortCutsForUser($user)]);
         }
+
+        return $this->jsonResponse(['success' => 'false']);
     }
 
     /**
-     * @param Request $request
      * @Route("/get-users")
      */
-    public function getUsersAction(Request $request)
+    public function getUsersAction(Request $request): JsonResponse
     {
         $users = [];
 
@@ -520,7 +515,7 @@ class AdminController extends \Pimcore\Bundle\AdminBundle\Controller\AdminContro
 
         $condition[] = 'admin = 1';
         $list->addConditionParam("((CONCAT(',', permissions, ',') LIKE ? ) OR " . implode(' OR ', $condition) . ')', '%,bundle_advancedsearch_search,%');
-        $list->addConditionParam('id != ?', $this->getAdminUser()->getId());
+        $list->addConditionParam('id != ?', $this->getPimcoreUser()->getId());
         $list->load();
         $userList = $list->getUsers();
 
@@ -531,13 +526,13 @@ class AdminController extends \Pimcore\Bundle\AdminBundle\Controller\AdminContro
             ];
         }
 
-        return $this->adminJson(['success' => true, 'total' => count($users), 'data' => $users]);
+        return $this->jsonResponse(['success' => true, 'total' => count($users), 'data' => $users]);
     }
 
     /**
      * @Route("/get-roles")
      */
-    public function getRolesAction()
+    public function getRolesAction(): JsonResponse
     {
         $roles = [];
 
@@ -553,15 +548,14 @@ class AdminController extends \Pimcore\Bundle\AdminBundle\Controller\AdminContro
             ];
         }
 
-        return $this->adminJson(['success' => true, 'total' => count($roles), 'data' => $roles]);
+        return $this->jsonResponse(['success' => true, 'total' => count($roles), 'data' => $roles]);
     }
 
     /**
-     * @param Request $request
      * @Route("/check-index-status")
      */
-    public function checkIndexStatusAction(Request $request, Service $service)
+    public function checkIndexStatusAction(Request $request, Service $service): JsonResponse
     {
-        return $this->adminJson(['indexUptodate' => $service->updateQueueEmpty()]);
+        return $this->jsonResponse(['indexUptodate' => $service->updateQueueEmpty()]);
     }
 }
