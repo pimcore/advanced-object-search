@@ -578,8 +578,10 @@ class Service
     {
         $db = Db::get();
         $idField = DataObjectService::getVersionDependentDatabaseColumnName('id');
+        $pathField = DataObjectService::getVersionDependentDatabaseColumnName('path');
         //need check, if there are sub objects because update on empty result set is too slow
-        $objects = $db->fetchFirstColumn('SELECT `'. $idField .'` FROM objects WHERE `path` LIKE ?', [$object->getFullPath() . '/%']);
+
+        $objects = $db->fetchFirstColumn('SELECT `'. $idField .'` FROM objects WHERE `' . $pathField . '` LIKE ?', [$object->getFullPath() . '/%']);
         if ($objects) {
             $updateStatement = 'UPDATE ' . Installer::QUEUE_TABLE_NAME . ' SET in_queue = 1 WHERE `id` IN ('.implode(',', $objects).')';
             $db->executeQuery($updateStatement);
