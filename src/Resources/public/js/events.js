@@ -17,10 +17,12 @@
  */
 pimcore.events.onAdvancedObjectSearchResult = "pimcore.advancedObjectSearch.result.initialize";
 
-//TODO: delete once support for 10.6 is dropped
+//TODO: delete once support for Pimcore 10.6 is dropped
+
 if(typeof addEventListenerCompatibilityForPlugins === "function") {
     let eventMappings = [];
     eventMappings["onAdvancedObjectSearchResult"] = pimcore.events.onAdvancedObjectSearchResult;
     addEventListenerCompatibilityForPlugins(eventMappings);
-    console.warn("Deprecation: addEventListenerCompatibilityForPlugins will be not supported in 11.");
+    console.warn("Deprecation: addEventListenerCompatibilityForPlugins will be not supported in Pimcore 11.");
+
 }
