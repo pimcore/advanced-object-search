@@ -69,7 +69,7 @@ class ReindexCommand extends ServiceAwareCommand
                 $list->setLimit($elementsPerLoop);
                 $list->setOffset($i * $elementsPerLoop);
 
-                $this->output->writeln('Processing ' . $class->getName() . ': ' . ($list->getOffset() + $elementsPerLoop) . '/' . $elementsTotal);
+                $this->output->writeln('Processing ' . $class->getName() . ': ' . min($list->getOffset() + $elementsPerLoop, $elementsTotal) . '/' . $elementsTotal);
 
                 $objects = $list->load();
                 foreach ($objects as $object) {
