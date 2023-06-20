@@ -88,7 +88,7 @@ pimcore.bundle.advancedObjectSearch.searchConfig.resultPanel = Class.create(pimc
     updateGrid: function (classId) {
         this.classId = classId;
         var classStore = pimcore.globalmanager.get("object_types_store");
-        var classRecord = classStore.findRecord("id", this.classId);
+        var classRecord = classStore.findRecord("id", this.classId, 0, false, false, true);
         if (classRecord) {
             this.selectedClass = classRecord.data.text;
 
