@@ -1,49 +1,55 @@
-bundle_advancedObjectSearch: Zaawansowane wyszukiwanie obiektów
+---
+bundle_advancedObjectSearch: "Zaawansowane wyszukiwanie obiekt\xF3w"
 bundle_advancedObjectSearch_field: Pole
 bundle_advancedObjectSearch_condition: Warunek
 bundle_advancedObjectSearch_term: Fraza
 bundle_advancedObjectSearch_operator: Operator
-bundle_advancedObjectSearch_language: Język
-bundle_advancedObjectSearch_subclass:  Podklasa
-bundle_advancedObjectSearch_filter:  Filtr
-bundle_advancedObjectSearch_filters:  Filtry
-bundle_advancedObjectSearch_type:  Typ
-bundle_advancedObjectSearch_ids:  IDs
-bundle_advancedObjectSearch_results:  Wyniki
-bundle_advancedObjectSearch_fulltextterm:  Fraza Wyszukiwania
-bundle_advancedObjectSearch_save_and_share:  Zapisz i Udostępnij
-bundle_advancedObjectSearch_share:  Udostępnianie
-bundle_advancedObjectSearch_combine_entries_with:  Combine Entries with
-bundle_advancedObjectSearch_combine_entries_with_must:  MUSI
-bundle_advancedObjectSearch_combine_entries_with_should:  POWINIEN
+bundle_advancedObjectSearch_language: "J\u0119zyk"
+bundle_advancedObjectSearch_subclass: Podklasa
+bundle_advancedObjectSearch_filter: Filtr
+bundle_advancedObjectSearch_filters: Filtry
+bundle_advancedObjectSearch_type: Typ
+bundle_advancedObjectSearch_ids: IDs
+bundle_advancedObjectSearch_results: Wyniki
+bundle_advancedObjectSearch_fulltextterm: Fraza Wyszukiwania
+bundle_advancedObjectSearch_save_and_share: "Zapisz i Udost\u0119pnij"
+bundle_advancedObjectSearch_share: "Udost\u0119pnianie"
+bundle_advancedObjectSearch_combine_entries_with: Combine Entries with
+bundle_advancedObjectSearch_combine_entries_with_must: MUSI
+bundle_advancedObjectSearch_combine_entries_with_should: POWINIEN
 bundle_advancedObjectSearch_group: Grupa
 bundle_advancedObjectSearch_save_success: Konfiguracja zapisana poprawnie
-bundle_advancedObjectSearch_save_error: Wystąpił błąd podczas zapisu konfiguracji
-bundle_advancedObjectSearch_category:  Kategoria
-bundle_advancedObjectSearch_open_saved_searches:  Otwórz zapisaną konfigurację
-bundle_advancedObjectSearch_new:  Nowe
-bundle_advancedObjectSearch_search:  Otwórz istniejącą konfigurację
-bundle_advancedObjectSearch_users:  Użytkownicy
-bundle_advancedObjectSearch_owner:  Właściciel
-bundle_advancedObjectSearch_save_as_copy:  Zapisz jako kopia
-bundle_advancedObjectSearch_name_copy_suffix:  (kopia)
-bundle_advancedObjectSearch_delete_error:  Wystąpił błąd podczas usuwania konfiguracji
-bundle_advancedObjectSearch_delete_really:  Czy na pewno chcesz usunąć konfigurację?
-bundle_advancedObjectSearch_add_to_shortcuts:  Dodaj skrót
-bundle_advancedObjectSearch_remove_from_shortcuts:  Usuń skrót
-bundle_advancedObjectSearch_short_cut_error:  Nie można dodać skrótu dla nie zapisanej konfiguracji
-bundle_advancedObjectSearch_ignoreInheritance:  Bez dziedziczenia
-bundle_advancedObjectSearch_date:  Data
-bundle_advancedObjectSearch_updating_index:  Aktualizacja indeksu wyszukiwarki w trakcie
-bundle_advancedsearch_search: Zaawansowane wyszukiwanie obiektów
+bundle_advancedObjectSearch_save_error: "Wyst\u0105pi\u0142 b\u0142\u0105d podczas
+  zapisu konfiguracji"
+bundle_advancedObjectSearch_category: Kategoria
+bundle_advancedObjectSearch_open_saved_searches: "Otw\xF3rz zapisan\u0105 konfiguracj\u0119"
+bundle_advancedObjectSearch_new: Nowe
+bundle_advancedObjectSearch_search: "Otw\xF3rz istniej\u0105c\u0105 konfiguracj\u0119"
+bundle_advancedObjectSearch_users: "U\u017Cytkownicy"
+bundle_advancedObjectSearch_owner: "W\u0142a\u015Bciciel"
+bundle_advancedObjectSearch_save_as_copy: Zapisz jako kopia
+bundle_advancedObjectSearch_name_copy_suffix: (kopia)
+bundle_advancedObjectSearch_delete_error: "Wyst\u0105pi\u0142 b\u0142\u0105d podczas
+  usuwania konfiguracji"
+bundle_advancedObjectSearch_delete_really: "Czy na pewno chcesz usun\u0105\u0107 konfiguracj\u0119?"
+bundle_advancedObjectSearch_add_to_shortcuts: "Dodaj skr\xF3t"
+bundle_advancedObjectSearch_remove_from_shortcuts: "Usu\u0144 skr\xF3t"
+bundle_advancedObjectSearch_short_cut_error: "Nie mo\u017Cna doda\u0107 skr\xF3tu
+  dla nie zapisanej konfiguracji"
+bundle_advancedObjectSearch_ignoreInheritance: Bez dziedziczenia
+bundle_advancedObjectSearch_date: Data
+bundle_advancedObjectSearch_updating_index: Aktualizacja indeksu wyszukiwarki w trakcie
+bundle_advancedsearch_search: "Zaawansowane wyszukiwanie obiekt\xF3w"
 bundle_advancedsearch_operator_lt: mniejszy od
-bundle_advancedsearch_operator_lte: mniejszy lub równy
-bundle_advancedsearch_operator_gt: większy od
-bundle_advancedsearch_operator_gte: większy lub równy
-bundle_advancedsearch_operator_eq: równy
+bundle_advancedsearch_operator_lte: "mniejszy lub r\xF3wny"
+bundle_advancedsearch_operator_gt: "wi\u0119kszy od"
+bundle_advancedsearch_operator_gte: "wi\u0119kszy lub r\xF3wny"
+bundle_advancedsearch_operator_eq: "r\xF3wny"
 bundle_advancedsearch_operator_exists: istnieje
 bundle_advancedsearch_operator_not_exists: nie istnieje
 bundle_advancedsearch_operator_must: musi
 bundle_advancedsearch_operator_must_not: nie musi
 bundle_advancedsearch_operator_should: powinien
 bundle_advancedObjectSearch_roles: Role
+bundle_advancedsearch_table_colum_config: Column
+...
