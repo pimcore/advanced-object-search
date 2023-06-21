@@ -1,45 +1,49 @@
+---
 bundle_advancedObjectSearch: Erweiterte Objektsuche
 bundle_advancedObjectSearch_field: Feld
 bundle_advancedObjectSearch_condition: Bedingung
 bundle_advancedObjectSearch_term: Wert
 bundle_advancedObjectSearch_operator: Operator
 bundle_advancedObjectSearch_language: Sprache
-bundle_advancedObjectSearch_subclass:  Klasse
-bundle_advancedObjectSearch_filter:  Filter
-bundle_advancedObjectSearch_filters:  Filter
-bundle_advancedObjectSearch_type:  Typ
-bundle_advancedObjectSearch_ids:  IDs
-bundle_advancedObjectSearch_results:  Ergebnisse
-bundle_advancedObjectSearch_fulltextterm:  Suchbegriff
-bundle_advancedObjectSearch_save_and_share:  Speichern & Teilen
-bundle_advancedObjectSearch_share:  Teilen
-bundle_advancedObjectSearch_combine_entries_with:  Einträge kombinieren mit
-bundle_advancedObjectSearch_combine_entries_with_must:  MUSS
-bundle_advancedObjectSearch_combine_entries_with_should:  SOLLTE
+bundle_advancedObjectSearch_subclass: Klasse
+bundle_advancedObjectSearch_filter: Filter
+bundle_advancedObjectSearch_filters: Filter
+bundle_advancedObjectSearch_type: Typ
+bundle_advancedObjectSearch_ids: IDs
+bundle_advancedObjectSearch_results: Ergebnisse
+bundle_advancedObjectSearch_fulltextterm: Suchbegriff
+bundle_advancedObjectSearch_save_and_share: Speichern & Teilen
+bundle_advancedObjectSearch_share: Teilen
+bundle_advancedObjectSearch_combine_entries_with: "Eintr\xE4ge kombinieren mit"
+bundle_advancedObjectSearch_combine_entries_with_must: MUSS
+bundle_advancedObjectSearch_combine_entries_with_should: SOLLTE
 bundle_advancedObjectSearch_group: Gruppe
 bundle_advancedObjectSearch_save_success: Suche gespeichert
 bundle_advancedObjectSearch_save_error: Fehler beim Speichern der Suche
-bundle_advancedObjectSearch_category:  Kategorie
-bundle_advancedObjectSearch_open_saved_searches:  Gespeicherte Suchen öffnen
-bundle_advancedObjectSearch_new:  Neue Suche
-bundle_advancedObjectSearch_search:  Gespeicherte Suchen öffnen
-bundle_advancedObjectSearch_users:  Nutzer
-bundle_advancedObjectSearch_owner:  Besitzer
-bundle_advancedObjectSearch_save_as_copy:  Als Kopie speichern
-bundle_advancedObjectSearch_name_copy_suffix:  (Kopie)
-bundle_advancedObjectSearch_delete_error:  Fehler beim löschen der gespeicherten Suche
-bundle_advancedObjectSearch_delete_really:  Möchten Sie die gespeicherte Suche wirklich löschen?
-bundle_advancedObjectSearch_add_to_shortcuts:  Zu Schnellzugriff hinzufügen
-bundle_advancedObjectSearch_remove_from_shortcuts:  Vom Schnellzugriff entfernen
-bundle_advancedObjectSearch_short_cut_error:  Suche kann nicht zum Schnellzugriff hinzugefügt werden. Bitte speichern Sie die Suche erst.
-bundle_advancedObjectSearch_ignoreInheritance:  Keine Vererbung
-bundle_advancedObjectSearch_date:  Datum
-bundle_advancedObjectSearch_updating_index:  Suchindex wird aktualisiert
+bundle_advancedObjectSearch_category: Kategorie
+bundle_advancedObjectSearch_open_saved_searches: "Gespeicherte Suchen \xF6ffnen"
+bundle_advancedObjectSearch_new: Neue Suche
+bundle_advancedObjectSearch_search: "Gespeicherte Suchen \xF6ffnen"
+bundle_advancedObjectSearch_users: Nutzer
+bundle_advancedObjectSearch_owner: Besitzer
+bundle_advancedObjectSearch_save_as_copy: Als Kopie speichern
+bundle_advancedObjectSearch_name_copy_suffix: (Kopie)
+bundle_advancedObjectSearch_delete_error: "Fehler beim l\xF6schen der gespeicherten
+  Suche"
+bundle_advancedObjectSearch_delete_really: "M\xF6chten Sie die gespeicherte Suche
+  wirklich l\xF6schen?"
+bundle_advancedObjectSearch_add_to_shortcuts: "Zu Schnellzugriff hinzuf\xFCgen"
+bundle_advancedObjectSearch_remove_from_shortcuts: Vom Schnellzugriff entfernen
+bundle_advancedObjectSearch_short_cut_error: "Suche kann nicht zum Schnellzugriff
+  hinzugef\xFCgt werden. Bitte speichern Sie die Suche erst."
+bundle_advancedObjectSearch_ignoreInheritance: Keine Vererbung
+bundle_advancedObjectSearch_date: Datum
+bundle_advancedObjectSearch_updating_index: Suchindex wird aktualisiert
 bundle_advancedsearch_search: Erweiterte Objektsuche
 bundle_advancedsearch_operator_lt: kleiner als
 bundle_advancedsearch_operator_lte: kleiner gleich
-bundle_advancedsearch_operator_gt: größer als
-bundle_advancedsearch_operator_gte: größer gleich
+bundle_advancedsearch_operator_gt: "gr\xF6\xDFer als"
+bundle_advancedsearch_operator_gte: "gr\xF6\xDFer gleich"
 bundle_advancedsearch_operator_eq: gleich
 bundle_advancedsearch_operator_exists: existiert
 bundle_advancedsearch_operator_not_exists: existiert nicht
@@ -48,3 +52,4 @@ bundle_advancedsearch_operator_must_not: darf nicht
 bundle_advancedsearch_operator_should: sollte
 bundle_advancedObjectSearch_roles: Rollen
 bundle_advancedsearch_table_colum_config: Spalte
+...
