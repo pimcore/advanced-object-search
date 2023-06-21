@@ -1,0 +1,53 @@
+---
+bundle_advancedObjectSearch: Advanced Object Search
+bundle_advancedObjectSearch_field: Champ
+bundle_advancedObjectSearch_condition: Condition
+bundle_advancedObjectSearch_term: Term
+bundle_advancedObjectSearch_operator: Operator
+bundle_advancedObjectSearch_language: Language
+bundle_advancedObjectSearch_subclass: Class
+bundle_advancedObjectSearch_filter: Filter
+bundle_advancedObjectSearch_filters: Filters
+bundle_advancedObjectSearch_type: Type
+bundle_advancedObjectSearch_ids: IDs
+bundle_advancedObjectSearch_results: Results
+bundle_advancedObjectSearch_fulltextterm: Search Term
+bundle_advancedObjectSearch_save_and_share: Save And Share
+bundle_advancedObjectSearch_share: Sharing
+bundle_advancedObjectSearch_combine_entries_with: Combine Entries with
+bundle_advancedObjectSearch_combine_entries_with_must: MUST
+bundle_advancedObjectSearch_combine_entries_with_should: SHOULD
+bundle_advancedObjectSearch_group: Group
+bundle_advancedObjectSearch_save_success: Search saved successfully
+bundle_advancedObjectSearch_save_error: Error occurred during save search
+bundle_advancedObjectSearch_category: Category
+bundle_advancedObjectSearch_open_saved_searches: Open saved Searches
+bundle_advancedObjectSearch_new: Nouveau
+bundle_advancedObjectSearch_search: Open existing Saved Search
+bundle_advancedObjectSearch_users: Utilisateurs
+bundle_advancedObjectSearch_owner: Owner
+bundle_advancedObjectSearch_save_as_copy: Sauvegarder une copie
+bundle_advancedObjectSearch_name_copy_suffix: (copie)
+bundle_advancedObjectSearch_delete_error: Error during deleting Saved Search
+bundle_advancedObjectSearch_delete_really: Do you really want to delete the Saved
+  Search?
+bundle_advancedObjectSearch_add_to_shortcuts: Add To Short Cuts
+bundle_advancedObjectSearch_remove_from_shortcuts: Remove From Short Cuts
+bundle_advancedObjectSearch_short_cut_error: Cannot add short cut for not saved search
+bundle_advancedObjectSearch_ignoreInheritance: No Inheritance
+bundle_advancedObjectSearch_date: Date
+bundle_advancedObjectSearch_updating_index: Currently updating search index
+bundle_advancedsearch_search: Advanced Object Search
+bundle_advancedsearch_operator_lt: lower than
+bundle_advancedsearch_operator_lte: lower or equal
+bundle_advancedsearch_operator_gt: greater than
+bundle_advancedsearch_operator_gte: greater or equal
+bundle_advancedsearch_operator_eq: equal
+bundle_advancedsearch_operator_exists: exists
+bundle_advancedsearch_operator_not_exists: not exists
+bundle_advancedsearch_operator_must: must
+bundle_advancedsearch_operator_must_not: must not
+bundle_advancedsearch_operator_should: should
+bundle_advancedObjectSearch_roles: "R\xF4les"
+bundle_advancedsearch_table_colum_config: Colonne
+...

@@ -36,16 +36,18 @@ class Version20221130130306 extends BundleAwareMigration
     public function up(Schema $schema): void
     {
         $table = $schema->getTable(Installer::QUEUE_TABLE_NAME)->getName();
-        $query = 'ALTER TABLE %s RENAME COLUMN `o_id` TO `id`;';
-
-        $this->addSql(sprintf($query, $table));
+        if ($table->hasColumn('o_id')) {
+            $query = 'ALTER TABLE %s CHANGE COLUMN `o_id` `id` bigint DEFAULT 0 NOT NULL;';
+            $this->addSql(sprintf($query, $table));
+        }
     }
 
     public function down(Schema $schema): void
     {
         $table = $schema->getTable(Installer::QUEUE_TABLE_NAME)->getName();
-        $query = 'ALTER TABLE %s RENAME COLUMN `id` TO `o_id`;';
-
-        $this->addSql(sprintf($query, $table));
+        if ($table->hasColumn('id')) {
+            $query = 'ALTER TABLE %s CHANGE COLUMN `id` `o_id` bigint DEFAULT 0 NOT NULL;';
+            $this->addSql(sprintf($query, $table));
+        }
     }
 }
