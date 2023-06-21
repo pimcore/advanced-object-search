@@ -1,4 +1,4 @@
-## Extending Filters
+# Extending Filters
 
 The advanced object search enables the definition of custom search filters that can be used to filter the result. This 
 gives the possibility to filter lists of products by article numbers, types or colors e.g. without having to create
