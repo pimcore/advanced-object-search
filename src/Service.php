@@ -131,7 +131,7 @@ class Service
      */
     public function getFieldDefinitionAdapter(ClassDefinition\Data $fieldDefinition, bool $considerInheritance)
     {
-        $fieldType = ($fieldDefinition->fieldtype) ?: $fieldDefinition->getFieldType();
+        $fieldType = $fieldDefinition->getFieldType();
 
         if ($this->filterLocator->has($fieldType)) {
             $adapter = $this->filterLocator->get($fieldType);
