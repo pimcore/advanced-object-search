@@ -131,8 +131,10 @@ class Service
      */
     public function getFieldDefinitionAdapter(ClassDefinition\Data $fieldDefinition, bool $considerInheritance)
     {
-        if ($this->filterLocator->has($fieldDefinition->fieldtype)) {
-            $adapter = $this->filterLocator->get($fieldDefinition->fieldtype);
+        $fieldType = $fieldDefinition->getFieldType();
+
+        if ($this->filterLocator->has($fieldType)) {
+            $adapter = $this->filterLocator->get($fieldType);
         } else {
             $adapter = $this->filterLocator->get('default');
         }
@@ -165,6 +167,7 @@ class Service
             }
 
             $fieldDefinitionAdapter = $this->getFieldDefinitionAdapter($fieldDefinition, $allowInheritance);
+
             $fieldSelectionInformationEntries = array_merge($fieldSelectionInformationEntries, $fieldDefinitionAdapter->getFieldSelectionInformation());
         }
 
