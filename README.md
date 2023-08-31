@@ -10,7 +10,7 @@ Pimcore backend powered by Elasticsearch v8.
 ## Integration into Pimcore
 
 ### Installation and Configuration
-Installer creates all necessary tables. 
+Follow [Installation instructions](./doc/00_Installation.md).
 
 #### Configure Elasticsearch Client 
 Elasticsearch client configuration takes place via [Pimcore Elasticsearch Client Bundle](https://github.com/pimcore/elasticsearch-client) and has two parts. 
