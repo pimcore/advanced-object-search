@@ -217,7 +217,7 @@ class AdminController extends UserAwareController
 
     protected function getCsvFile(string $fileHandle): string
     {
-        return PIMCORE_SYSTEM_TEMP_DIRECTORY . '/' . $fileHandle . '.csv';
+        return $fileHandle . '.csv';
     }
 
     /**
@@ -247,7 +247,8 @@ class AdminController extends UserAwareController
         $jobs = array_chunk($ids, 20);
 
         $fileHandle = uniqid('export-');
-        file_put_contents($this->getCsvFile($fileHandle), '');
+        $storage = Tool\Storage::get('temp');
+        $storage->write($this->getCsvFile($fileHandle), '');
 
         return $this->jsonResponse(['success' => true, 'jobs' => $jobs, 'fileHandle' => $fileHandle]);
     }
