@@ -36,6 +36,6 @@ bin/console pimcore:bundle:install AdvancedObjectSearchBundle
 ```
 
 ## Required Backend User Permission
-To access Advanced Object Search feature, user needs to meet one of following criteria:
-* be an `admin` or
-* have `bundle_advancedsearch_search` permission
+To access the Advanced Object Search feature, a user needs to meet at least one of the following criteria:
+* Be an `admin` user.
+* Have `bundle_advancedsearch_search` permission.
