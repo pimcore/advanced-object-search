@@ -1,10 +1,7 @@
 framework:
     messenger:
         transports:
-            pimcore_index_queues:
-                dsn: 'doctrine://default'
-                options:
-                    queue_name: pimcore_index_queues
+            pimcore_index_queues: "doctrine://default?queue_name=pimcore_index_queues"
 
         routing:
             'AdvancedObjectSearchBundle\Messenger\QueueMessage': pimcore_index_queues
