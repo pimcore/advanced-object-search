@@ -108,6 +108,10 @@ class Table extends DefaultAdapter
         if ($this->isColumnConfigActivated()) {
             // When saving an object the array doesnt have named keys, so first get data for resource
             // and then get the data from resource. This way we have named keys in the data array
+            if (!$object instanceof Concrete) {
+                $object = null;
+            }
+
             $value = $this->fieldDefinition->getDataFromResource($this->fieldDefinition->getDataForResource($value, $object));
         }
 
