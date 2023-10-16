@@ -64,7 +64,8 @@ class Dao extends Model\Dao\AbstractDao
                 }
             }
 
-            Helper::upsert($this->db, self::TABLE_NAME, $data, $this->getPrimaryKey(self::TABLE_NAME));
+            $quoteIdentifiers = \Pimcore\Version::getMajorVersion() >= 11;
+            Helper::upsert($this->db, self::TABLE_NAME, $data, $this->getPrimaryKey(self::TABLE_NAME), $quoteIdentifiers);
 
             $lastInsertId = $this->db->lastInsertId();
             if (!$this->model->getId() && $lastInsertId) {
