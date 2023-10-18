@@ -435,7 +435,7 @@ pimcore.bundle.advancedObjectSearch.searchConfig.resultPanel = Class.create(pimc
             for (var i = 0; i < selectedRows.length; i++) {
                 jobs.push(selectedRows[i].get("id"));
             }
-            this.batchOpen(columnIndex, jobs, append, remove);
+            this.batchOpen(columnIndex, jobs, append, remove, onlySelected);
 
         } else {
 
@@ -467,7 +467,7 @@ pimcore.bundle.advancedObjectSearch.searchConfig.resultPanel = Class.create(pimc
                 success: function (columnIndex, response) {
                     var rdata = Ext.decode(response.responseText);
                     if (rdata.success && rdata.jobs) {
-                        this.batchOpen(columnIndex, rdata.jobs, append, remove);
+                        this.batchOpen(columnIndex, rdata.jobs, append, remove, onlySelected);
                     }
 
                 }.bind(this, columnIndex)
