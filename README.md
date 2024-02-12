@@ -26,7 +26,7 @@ pimcore_elasticsearch_client:
             hosts: ['elastic:9200']
             username: 'elastic'
             password: 'somethingsecret'
-            logger_channel: 'pimcore.elasicsearch'        
+            logger_channel: 'pimcore.elasticsearch'        
 
 
 # Define the client to be used by advanced object search
