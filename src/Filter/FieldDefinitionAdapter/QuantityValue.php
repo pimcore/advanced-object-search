@@ -46,7 +46,7 @@ class QuantityValue extends Numeric implements FieldDefinitionAdapterInterface
                 $this->fieldDefinition->getName(),
                 [
                     'properties' => [
-                        self::ES_MAPPING_PROPERTY_STANDARD => [
+                        self::INDEX_MAPPING_PROPERTY_STANDARD => [
                             'properties' => [
                                 'value' => [
                                     'type' => 'float',
@@ -56,7 +56,7 @@ class QuantityValue extends Numeric implements FieldDefinitionAdapterInterface
                                 ]
                             ]
                         ],
-                        self::ES_MAPPING_PROPERTY_NOT_INHERITED => [
+                        self::INDEX_MAPPING_PROPERTY_NOT_INHERITED => [
                             'properties' => [
                                 'value' => [
                                     'type' => 'float',

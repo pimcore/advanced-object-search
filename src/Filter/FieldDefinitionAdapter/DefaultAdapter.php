@@ -96,13 +96,13 @@ class DefaultAdapter implements FieldDefinitionAdapterInterface
                 $this->fieldDefinition->getName(),
                 [
                     'properties' => [
-                        self::ES_MAPPING_PROPERTY_STANDARD => [
+                        self::INDEX_MAPPING_PROPERTY_STANDARD => [
                             'type' => 'text',
                             'fields' => [
                                 'raw' => [ 'type' => 'keyword' ]
                             ]
                         ],
-                        self::ES_MAPPING_PROPERTY_NOT_INHERITED => [
+                        self::INDEX_MAPPING_PROPERTY_NOT_INHERITED => [
                             'type' => 'text',
                             'fields' => [
                                 'raw' => [ 'type' => 'keyword' ]
@@ -182,11 +182,11 @@ class DefaultAdapter implements FieldDefinitionAdapterInterface
 
             $returnValue = null;
             if ($value) {
-                $returnValue[self::ES_MAPPING_PROPERTY_STANDARD] = $value;
+                $returnValue[self::INDEX_MAPPING_PROPERTY_STANDARD] = $value;
             }
 
             if ($notInheritedValue) {
-                $returnValue[self::ES_MAPPING_PROPERTY_NOT_INHERITED] = $notInheritedValue;
+                $returnValue[self::INDEX_MAPPING_PROPERTY_NOT_INHERITED] = $notInheritedValue;
             }
 
             return $returnValue;
@@ -205,9 +205,9 @@ class DefaultAdapter implements FieldDefinitionAdapterInterface
 
         if ($this->considerInheritance) {
             if ($ignoreInheritance) {
-                $postfix = '.' . self::ES_MAPPING_PROPERTY_NOT_INHERITED;
+                $postfix = '.' . self::INDEX_MAPPING_PROPERTY_NOT_INHERITED;
             } else {
-                $postfix = '.' . self::ES_MAPPING_PROPERTY_STANDARD;
+                $postfix = '.' . self::INDEX_MAPPING_PROPERTY_STANDARD;
             }
         }
 

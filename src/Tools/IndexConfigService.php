@@ -19,7 +19,7 @@ use Psr\Log\LoggerAwareInterface;
 use Psr\Log\LoggerAwareTrait;
 use Psr\Log\LoggerInterface;
 
-class ElasticSearchConfigService implements LoggerAwareInterface
+class IndexConfigService implements LoggerAwareInterface
 {
     use LoggerAwareTrait;
 
@@ -34,7 +34,7 @@ class ElasticSearchConfigService implements LoggerAwareInterface
     protected $indexConfiguration;
 
     /**
-     * ElasticSearchConfigService constructor.
+     * IndexConfigService constructor.
      *
      * @param string $indexNamePrefix
      * @param array $indexConfiguration

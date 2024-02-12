@@ -66,8 +66,8 @@ abstract class AbstractFilterListener implements EventSubscriberInterface
     public static function getSubscribedEvents()
     {
         return [
-            AdvancedObjectSearchEvents::ELASITIC_FILTER => [
-                ['onElasticSearch', 10],
+            AdvancedObjectSearchEvents::SEARCH_FILTER => [
+                ['onIndexSearch', 10],
             ],
 
             AdvancedObjectSearchEvents::LISTING_FILER => [
@@ -76,40 +76,27 @@ abstract class AbstractFilterListener implements EventSubscriberInterface
         ];
     }
 
-    public function onElasticSearch(FilterSearchEvent $event)
+    public function onIndexSearch(FilterSearchEvent $event): void
     {
         if ($this->supports()) {
-            $this->addElasticSearchFilter($event);
+            $this->addIndexSearchFilter($event);
         }
     }
 
-    public function onListing(FilterListingEvent $event)
+    public function onListing(FilterListingEvent $event): void
     {
         if ($this->supports()) {
             $this->addListingFiler($event);
         }
     }
 
-    /**
-     * @return bool
-     */
     abstract protected function supports(): bool;
 
-    /**
-     * @param FilterSearchEvent $event
-     *
-     * @return void
-     */
-    protected function addElasticSearchFilter(FilterSearchEvent $event)
+    protected function addIndexSearchFilter(FilterSearchEvent $event): void
     {
     }
 
-    /**
-     * @param FilterListingEvent $event
-     *
-     * @return void
-     */
-    protected function addListingFiler(FilterListingEvent $event)
+    protected function addListingFiler(FilterListingEvent $event): void
     {
     }
 }

@@ -127,7 +127,6 @@ class AdminController extends UserAwareController
 
             $listClass = '\\Pimcore\\Model\\DataObject\\' . ucfirst($className) . '\\Listing';
 
-            //get ID list from ES Service
             $data = json_decode($request->get('filter'), true);
             $results = $service->doFilter($data['classId'], $data['conditions']['filters'], $data['conditions']['fulltextSearchTerm'], $start, $limit);
 
@@ -166,7 +165,6 @@ class AdminController extends UserAwareController
 
             $list->setCondition(implode(' AND ', $conditionFilters));
 
-            /* @phpstan-ignore-next-line */
             $eventDispatcher->dispatch(new FilterListingEvent($list), AdvancedObjectSearchEvents::LISTING_FILER);
 
             $list->load();
@@ -192,7 +190,6 @@ class AdminController extends UserAwareController
 
         $class = DataObject\ClassDefinition::getById($request->get('classId'));
 
-        //get ID list from ES Service
         $data = json_decode($request->get('filter'), true);
         $results = $service->doFilter($data['classId'], $data['conditions']['filters'] ?? [], $data['conditions']['fulltextSearchTerm'] ?? [], null, 9999);
 
@@ -237,10 +234,9 @@ class AdminController extends UserAwareController
                 $data['conditions']['filters'],
                 $data['conditions']['fulltextSearchTerm'],
                 0,
-                9999 // elastic search cannot export more results than 9999 in one request
+                9999
             );
 
-            //get ID list from ES Service
             $ids = $service->extractIdsFromResult($results);
         }
 

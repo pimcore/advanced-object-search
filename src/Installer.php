@@ -52,31 +52,17 @@ class Installer extends SettingsStoreAwareInstaller
          * The simple backend search can be deactivated from Pimcore 11 on. But it is necessary for the advanced object search,
          * so we have to make sure that it is activated & installed.
          */
-        if (\Pimcore\Version::getMajorVersion() >= 11) {
-            $simpleBackendSearchInstaller = \Pimcore::getContainer()->get(\Pimcore\Bundle\SimpleBackendSearchBundle\Installer::class);
-
-            if (!$simpleBackendSearchInstaller->isInstalled()) {
-                $simpleBackendSearchInstaller->install();
-            }
+        $simpleBackendSearchInstaller = \Pimcore::getContainer()->get(\Pimcore\Bundle\SimpleBackendSearchBundle\Installer::class);
+        if (!$simpleBackendSearchInstaller->isInstalled()) {
+            $simpleBackendSearchInstaller->install();
         }
 
         /**
          * @var Connection $db
          */
         $db = Db::get();
-
-        // TODO: remove this when dropping support for dbal v2/pimcore 10.5, and supporting min DBAL 3.5/4+
-        if (method_exists($db, 'getSchemaManager')) {
-            /* @phpstan-ignore-next-line */
-            $currentSchema = $db->getSchemaManager()->createSchema();
-            /* @phpstan-ignore-next-line */
-            $schema = $db->getSchemaManager()->createSchema();
-        } else {
-            /* @phpstan-ignore-next-line */
-            $currentSchema = $db->createSchemaManager()->introspectSchema();
-            /* @phpstan-ignore-next-line */
-            $schema = $db->createSchemaManager()->introspectSchema();
-        }
+        $currentSchema = $db->createSchemaManager()->introspectSchema();
+        $schema = $db->createSchemaManager()->introspectSchema();
 
         if (! $schema->hasTable(self::QUEUE_TABLE_NAME)) {
             $queueTable = $schema->createTable(self::QUEUE_TABLE_NAME);
@@ -122,19 +108,8 @@ class Installer extends SettingsStoreAwareInstaller
          * @var Connection $db
          */
         $db = Db::get();
-
-        // TODO: remove this when dropping support for dbal v2/pimcore 10.5, and supporting min DBAL 3.5/4+
-        if (method_exists($db, 'getSchemaManager')) {
-            /* @phpstan-ignore-next-line */
-            $currentSchema = $db->getSchemaManager()->createSchema();
-            /* @phpstan-ignore-next-line */
-            $schema = $db->getSchemaManager()->createSchema();
-        } else {
-            /* @phpstan-ignore-next-line */
-            $currentSchema = $db->createSchemaManager()->introspectSchema();
-            /* @phpstan-ignore-next-line */
-            $schema = $db->createSchemaManager()->introspectSchema();
-        }
+        $currentSchema = $db->createSchemaManager()->introspectSchema();
+        $schema = $db->createSchemaManager()->introspectSchema();
 
         $tables = [
             self::QUEUE_TABLE_NAME,

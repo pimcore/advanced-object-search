@@ -25,8 +25,8 @@ use Pimcore\Model\DataObject\Concrete;
 
 interface FieldDefinitionAdapterInterface
 {
-    const ES_MAPPING_PROPERTY_STANDARD = 'standard';
-    const ES_MAPPING_PROPERTY_NOT_INHERITED = 'notInherited';
+    const INDEX_MAPPING_PROPERTY_STANDARD = 'standard';
+    const INDEX_MAPPING_PROPERTY_NOT_INHERITED = 'notInherited';
 
     /**
      * @param Service $service

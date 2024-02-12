@@ -1,6 +1,6 @@
 # Exclude Fields
 
-It is possible to exclude specified fields from the elasticsearch index by extending the services.yaml:
+It is possible to exclude specified fields from the search index by extending the services.yaml:
 ```yaml
 advanced_object_search:
     index_configuration:

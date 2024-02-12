@@ -1,8 +1,14 @@
-# Installation
+# Installation of Advanced Object Search
 
-## Installation Process
-### For Pimcore >= 10.5
-To install Advanced Object Search Bundle for Pimcore 10.5 or higher, follow the three steps below:
+:::info
+
+This bundle is only supported on Pimcore Core Framework 11.
+
+:::
+
+## Installation
+
+To install Advanced Object Search Bundle, follow the three steps below:
 
 1. Install the required dependencies:
 ```bash
@@ -23,15 +29,6 @@ return [
 3. Install the bundle:
 
 ```bash
-bin/console pimcore:bundle:install AdvancedObjectSearchBundle
-```
-
-### For Older Versions
-To install the Advanced Object Search Bundle for older versions of Pimcore, please run the following commands instead:
-
-```bash 
-composer require pimcore/advanced-object-search
-bin/console pimcore:bundle:enable AdvancedObjectSearchBundle
 bin/console pimcore:bundle:install AdvancedObjectSearchBundle
 ```
 
