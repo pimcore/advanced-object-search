@@ -16,7 +16,7 @@ services:
         public: true
         tags: ['controller.service_arguments']
 
-    AdvancedObjectSearchBundle\Tools\ElasticSearchConfigService:
+    AdvancedObjectSearchBundle\Tools\IndexConfigService:
         public: true
         arguments:
             $indexNamePrefix: '%pimcore.advanced_object_search.index_name_prefix%'
@@ -32,6 +32,7 @@ services:
     AdvancedObjectSearchBundle\Service:
         arguments:
             $filterLocator: '@bundle.advanced_object_search.filter_locator'
+            $openSearchClient: '@pimcore.advanced_object_search.opensearch-client'
         calls:
             - [setCoreFieldsConfig, ['%advanced_object_search.core_fields_configuration%']]
         tags:

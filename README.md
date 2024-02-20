@@ -2,36 +2,36 @@
 title: Advanced Object Search
 ---
 
-# Pimcore Advanced Object Search via Elasticsearch
+# Pimcore Advanced Object Search via OpenSearch
 
 Advanced Object Search bundle provides advanced object search in 
-Pimcore backend powered by Elasticsearch v8. 
+Pimcore backend powered by OpenSearch v8. 
 
 ## Integration into Pimcore
 
 ### Installation and Configuration
 Follow [Installation instructions](./doc/00_Installation.md).
 
-#### Configure Elasticsearch Client 
-Elasticsearch client configuration takes place via [Pimcore Elasticsearch Client Bundle](https://github.com/pimcore/elasticsearch-client) and has two parts. 
-1) Configuring an elasticsearch client. 
+#### Configure OpenSearch Client 
+OpenSearch client configuration takes place via [Pimcore OpenSearch Client Bundle](https://github.com/pimcore/opensearch-client) and has two parts. 
+1) Configuring an OpenSearch client. 
 2) Define the client to be used by advanced object search. 
 
 ```yaml
 
-# Configure an elasticsearch client 
-pimcore_elasticsearch_client:
-    es_clients:
+# Configure an OpenSearch client 
+pimcore_open_search_client:
+    clients:
         default:
-            hosts: ['elastic:9200']
-            username: 'elastic'
-            password: 'somethingsecret'
-            logger_channel: 'pimcore.elasticsearch'        
+            hosts: ['https://opensearch:9200']
+            password: 'admin'
+            username: 'admin'
+            ssl_verification: false
 
 
 # Define the client to be used by advanced object search
 advanced_object_search:
-    es_client_name: default  # default is default value here, just need to be specified when other client should be used.
+    client_name: default  # default is default value here, just need to be specified when other client should be used.
 ```
 
 If nothing is configured, a default client connecting to `localhost:9200` is used. 
@@ -54,7 +54,7 @@ for indexing data for the first time.
 
 
 ### GUI
-GUI for creating searches against ES index with
+GUI for creating searches against search index with
 - saving functionality
 - sharing functionality
 
@@ -63,9 +63,9 @@ GUI for creating searches against ES index with
 
 ### Plugin Hooks
 Following event listeners are called automatically
-- `pimcore.dataobject.postUpdate` - data object is updated in ES index, all child objects are added to update queue.
-- `pimcore.dataobject.preDelete`  - data object is deleted from ES index.
-- `pimcore.class.postUpdate`  - ES index mapping is updated or index recreated if necessary.
+- `pimcore.dataobject.postUpdate` - data object is updated in search index, all child objects are added to update queue.
+- `pimcore.dataobject.preDelete`  - data object is deleted from search index.
+- `pimcore.class.postUpdate`  - search index mapping is updated or index recreated if necessary.
 
 ### Pimcore Console
 Functions in Pimcore console.
@@ -252,10 +252,4 @@ advanced_object_search:
 ## Extend Filters in the Result Tab
 
 If you want custom filters in the result tab directly without having to create a new advanced object search every time
-read [here on how to extend the result tab with custom filters.](./doc/01_Extending_Filters.md).
-
-
-## Supported Elasticsearch Versions
-- ElasticSearch 8
-
-
+read [here on how to extend the result tab with custom filters](./doc/01_Extending_Filters.md).

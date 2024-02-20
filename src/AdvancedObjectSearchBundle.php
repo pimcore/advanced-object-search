@@ -15,7 +15,8 @@
 
 namespace AdvancedObjectSearchBundle;
 
-use Pimcore\Bundle\ElasticsearchClientBundle\PimcoreElasticsearchClientBundle;
+use Pimcore\Bundle\OpenSearchClientBundle\PimcoreOpenSearchClientBundle;
+use Pimcore\Bundle\SimpleBackendSearchBundle\PimcoreSimpleBackendSearchBundle;
 use Pimcore\Extension\Bundle\AbstractPimcoreBundle;
 use Pimcore\Extension\Bundle\PimcoreBundleAdminClassicInterface;
 use Pimcore\Extension\Bundle\Traits\BundleAdminClassicTrait;
@@ -102,9 +103,7 @@ class AdvancedObjectSearchBundle extends AbstractPimcoreBundle implements Depend
 
     public static function registerDependentBundles(BundleCollection $collection): void
     {
-        $collection->addBundle(new PimcoreElasticsearchClientBundle());
-        if (\Pimcore\Version::getMajorVersion() >= 11) {
-            $collection->addBundle(\Pimcore\Bundle\SimpleBackendSearchBundle\PimcoreSimpleBackendSearchBundle::class);
-        }
+        $collection->addBundle(new PimcoreOpenSearchClientBundle());
+        $collection->addBundle(new PimcoreSimpleBackendSearchBundle());
     }
 }

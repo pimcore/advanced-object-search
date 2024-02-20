@@ -20,16 +20,15 @@ use AdvancedObjectSearchBundle\Event\FilterSearchEvent;
 use AdvancedObjectSearchBundle\Filter\FieldDefinitionAdapter\FieldDefinitionAdapterInterface;
 use AdvancedObjectSearchBundle\Filter\FieldSelectionInformation;
 use AdvancedObjectSearchBundle\Filter\FilterEntry;
-use AdvancedObjectSearchBundle\Tools\ElasticSearchConfigService;
+use AdvancedObjectSearchBundle\Tools\IndexConfigService;
 use Doctrine\DBAL\Exception as DoctrineDbalException;
-use Elastic\Elasticsearch\Client;
-use Elastic\Elasticsearch\Exception\ClientResponseException;
 use Exception;
 use ONGR\ElasticsearchDSL\BuilderInterface;
 use ONGR\ElasticsearchDSL\Query\Compound\BoolQuery;
 use ONGR\ElasticsearchDSL\Query\FullText\QueryStringQuery;
 use ONGR\ElasticsearchDSL\Query\TermLevel\WildcardQuery;
 use ONGR\ElasticsearchDSL\Search;
+use OpenSearch\Client as OpenSearchClient;
 use Pimcore\Db;
 use Pimcore\Model\DataObject\ClassDefinition;
 use Pimcore\Model\DataObject\Concrete;
@@ -44,79 +43,23 @@ use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
 class Service
 {
-    /**
-     * @var null|User
-     */
-    protected $user;
+    protected ?User $user;
 
-    /**
-     * @var LoggerInterface
-     */
-    protected $logger;
+    protected array $coreFieldsConfig;
 
-    /**
-     * @var Client
-     */
-    protected $esClient;
+    private string $indexNamePrefix;
 
-    /**
-     * @var ContainerInterface
-     */
-    protected $filterLocator;
-
-    /**
-     * @var EventDispatcherInterface
-     */
-    protected $eventDispatcher;
-
-    /**
-     * @var Translator
-     */
-    protected $translator;
-
-    /**
-     * @var array
-     */
-    protected $coreFieldsConfig;
-
-    /**
-     * @var string
-     */
-    protected $indexNamePrefix;
-
-    /**
-     * @var ElasticSearchConfigService
-     */
-    protected $elasticSearchConfigService;
-
-    /**
-     * Service constructor.
-     *
-     * @param LoggerInterface $logger
-     * @param TokenStorageUserResolver $userResolver
-     * @param Client $esClient
-     * @param ContainerInterface $filterLocator
-     * @param EventDispatcherInterface $eventDispatcher
-     * @param Translator $translator
-     * @param ElasticSearchConfigService $elasticSearchConfigService
-     */
     public function __construct(
-        LoggerInterface $logger,
-        TokenStorageUserResolver $userResolver,
-        Client $esClient,
-        ContainerInterface $filterLocator,
-        EventDispatcherInterface $eventDispatcher,
-        Translator $translator,
-        ElasticSearchConfigService $elasticSearchConfigService
+        private LoggerInterface $logger,
+        private TokenStorageUserResolver $userResolver,
+        private ContainerInterface $filterLocator,
+        private EventDispatcherInterface $eventDispatcher,
+        private Translator $translator,
+        private IndexConfigService $indexConfigService,
+        private OpenSearchClient $openSearchClient
     ) {
-        $this->user = $userResolver->getUser();
-        $this->logger = $logger;
-        $this->esClient = $esClient;
-        $this->filterLocator = $filterLocator;
-        $this->eventDispatcher = $eventDispatcher;
-        $this->translator = $translator;
-        $this->indexNamePrefix = $elasticSearchConfigService->getIndexNamePrefix();
-        $this->elasticSearchConfigService = $elasticSearchConfigService;
+        $this->user = $this->userResolver->getUser();
+        $this->indexNamePrefix = $indexConfigService->getIndexNamePrefix();
     }
 
     /**
@@ -326,7 +269,7 @@ class Service
     public function updateMapping(ClassDefinition $classDefinition)
     {
         if ($this->isExcludedClass($classDefinition->getName())) {
-            if ($this->esClient->indices()->exists(['index' => $this->getIndexName($classDefinition->getName())])->asBool()) {
+            if ($this->openSearchClient->indices()->exists(['index' => $this->getIndexName($classDefinition->getName())])) {
                 try {
                     $this->deleteIndex($classDefinition);
                 } catch (Exception $e) {
@@ -337,7 +280,7 @@ class Service
             return true;
         }
 
-        if (!$this->esClient->indices()->exists(['index' => $this->getIndexName($classDefinition->getName())])->asBool()) {
+        if (!$this->openSearchClient->indices()->exists(['index' => $this->getIndexName($classDefinition->getName())])) {
             $this->createIndex($classDefinition);
         }
 
@@ -371,11 +314,11 @@ class Service
     protected function doUpdateMapping(ClassDefinition $classDefinition)
     {
         $mapping = $this->generateMapping($classDefinition);
-        $this->esClient->indices()->putMapping($mapping);
+        $this->openSearchClient->indices()->putMapping($mapping);
     }
 
     /**
-     * creates new elastic search index and deletes old one if exists
+     * creates new search index and deletes old one if exists
      *
      * @param ClassDefinition $classDefinition
      */
@@ -392,19 +335,19 @@ class Service
         try {
             $this->logger->info("Creating index $indexName for class " . $classDefinition->getName());
 
-            $this->esClient->indices()->create([
+            $this->openSearchClient->indices()->create([
                 'index' => $indexName,
                 'body' => [
                     'settings' => [
                         'index' => [
                             'mapping' => [
                                 'nested_fields' => [
-                                    'limit' => (int) $this->elasticSearchConfigService->getIndexConfiguration(
+                                    'limit' => (int) $this->indexConfigService->getIndexConfiguration(
                                         'nested_fields_limit'
                                     )
                                 ],
                                 'total_fields' => [
-                                    'limit' => (int) $this->elasticSearchConfigService->getIndexConfiguration(
+                                    'limit' => (int) $this->indexConfigService->getIndexConfiguration(
                                         'total_fields_limit'
                                     )
                                 ]
@@ -418,26 +361,11 @@ class Service
         }
     }
 
-    /**
-     * deletes index
-     *
-     * @param ClassDefinition $classDefinition
-     *
-     * @throws Exception
-     */
-    public function deleteIndex(ClassDefinition $classDefinition)
+    public function deleteIndex(ClassDefinition $classDefinition): void
     {
         $indexName = $this->getIndexName($classDefinition->getName());
         $this->logger->info("Deleting index $indexName for class " . $classDefinition->getName());
-        try {
-            $this->esClient->indices()->delete(['index' => $indexName]);
-        } catch (ClientResponseException $e) {
-            if ($e->getCode() === 404) {
-                $this->logger->info('Cannot delete index ' . $indexName . ' because it doesn\'t exist.');
-            } else {
-                throw $e;
-            }
-        }
+        $this->openSearchClient->indices()->delete(['index' => $indexName]);
     }
 
     /**
@@ -467,7 +395,6 @@ class Service
 
         return [
             'index' => $this->getIndexName($object->getClassName()),
-            'type' => '_doc',
             'id' => $object->getId(),
             'body' => $data
         ];
@@ -491,12 +418,11 @@ class Service
 
         $params = [
             'index' => $this->getIndexName($object->getClassName()),
-            'type' => '_doc',
             'id' => $object->getId()
         ];
 
         try {
-            $indexDocument = $this->esClient->get($params);
+            $indexDocument = $this->openSearchClient->get($params);
             $originalChecksum = $indexDocument['_source']['checksum'] ?? -1;
         } catch (Exception $e) {
             $this->logger->debug($e->getMessage());
@@ -506,9 +432,9 @@ class Service
         $indexUpdateParams = $this->getIndexData($object);
 
         if ($indexUpdateParams['body']['checksum'] != $originalChecksum) {
-            $this->esClient->index($indexUpdateParams);
+            $this->openSearchClient->index($indexUpdateParams);
             $this->logger->info('Updates es index for data object ' . $object->getId());
-            $this->esClient->index($indexUpdateParams);
+            $this->openSearchClient->index($indexUpdateParams);
         } else {
             $this->logger->info('Not updating index for data object ' . $object->getId() . ' - nothing has changed.');
         }
@@ -543,31 +469,15 @@ class Service
         }
     }
 
-    /**
-     * Delete given object from index
-     *
-     * @param Concrete $object
-     *
-     * @throws Exception
-     */
-    public function doDeleteFromIndex(Concrete $object)
+    public function doDeleteFromIndex(Concrete $object): void
     {
         $params = [
             'index' => $this->getIndexName($object->getClassName()),
-            'type' => '_doc',
             'id' => $object->getId()
         ];
 
-        try {
-            $this->logger->info('Deleting data object ' . $object->getId() . ' from es index.');
-            $this->esClient->delete($params);
-        } catch (ClientResponseException $e) {
-            if ($e->getCode() === 404) {
-                $this->logger->info('Cannot delete data object ' . $object->getId() . ' from es index because not found.');
-            } else {
-                throw $e;
-            }
-        }
+        $this->logger->info('Deleting data object ' . $object->getId() . ' from es index.');
+        $this->openSearchClient->delete($params);
     }
 
     /**
@@ -603,7 +513,7 @@ class Service
      */
     public function processUpdateQueue($limit = 200)
     {
-        $workerId = uniqid();
+        $workerId = uniqid('', true);
         $entries = $this->initUpdateQueue($workerId, $limit);
         if (!empty($entries)) {
             return $this->doProcessUpdateQueue($workerId, $entries);
@@ -814,7 +724,7 @@ class Service
             $search->addQuery(new QueryStringQuery($fullTextQuery));
         }
 
-        $this->eventDispatcher->dispatch(new FilterSearchEvent($search), AdvancedObjectSearchEvents::ELASITIC_FILTER); // @phpstan-ignore-line
+        $this->eventDispatcher->dispatch(new FilterSearchEvent($search), AdvancedObjectSearchEvents::SEARCH_FILTER);
 
         if ($size) {
             $search->setSize($size);
@@ -836,7 +746,7 @@ class Service
 
         $this->logger->info('Filter-Params: ' . json_encode($params));
 
-        return $this->esClient->search($params)->asArray();
+        return $this->openSearchClient->search($params);
     }
 
     /**
@@ -858,8 +768,8 @@ class Service
             }
             if (count($forbiddenObjectPaths) > 0) {
                 $boolFilter = new BoolQuery();
-
-                for ($i = 0; $i < count($forbiddenObjectPaths); $i++) {
+                $iMax = count($forbiddenObjectPaths);
+                for ($i = 0; $i < $iMax; $i++) {
                     $boolFilter->add(new WildcardQuery('path', $forbiddenObjectPaths[$i] . '*'), BoolQuery::MUST);
                 }
 
@@ -891,7 +801,7 @@ class Service
      */
     protected function isExcludedClass(string $className): bool
     {
-        $excludeClasses = $this->elasticSearchConfigService->getIndexConfiguration('exclude_classes');
+        $excludeClasses = $this->indexConfigService->getIndexConfiguration('exclude_classes');
 
         return isset($excludeClasses)
             && in_array($className, $excludeClasses);
@@ -905,7 +815,7 @@ class Service
      */
     protected function isExcludedField(string $className, string $fieldName): bool
     {
-        $excludeFields = $this->elasticSearchConfigService->getIndexConfiguration('exclude_fields');
+        $excludeFields = $this->indexConfigService->getIndexConfiguration('exclude_fields');
 
         return isset($excludeFields[$className])
             && in_array($fieldName, $excludeFields[$className]);

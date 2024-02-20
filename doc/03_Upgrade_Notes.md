@@ -18,3 +18,7 @@
 ### Upgrade to v5.0.0
 - Removed Elasticsearch v6 and v7 support
 - Changed elasticsearch client configuration
+
+### Upgrade to v6.0.0
+- Removed Pimcore 10 support
+- Removed Elasticsearch support and added OpenSearch support (Kept ONGR Elasticsearch library as it is compatible with OpenSearch)

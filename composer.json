@@ -9,16 +9,16 @@
   "minimum-stability": "dev",
   "require": {
     "handcraftedinthealps/elasticsearch-dsl": "^8.0",
-    "pimcore/elasticsearch-client": "^1.0",
-    "pimcore/pimcore": "^10.6 || ^11.0",
-    "symfony/config": "^5.2.0 || ^6.1",
-    "symfony/console": "^5.2.0 || ^6.1",
-    "symfony/dependency-injection": "^5.2.0 || ^6.1",
-    "symfony/event-dispatcher": "^5.2.0 || ^6.1",
-    "symfony/http-foundation": "^5.2.0 || ^6.1",
-    "symfony/http-kernel": "^5.2.0 || ^6.1",
-    "symfony/messenger": "^5.2.0 || ^6.1",
-    "symfony/routing": "^5.2.0 || ^6.1"
+    "pimcore/opensearch-client": "^1.x-dev",
+    "pimcore/pimcore": "^11.1",
+    "symfony/config": "^6.2",
+    "symfony/console": "^6.2",
+    "symfony/dependency-injection": "^6.2",
+    "symfony/event-dispatcher": "^6.2",
+    "symfony/http-foundation": "^6.2",
+    "symfony/http-kernel": "^6.2",
+    "symfony/messenger": "^6.2",
+    "symfony/routing": "^6.2"
   },
   "require-dev": {
     "phpstan/phpstan": "^1.9.11"

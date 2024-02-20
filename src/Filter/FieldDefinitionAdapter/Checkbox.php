@@ -41,23 +41,23 @@ class Checkbox extends DefaultAdapter implements FieldDefinitionAdapterInterface
                 $this->fieldDefinition->getName(),
                 [
                     'properties' => [
-                        self::ES_MAPPING_PROPERTY_STANDARD => [
+                        self::INDEX_MAPPING_PROPERTY_STANDARD => [
                             'type' => 'boolean',
                         ],
-                        self::ES_MAPPING_PROPERTY_NOT_INHERITED => [
+                        self::INDEX_MAPPING_PROPERTY_NOT_INHERITED => [
                             'type' => 'boolean',
                         ]
                     ]
                 ]
             ];
-        } else {
-            return [
-                $this->fieldDefinition->getName(),
-                [
-                    'type' => 'boolean',
-                ]
-            ];
         }
+
+        return [
+            $this->fieldDefinition->getName(),
+            [
+                'type' => 'boolean',
+            ]
+        ];
     }
 
     /**
@@ -94,8 +94,8 @@ class Checkbox extends DefaultAdapter implements FieldDefinitionAdapterInterface
             $notInheritedValue = $this->doGetIndexDataValue($object, true);
 
             $returnValue = [];
-            $returnValue[self::ES_MAPPING_PROPERTY_STANDARD] = $value;
-            $returnValue[self::ES_MAPPING_PROPERTY_NOT_INHERITED] = $notInheritedValue;
+            $returnValue[self::INDEX_MAPPING_PROPERTY_STANDARD] = $value;
+            $returnValue[self::INDEX_MAPPING_PROPERTY_NOT_INHERITED] = $notInheritedValue;
 
             return $returnValue;
         } else {

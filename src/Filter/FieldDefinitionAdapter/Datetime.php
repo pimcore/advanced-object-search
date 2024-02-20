@@ -40,10 +40,10 @@ class Datetime extends Numeric implements FieldDefinitionAdapterInterface
                 $this->fieldDefinition->getName(),
                 [
                     'properties' => [
-                        self::ES_MAPPING_PROPERTY_STANDARD => [
+                        self::INDEX_MAPPING_PROPERTY_STANDARD => [
                             'type' => 'date',
                         ],
-                        self::ES_MAPPING_PROPERTY_NOT_INHERITED => [
+                        self::INDEX_MAPPING_PROPERTY_NOT_INHERITED => [
                             'type' => 'date',
                         ]
                     ]

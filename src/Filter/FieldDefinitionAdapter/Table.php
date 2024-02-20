@@ -31,7 +31,6 @@ use Pimcore\Model\DataObject\Concrete;
 class Table extends DefaultAdapter
 {
     /**
-     * @url https://www.elastic.co/guide/en/elasticsearch/reference/current/ignore-above.html
      *
      * The value for ignore_above is the character count, but Lucene counts bytes. If you use UTF-8 text with
      * many non-ASCII characters, you may want to set the limit to 32766 / 4 = 8191 since UTF-8 characters may
@@ -66,7 +65,7 @@ class Table extends DefaultAdapter
                 $mapping['properties'][$columnConfig['key']] = ['type' => 'keyword'];
             }
         } else {
-            // https://www.elastic.co/guide/en/elasticsearch/reference/current/ignore-above.html
+            // https://opensearch.org/docs/2.11/field-types/supported-field-types/keyword/
             $mapping['ignore_above'] = self::IGNORE_ABOVE;
         }
 
@@ -75,19 +74,19 @@ class Table extends DefaultAdapter
                 $this->fieldDefinition->getName(),
                 [
                     'properties' => [
-                        self::ES_MAPPING_PROPERTY_STANDARD => $mapping,
-                        self::ES_MAPPING_PROPERTY_NOT_INHERITED => $mapping
+                        self::INDEX_MAPPING_PROPERTY_STANDARD => $mapping,
+                        self::INDEX_MAPPING_PROPERTY_NOT_INHERITED => $mapping
                     ]
                 ]
             ];
 
             return $inheritanceMapping;
-        } else {
-            return [
-                $this->fieldDefinition->getName(),
-                $mapping
-            ];
         }
+
+        return [
+            $this->fieldDefinition->getName(),
+            $mapping
+        ];
     }
 
     /**
@@ -140,11 +139,11 @@ class Table extends DefaultAdapter
 
             $returnValue = null;
             if ($value) {
-                $returnValue[self::ES_MAPPING_PROPERTY_STANDARD] = $value;
+                $returnValue[self::INDEX_MAPPING_PROPERTY_STANDARD] = $value;
             }
 
             if ($notInheritedValue) {
-                $returnValue[self::ES_MAPPING_PROPERTY_NOT_INHERITED] = $notInheritedValue;
+                $returnValue[self::INDEX_MAPPING_PROPERTY_NOT_INHERITED] = $notInheritedValue;
             }
 
             return $returnValue;
@@ -163,9 +162,9 @@ class Table extends DefaultAdapter
 
         if ($this->considerInheritance) {
             if ($ignoreInheritance) {
-                $postfix = '.' . self::ES_MAPPING_PROPERTY_NOT_INHERITED;
+                $postfix = '.' . self::INDEX_MAPPING_PROPERTY_NOT_INHERITED;
             } else {
-                $postfix = '.' . self::ES_MAPPING_PROPERTY_STANDARD;
+                $postfix = '.' . self::INDEX_MAPPING_PROPERTY_STANDARD;
             }
         }
 

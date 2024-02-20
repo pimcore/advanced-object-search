@@ -11,12 +11,12 @@ In order to create a custom filter for an advanced object search you have to fol
 ## Event Listeners
 
 To add your custom condition(s) to the search, you have two possibilities
-- add the condition(s) to the elastic search directly
-- add the condition(s) to the pimcore listing which will load all objects the elastic search found
+- add the condition(s) to the index search directly
+- add the condition(s) to the pimcore listing which will load all objects the index search found
 
 For convenience reasons you can extend the ``AdvancedObjectSearchBundle\Event\AbstractFilterListener`` and register it
 as an event subscriber in your container. This class provides you with two methods
-- ``public function onElasticSearch(FilterSearchEvent $event)`` to add condition(s) to the elastic search
+- ``public function onIndexSearch(FilterSearchEvent $event)`` to add condition(s) to the index search
 - ``public function onListing(FilterListingEvent $event)`` to add the condition(s) to the pimcore listing
 
 If you use the ``AbstractFilterListener`` you have to implement the ``supports(): bool`` method, which defines if the 
@@ -35,10 +35,10 @@ class ArticleNumber extends AbstractFilterListener
 }
 ```
 
-### Elastic Search Conditions
+### Index Search Conditions
 
-Condition(s) can be added to the elastic search directly by creating an event listener that listens to the 
-``advanced_object_search.elastic_filter`` event (``AdvancedObjectSearchBundle\Event::ELASITIC_FILTER``). As mentioned
+Condition(s) can be added to the index search directly by creating an event listener that listens to the 
+``advanced_object_search.index_filter`` event (``AdvancedObjectSearchBundle\Event::INDEX_FILTER``). As mentioned
 before the ``AbstractFilterListener`` already takes care of that for you, if you extend it.
 
 Here is an example for the article number filter again, if your product has a field called ``artno``. As defined in the
@@ -47,9 +47,9 @@ previous example, this condition will only be added if the ``articleNumber`` que
 ```php
 class ArticleNumber extends AbstractFilterListener
 {
-    protected function addElasticSearchFilter(FilterSearchEvent $event)
+    protected function addIndexSearchFilter(FilterSearchEvent $event)
     {
-        $path = "artno." . DefaultAdapter::ES_MAPPING_PROPERTY_STANDARD;
+        $path = "artno." . DefaultAdapter::INDEX_MAPPING_PROPERTY_STANDARD;
 
         $query = new BoolQuery();
         $query->add(
@@ -64,14 +64,14 @@ class ArticleNumber extends AbstractFilterListener
 ### Listing Conditions
 
 In some cases you might have to join your result with another table before you can actually achieve the filter that you
-want. For that you can use the listing filter. The elastic search only returns the object ids which were found. These
+want. For that you can use the listing filter. The index search only returns the object ids which were found. These
 will be loaded using a basic pimcore listing of that class which enables you to add more mysql queries to that listing.
 
 For that you can use the ``advanced_object_search.listing_filter`` event (``AdvancedObjectSearchBundle\Event::LISTING_FILER``).
 
-Here is an example to filter for the article number as well, but with the listing instead of the elastic search. Keep
+Here is an example to filter for the article number as well, but with the listing instead of the index search. Keep
 in mind that this resolves in more overhead and less performant searches, only use this if you actually have to join 
-your result to filter. If the data is available in elastic search use Elastic Search Conditions instead.
+your result to filter. If the data is available in index search use Index Search Conditions instead.
 
 ```php
 class ArticleNumber extends AbstractFilterListener

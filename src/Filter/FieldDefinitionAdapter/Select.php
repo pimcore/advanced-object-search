@@ -45,8 +45,8 @@ class Select extends DefaultAdapter implements FieldDefinitionAdapterInterface
                 $this->fieldDefinition->getName(),
                 [
                     'properties' => [
-                        self::ES_MAPPING_PROPERTY_STANDARD => ['type' => 'keyword'],
-                        self::ES_MAPPING_PROPERTY_NOT_INHERITED => ['type' => 'keyword']
+                        self::INDEX_MAPPING_PROPERTY_STANDARD => ['type' => 'keyword'],
+                        self::INDEX_MAPPING_PROPERTY_NOT_INHERITED => ['type' => 'keyword']
                     ]
                 ]
             ];
