@@ -795,6 +795,34 @@ class Service
      * @param string $classId
      * @param array $filters
      * @param BuilderInterface|string $fullTextQuery
+     *
+     * @return array
+     *
+     * @throws Exception
+     */
+    public function doFilterNoLimit($classId, array $filters, $fullTextQuery): array
+    {
+        $from = 0;
+        $size = 1000;
+        $ids = [];
+
+        while($results = $this->doFilter(
+            $classId,
+            $filters,
+            $fullTextQuery,
+            $from,
+            $size
+        )){
+            $from += $size;
+            $ids = array_merge($this->extractIdsFromResult($results), $ids);
+        };
+        return $ids;
+    }
+
+    /**
+     * @param string $classId
+     * @param array $filters
+     * @param BuilderInterface|string $fullTextQuery
      * @param int $from
      * @param int $size
      *
