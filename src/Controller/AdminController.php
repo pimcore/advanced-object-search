@@ -233,7 +233,7 @@ class AdminController extends UserAwareController
         $data = json_decode($request->get('filter'), true);
 
         if (empty($ids = $request->get('ids', false))) {
-            $ids = $service->doFilterNoLimit(
+            $ids = $service->getIdsFromFilterNoLimit(
                 $data['classId'],
                 $data['conditions']['filters'],
                 $data['conditions']['fulltextSearchTerm']

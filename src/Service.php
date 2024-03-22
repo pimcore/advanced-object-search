@@ -30,6 +30,7 @@ use ONGR\ElasticsearchDSL\Query\Compound\BoolQuery;
 use ONGR\ElasticsearchDSL\Query\FullText\QueryStringQuery;
 use ONGR\ElasticsearchDSL\Query\TermLevel\WildcardQuery;
 use ONGR\ElasticsearchDSL\Search;
+use ONGR\ElasticsearchDSL\Sort\FieldSort;
 use Pimcore\Db;
 use Pimcore\Model\DataObject\ClassDefinition;
 use Pimcore\Model\DataObject\Concrete;
@@ -800,23 +801,58 @@ class Service
      *
      * @throws Exception
      */
-    public function doFilterNoLimit($classId, array $filters, $fullTextQuery): array
+    public function getIdsFromFilterNoLimit($classId, array $filters, $fullTextQuery): array
     {
-        $from = 0;
-        $size = 1000;
-        $ids = [];
+        $search = $this->getDoFilter($classId, $filters, $fullTextQuery);
+        $sort = new FieldSort('id', 'asc');
 
-        while($results = $this->doFilter(
-            $classId,
-            $filters,
-            $fullTextQuery,
-            $from,
-            $size
-        )){
-            $from += $size;
-            $ids = array_merge($this->extractIdsFromResult($results), $ids);
-        };
+        $search->addSort($sort);
+
+        $classDefinition = \Pimcore\Model\DataObject\ClassDefinition::getById($classId);
+        $params = [
+            'index' => $this->getIndexName($classDefinition->getName()),
+            'track_total_hits' => true,
+            'rest_total_hits_as_int' => true,
+            'body' => $search->toArray()
+        ];
+
+        $this->logger->info('Filter-Params: ' . json_encode($params));
+
+        $ids = [];
+        do {
+            $results = $this->esClient->search($params)->asArray();
+            $total = $results['hits']['total'];
+            $searchAfter = end($results['hits']['hits'])['sort'];
+            $search->setSearchAfter($searchAfter);
+            $params['body'] = $search->toArray();
+            $ids = array_unique(array_merge($this->extractIdsFromResult($results), $ids));
+
+        } while ($total !== count($ids));
+
         return $ids;
+    }
+
+
+
+    public function getDoFilter($classId, array $filters, $fullTextQuery): Search
+    {
+        $classDefinition = \Pimcore\Model\DataObject\ClassDefinition::getById($classId);
+
+        $search = $this->getFilter($classDefinition, $filters);
+
+        if ($fullTextQuery instanceof BuilderInterface) {
+            $search->addQuery($fullTextQuery);
+        } elseif (!empty($fullTextQuery)) {
+            $search->addQuery(new QueryStringQuery($fullTextQuery));
+        }
+
+        $this->eventDispatcher->dispatch(new FilterSearchEvent($search), AdvancedObjectSearchEvents::ELASITIC_FILTER); // @phpstan-ignore-line
+
+        if ($this->user) {
+            $this->addPermissionsExcludeFilter($search);
+        }
+
+        return $search;
     }
 
     /**
@@ -834,15 +870,7 @@ class Service
     {
         $classDefinition = \Pimcore\Model\DataObject\ClassDefinition::getById($classId);
 
-        $search = $this->getFilter($classDefinition, $filters);
-
-        if ($fullTextQuery instanceof BuilderInterface) {
-            $search->addQuery($fullTextQuery);
-        } elseif (!empty($fullTextQuery)) {
-            $search->addQuery(new QueryStringQuery($fullTextQuery));
-        }
-
-        $this->eventDispatcher->dispatch(new FilterSearchEvent($search), AdvancedObjectSearchEvents::ELASITIC_FILTER); // @phpstan-ignore-line
+        $search = $this->getDoFilter($classId, $filters, $fullTextQuery);
 
         if ($size) {
             $search->setSize($size);
