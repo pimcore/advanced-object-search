@@ -233,16 +233,11 @@ class AdminController extends UserAwareController
         $data = json_decode($request->get('filter'), true);
 
         if (empty($ids = $request->get('ids', false))) {
-            $results = $service->doFilter(
+            $ids = $service->getIdsFromFilterNoLimit(
                 $data['classId'],
                 $data['conditions']['filters'],
-                $data['conditions']['fulltextSearchTerm'],
-                0,
-                9999 // elastic search cannot export more results than 9999 in one request
+                $data['conditions']['fulltextSearchTerm']
             );
-
-            //get ID list from ES Service
-            $ids = $service->extractIdsFromResult($results);
         }
 
         $jobs = array_chunk($ids, 20);
