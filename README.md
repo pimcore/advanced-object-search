@@ -5,7 +5,7 @@ title: Advanced Object Search
 # Pimcore Advanced Object Search via OpenSearch
 
 Advanced Object Search bundle provides advanced object search in 
-Pimcore backend powered by OpenSearch v8. 
+Pimcore backend powered by OpenSearch. 
 
 ## Integration into Pimcore
 
