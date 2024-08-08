@@ -48,27 +48,27 @@ class AdminController extends UserAwareController
      */
     public function getFieldsAction(Request $request, Service $service): JsonResponse
     {
-        $type = strip_tags($request->get('type'));
+        $type = strip_tags($request->query->getString('type'));
 
         $allowInheritance = false;
 
         switch ($type) {
             case 'class':
-                $classId = strip_tags($request->get('class_id'));
+                $classId = strip_tags($request->query->getString('class_id'));
                 $definition = DataObject\ClassDefinition::getById($classId);
                 $allowInheritance = $definition->getAllowInherit();
                 break;
 
             case 'fieldcollection':
-                $key = strip_tags($request->get('key'));
+                $key = strip_tags($request->query->getString('key'));
                 $definition = DataObject\Fieldcollection\Definition::getByKey($key);
                 break;
 
             case 'objectbrick':
-                $key = strip_tags($request->get('key'));
+                $key = strip_tags($request->query->getString('key'));
                 $definition = DataObject\Objectbrick\Definition::getByKey($key);
 
-                $classId = strip_tags($request->get('class_id'));
+                $classId = strip_tags($request->query->getString('class_id'));
                 $classDefinition = DataObject\ClassDefinition::getById($classId);
                 $allowInheritance = $classDefinition->getAllowInherit();
 
@@ -94,7 +94,7 @@ class AdminController extends UserAwareController
      */
     public function gridProxyAction(Request $request, Service $service, EventDispatcherInterface $eventDispatcher): JsonResponse | Response
     {
-        $requestedLanguage = $request->get('language');
+        $requestedLanguage = $request->request->get('language');
         if ($requestedLanguage) {
             if ($requestedLanguage != 'default') {
                 $request->setLocale($requestedLanguage);
@@ -108,26 +108,17 @@ class AdminController extends UserAwareController
         } else {
 
             // get list of objects
-            $class = DataObject\ClassDefinition::getById($request->get('classId'));
+            $class = DataObject\ClassDefinition::getById($request->query->getString('classId'));
             $className = $class->getName();
 
-            $fields = [];
-            if ($request->get('fields')) {
-                $fields = $request->get('fields');
-            }
+            $fields = $request->request->all('fields');
 
-            $start = 0;
-            $limit = 20;
-            if ($request->get('limit')) {
-                $limit = $request->get('limit');
-            }
-            if ($request->get('start')) {
-                $start = $request->get('start');
-            }
+            $limit = $request->request->getInt('limit', 20);
+            $start = $request->request->getInt('start');
 
             $listClass = '\\Pimcore\\Model\\DataObject\\' . ucfirst($className) . '\\Listing';
 
-            $data = json_decode($request->get('filter'), true);
+            $data = json_decode($request->request->getString('filter'), true);
             $results = $service->doFilter($data['classId'], $data['conditions']['filters'], $data['conditions']['fulltextSearchTerm'], $start, $limit);
 
             $total = $service->extractTotalCountFromResult($results);
@@ -248,10 +239,10 @@ class AdminController extends UserAwareController
      */
     public function saveAction(Request $request): JsonResponse
     {
-        $data = $request->get('data');
+        $data = $request->request->getString('data');
         $data = json_decode($data);
 
-        $id = (intval($request->get('id')));
+        $id = $request->request->getInt('id');
         if ($id) {
             $savedSearch = SavedSearch::getById($id);
         } else {
@@ -278,7 +269,7 @@ class AdminController extends UserAwareController
      */
     public function deleteAction(Request $request): JsonResponse
     {
-        $id = intval($request->get('id'));
+        $id = $request->request->getInt('id');
         $savedSearch = SavedSearch::getById($id);
 
         if ($savedSearch) {
@@ -297,18 +288,15 @@ class AdminController extends UserAwareController
     {
         $user = $this->getPimcoreUser();
 
-        $query = $request->get('query');
+        $query = $request->query->getString('query');
         if ($query == '*') {
             $query = '';
         }
 
         $query = str_replace('%', '*', $query);
 
-        $offset = intval($request->get('start'));
-        $limit = intval($request->get('limit'));
-
-        $offset = $offset ? $offset : 0;
-        $limit = $limit ? $limit : 50;
+        $offset = $request->query->getInt('start');
+        $limit = $request->query->getInt('limit', 50);
 
         $db = Db::get();
         $searcherList = new SavedSearch\Listing();
@@ -366,7 +354,7 @@ class AdminController extends UserAwareController
         }
 
         // only get the real total-count when the limit parameter is given otherwise use the default limit
-        if ($request->get('limit')) {
+        if ($request->query->has('limit')) {
             $totalMatches = $searcherList->getTotalCount();
         } else {
             $totalMatches = count($results);
@@ -380,7 +368,7 @@ class AdminController extends UserAwareController
      */
     public function loadSearchAction(Request $request): JsonResponse
     {
-        $id = intval($request->get('id'));
+        $id = $request->query->getInt('id');
         $savedSearch = SavedSearch::getById($id);
         if ($savedSearch) {
             $config = json_decode($savedSearch->getConfig(), true);
@@ -470,7 +458,7 @@ class AdminController extends UserAwareController
      */
     public function toggleShortCutAction(Request $request): JsonResponse
     {
-        $id = intval($request->get('id'));
+        $id = $request->request->getInt('id');
         $savedSearch = SavedSearch::getById($id);
         if ($savedSearch) {
             $user = $this->getPimcoreUser();
