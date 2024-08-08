@@ -38,7 +38,7 @@ abstract class AbstractFilterListener implements EventSubscriberInterface
 
         $this->service = $service;
         if ($request) {
-            $this->parameters = new ParameterBag(json_decode($request->get('customFilter'), true) ?: []);
+            $this->parameters = new ParameterBag(json_decode($request->request->getString('customFilter'), true) ?: []);
         } else {
             $this->parameters = new ParameterBag([]);
         }

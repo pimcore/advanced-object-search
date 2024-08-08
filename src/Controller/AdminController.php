@@ -103,7 +103,7 @@ class AdminController extends UserAwareController
             $requestedLanguage = $request->getLocale();
         }
 
-        if ($request->get('data')) {
+        if ($request->request->get('data')) {
             return $this->forward('Pimcore\Bundle\AdminBundle\Controller\Admin\DataObject\DataObjectController::gridProxyAction', [], $request->query->all());
         } else {
 
@@ -211,13 +211,13 @@ class AdminController extends UserAwareController
      */
     public function getExportJobsAction(Request $request, Service $service): JsonResponse
     {
-        if ($request->get('language')) {
-            $request->setLocale($request->get('language'));
+        if ($request->request->has('language')) {
+            $request->setLocale($request->request->getString('language'));
         }
 
-        $data = json_decode($request->get('filter'), true);
+        $data = json_decode($request->request->get('filter'), true);
 
-        if (empty($ids = $request->get('ids', false))) {
+        if (empty($ids = $request->request->get('ids', false))) {
             $ids = $service->getIdsFromFilterNoLimit(
                 $data['classId'],
                 $data['conditions']['filters'],
