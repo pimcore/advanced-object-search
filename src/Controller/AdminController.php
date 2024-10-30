@@ -173,13 +173,13 @@ class AdminController extends UserAwareController
      */
     public function getBatchJobsAction(Request $request, Service $service): JsonResponse
     {
-        if ($request->get('language')) {
-            $request->setLocale($request->get('language'));
+        if ($request->request->getString('language')) {
+            $request->setLocale($request->request->getString('language'));
         }
 
-        $class = DataObject\ClassDefinition::getById($request->get('classId'));
+        $class = DataObject\ClassDefinition::getById($request->request->get('classId'));
 
-        $data = json_decode($request->get('filter'), true);
+        $data = json_decode($request->request->getString('filter'), true);
         $results = $service->doFilter($data['classId'], $data['conditions']['filters'] ?? [], $data['conditions']['fulltextSearchTerm'] ?? [], null, 9999);
 
         $ids = $service->extractIdsFromResult($results);
@@ -192,8 +192,8 @@ class AdminController extends UserAwareController
         $list->setCondition($idField . ' IN (' . implode(',', $ids) . ')');
         $list->setOrderKey(' FIELD('. $idField .', ' . implode(',', $ids) . ')', false);
 
-        if ($request->get('objecttype')) {
-            $list->setObjectTypes([$request->get('objecttype')]);
+        if ($request->request->getString('objecttype')) {
+            $list->setObjectTypes([$request->request->getString('objecttype')]);
         }
 
         $jobs = $list->loadIdList();
@@ -217,7 +217,7 @@ class AdminController extends UserAwareController
 
         $data = json_decode($request->request->get('filter'), true);
 
-        if (empty($ids = $request->request->get('ids', false))) {
+        if (empty($ids = $request->request->all('ids'))) {
             $ids = $service->getIdsFromFilterNoLimit(
                 $data['classId'],
                 $data['conditions']['filters'],
