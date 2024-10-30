@@ -94,7 +94,7 @@ class AdminController extends UserAwareController
      */
     public function gridProxyAction(Request $request, Service $service, EventDispatcherInterface $eventDispatcher): JsonResponse | Response
     {
-        $requestedLanguage = $request->request->get('language');
+        $requestedLanguage = $request->request->getString('language');
         if ($requestedLanguage) {
             if ($requestedLanguage != 'default') {
                 $request->setLocale($requestedLanguage);
@@ -103,7 +103,7 @@ class AdminController extends UserAwareController
             $requestedLanguage = $request->getLocale();
         }
 
-        if ($request->request->get('data')) {
+        if ($request->request->has('data')) {
             return $this->forward('Pimcore\Bundle\AdminBundle\Controller\Admin\DataObject\DataObjectController::gridProxyAction', [], $request->query->all());
         } else {
 
@@ -177,7 +177,7 @@ class AdminController extends UserAwareController
             $request->setLocale($request->request->getString('language'));
         }
 
-        $class = DataObject\ClassDefinition::getById($request->request->get('classId'));
+        $class = DataObject\ClassDefinition::getById($request->request->getString('classId'));
 
         $data = json_decode($request->request->getString('filter'), true);
         $results = $service->doFilter($data['classId'], $data['conditions']['filters'] ?? [], $data['conditions']['fulltextSearchTerm'] ?? [], null, 9999);
@@ -215,7 +215,7 @@ class AdminController extends UserAwareController
             $request->setLocale($request->request->getString('language'));
         }
 
-        $data = json_decode($request->request->get('filter'), true);
+        $data = json_decode($request->request->getString('filter'), true);
 
         if (empty($ids = $request->request->all('ids'))) {
             $ids = $service->getIdsFromFilterNoLimit(
