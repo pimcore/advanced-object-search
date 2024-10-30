@@ -480,7 +480,8 @@ pimcore.bundle.advancedObjectSearch.searchConfig.resultPanel = Class.create(pimc
         var jobs = [];
 
         var fields = this.getGridConfig().columns;
-        var fieldKeys = Object.keys(fields);
+        var fieldKeys = this.mapRequestParameter(fields); 
+
 
         //create the ids array which contains chosen rows to export
         var ids = [];
@@ -509,7 +510,8 @@ pimcore.bundle.advancedObjectSearch.searchConfig.resultPanel = Class.create(pimc
                 var rdata = Ext.decode(response.responseText);
 
                 var fields = this.getGridConfig().columns;
-                var fieldKeys = Object.keys(fields);
+				var fieldKeys = this.mapRequestParameter(fields); 
+
 
                 if (rdata.success && rdata.jobs) {
                     this.exportProcess(rdata.jobs, rdata.fileHandle, fieldKeys, true, settings, exportType);
@@ -517,6 +519,24 @@ pimcore.bundle.advancedObjectSearch.searchConfig.resultPanel = Class.create(pimc
 
             }.bind(this)
         });
+    },
+   
+	mapRequestParameter: function(fields )
+    {
+        var fieldKeys = Object.keys(fields);
+        var fieldKeys2 = [];
+        for(var i = 0; i < fieldKeys.length; i++) {
+            var field = fields[fieldKeys[i]];
+            if(!field.hidden) {
+                var fc = {
+                    key: fieldKeys[i],
+                    label: field.fieldConfig.label,
+
+                };
+                fieldKeys2.push(fc);
+            }
+        }
+        return JSON.stringify(fieldKeys2);
     },
 
     openColumnConfig: function () {

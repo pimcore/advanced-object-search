@@ -472,6 +472,10 @@ class Service
 
     public function doDeleteFromIndex(Concrete $object): void
     {
+        if ($this->isExcludedClass($object->getClassName())) {
+            return;
+        }
+
         $params = [
             'index' => $this->getIndexName($object->getClassName()),
             'id' => $object->getId()
