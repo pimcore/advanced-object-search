@@ -2,40 +2,19 @@
 title: Advanced Object Search
 ---
 
-# Pimcore Advanced Object Search via OpenSearch
+# Pimcore Advanced Object Search via OpenSearch or Elasticsearch
 
 Advanced Object Search bundle provides advanced object search in 
-Pimcore backend powered by OpenSearch. 
+Pimcore backend powered by search index technology (OpenSearch or Elasticsearch). 
 
 ## Integration into Pimcore
 
 ### Installation and Configuration
 Follow [Installation instructions](./doc/00_Installation.md).
 
-#### Configure OpenSearch Client 
-OpenSearch client configuration takes place via [Pimcore OpenSearch Client Bundle](https://github.com/pimcore/opensearch-client) and has two parts. 
-1) Configuring an OpenSearch client. 
-2) Define the client to be used by advanced object search. 
-
-```yaml
-
-# Configure an OpenSearch client 
-pimcore_open_search_client:
-    clients:
-        default:
-            hosts: ['https://opensearch:9200']
-            password: 'admin'
-            username: 'admin'
-            ssl_verification: false
-
-
-# Define the client to be used by advanced object search
-advanced_object_search:
-    client_name: default  # default is default value here, just need to be specified when other client should be used.
-```
-
-If nothing is configured, a default client connecting to `localhost:9200` is used. 
-
+#### Configure Search Client 
+Setup search client configuration in your Symfony configuration files (e.g. `config.yaml`).
+See [OpenSearch Client Setup](./doc/04_Opensearch.md) or [Elasticsearch Client Setup](./doc/05_Elasticsearch.md) for more information.
 
 #### Configure Advanced Object Search
 Before starting, setup at least following configuration in symfony configuration tree: 
@@ -69,7 +48,7 @@ Following event listeners are called automatically
 
 ### Pimcore Console
 Functions in Pimcore console.
-- `advanced-object-search:process-update-queue` --> processes whole update queue of es search index.
+- `advanced-object-search:process-update-queue` --> processes whole update queue of search index.
 - `advanced-object-search:re-index` --> Reindex all data objects of given class. Does not delete index first or resets update queue.
 - `advanced-object-search:update-mapping` --> Deletes and recreates mapping of given classes. Resets update queue for given class.
 

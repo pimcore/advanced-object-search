@@ -35,6 +35,7 @@ services:
             $openSearchClient: '@pimcore.advanced_object_search.opensearch-client'
         calls:
             - [setCoreFieldsConfig, ['%advanced_object_search.core_fields_configuration%']]
+            - [setSearchClientInterface, ['@pimcore.advanced_object_search.search-client']]
         tags:
             - { name: monolog.logger, channel: pimcore_advanced_object_search }
 

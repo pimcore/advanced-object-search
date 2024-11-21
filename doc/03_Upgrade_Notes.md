@@ -22,3 +22,13 @@
 ### Upgrade to v6.0.0
 - Removed Pimcore 10 support
 - Removed Elasticsearch support and added OpenSearch support (Kept ONGR Elasticsearch library as it is compatible with OpenSearch)
+
+### Upgrade to v6.1.0
+- Added support for Elasticsearch in parallel to Opensearch. Opensearch remains the default search technology. If you are using Elasticsearch, you need to update your symfony configuration as follows:
+```yml 
+advanced_object_search:
+    client_name: default
+    client_type: 'elasticsearch'
+```
+- Introduced new service alias `pimcore.advanced_object_search.search-client`. This will replace deprecated alias `pimcore.advanced_object_search.opensearch-client` which will be removed in the next major version.
+  The new service alias can be used to inject the search client into your services. This search client is an instance of `Pimcore\SearchClient\SearchClientInterface` which is a common interface for OpenSearch and Elasticsearch clients.

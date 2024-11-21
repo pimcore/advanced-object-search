@@ -36,6 +36,7 @@ use Pimcore\Model\DataObject\Concrete;
 use Pimcore\Model\DataObject\Fieldcollection\Definition;
 use Pimcore\Model\DataObject\Service as DataObjectService;
 use Pimcore\Model\User;
+use Pimcore\SearchClient\SearchClientInterface;
 use Pimcore\Security\User\TokenStorageUserResolver;
 use Pimcore\Translation\Translator;
 use Psr\Container\ContainerInterface;
@@ -50,6 +51,8 @@ class Service
 
     private string $indexNamePrefix;
 
+    private ?SearchClientInterface $searchClient = null;
+
     public function __construct(
         private LoggerInterface $logger,
         private TokenStorageUserResolver $userResolver,
@@ -61,6 +64,12 @@ class Service
     ) {
         $this->user = $this->userResolver->getUser();
         $this->indexNamePrefix = $indexConfigService->getIndexNamePrefix();
+    }
+
+    // ToDo Remove this and inject SearchClientInterface directly in version 7.0
+    public function setSearchClientInterface(SearchClientInterface $searchClient): void
+    {
+        $this->searchClient = $searchClient;
     }
 
     /**
@@ -270,7 +279,7 @@ class Service
     public function updateMapping(ClassDefinition $classDefinition)
     {
         if ($this->isExcludedClass($classDefinition->getName())) {
-            if ($this->openSearchClient->indices()->exists(['index' => $this->getIndexName($classDefinition->getName())])) {
+            if ($this->existsIndicesRequest(['index' => $this->getIndexName($classDefinition->getName())])) {
                 try {
                     $this->deleteIndex($classDefinition);
                 } catch (Exception $e) {
@@ -281,7 +290,7 @@ class Service
             return true;
         }
 
-        if (!$this->openSearchClient->indices()->exists(['index' => $this->getIndexName($classDefinition->getName())])) {
+        if (!$this->existsIndicesRequest(['index' => $this->getIndexName($classDefinition->getName())])) {
             $this->createIndex($classDefinition);
         }
 
@@ -315,7 +324,12 @@ class Service
     protected function doUpdateMapping(ClassDefinition $classDefinition)
     {
         $mapping = $this->generateMapping($classDefinition);
-        $this->openSearchClient->indices()->putMapping($mapping);
+        if ($this->searchClient === null) {
+            $this->openSearchClient->indices()->putMapping($mapping);
+            return;
+        }
+
+        $this->searchClient->putIndexMapping($mapping);
     }
 
     /**
@@ -336,7 +350,7 @@ class Service
         try {
             $this->logger->info("Creating index $indexName for class " . $classDefinition->getName());
 
-            $this->openSearchClient->indices()->create([
+            $this->doIndicesRequest('create', [
                 'index' => $indexName,
                 'body' => [
                     'settings' => [
@@ -366,7 +380,7 @@ class Service
     {
         $indexName = $this->getIndexName($classDefinition->getName());
         $this->logger->info("Deleting index $indexName for class " . $classDefinition->getName());
-        $this->openSearchClient->indices()->delete(['index' => $indexName]);
+        $this->doIndicesRequest('delete', ['index' => $indexName]);
     }
 
     /**
@@ -423,7 +437,7 @@ class Service
         ];
 
         try {
-            $indexDocument = $this->openSearchClient->get($params);
+            $indexDocument = $this->getClient()->get($params);
             $originalChecksum = $indexDocument['_source']['checksum'] ?? -1;
         } catch (Exception $e) {
             $this->logger->debug($e->getMessage());
@@ -433,9 +447,9 @@ class Service
         $indexUpdateParams = $this->getIndexData($object);
 
         if ($indexUpdateParams['body']['checksum'] != $originalChecksum) {
-            $this->openSearchClient->index($indexUpdateParams);
+            $this->getClient()->index($indexUpdateParams);
             $this->logger->info('Updates es index for data object ' . $object->getId());
-            $this->openSearchClient->index($indexUpdateParams);
+            $this->getClient()->index($indexUpdateParams);
         } else {
             $this->logger->info('Not updating index for data object ' . $object->getId() . ' - nothing has changed.');
         }
@@ -482,7 +496,7 @@ class Service
         ];
 
         $this->logger->info('Deleting data object ' . $object->getId() . ' from es index.');
-        $this->openSearchClient->delete($params);
+        $this->getClient()->delete($params);
     }
 
     /**
@@ -734,7 +748,7 @@ class Service
 
         $ids = [];
         do {
-            $results = $this->openSearchClient->search($params);
+            $results = $this->getClient()->search($params);
             $total = $results['hits']['total'];
             $searchAfter = end($results['hits']['hits'])['sort'];
             $search->setSearchAfter($searchAfter);
@@ -803,7 +817,7 @@ class Service
 
         $this->logger->info('Filter-Params: ' . json_encode($params));
 
-        return $this->openSearchClient->search($params);
+        return $this->getClient()->search($params);
     }
 
     /**
@@ -876,5 +890,36 @@ class Service
 
         return isset($excludeFields[$className])
             && in_array($fieldName, $excludeFields[$className]);
+    }
+
+    // ToDo Remove this and use SearchClientInterface directly in version 7.0
+    private function getClient(): SearchClientInterface|OpenSearchClient
+    {
+        if ($this->searchClient !== null) {
+            return $this->searchClient;
+        }
+
+        return $this->openSearchClient;
+    }
+
+    // ToDo Remove this and use SearchClientInterface directly in version 7.0
+    private function existsIndicesRequest(array $params): bool
+    {
+        if ($this->searchClient === null) {
+            return $this->openSearchClient->indices()->exists($params);
+        }
+
+        return $this->searchClient->existsIndex($params);
+    }
+
+    // ToDo Remove this and use SearchClientInterface directly in version 7.0
+    private function doIndicesRequest(string $method, array $params): void
+    {
+        if ($this->searchClient === null) {
+            $this->openSearchClient->indices()->$method($params);
+        }
+
+        $method .= 'Index';
+        $this->searchClient->$method($params);
     }
 }

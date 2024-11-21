@@ -15,6 +15,7 @@
 
 namespace AdvancedObjectSearchBundle\DependencyInjection;
 
+use AdvancedObjectSearchBundle\Enum\ClientType;
 use Symfony\Component\Config\Definition\Builder\TreeBuilder;
 use Symfony\Component\Config\Definition\ConfigurationInterface;
 
@@ -41,8 +42,13 @@ class Configuration implements ConfigurationInterface
                     ->info('Prefix for index names')
                 ->end()
                 ->scalarNode('client_name')
-                    ->info('Name of OpenSearch client configuration to be used.')
+                    ->info('Name of search client configuration to be used.')
                     ->defaultValue('default')
+                ->end()
+                ->enumNode('client_type')
+                    ->info('Type of search client to be used.')
+                    ->values([ClientType::OPEN_SEARCH->value, ClientType::ELASTIC_SEARCH->value])
+                    ->defaultValue(ClientType::ELASTIC_SEARCH->value)
                 ->end()
                 ->arrayNode('index_configuration')
                     ->info('Add mapping between data object type and service implementation for field definition adapter')
