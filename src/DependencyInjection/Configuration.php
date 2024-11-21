@@ -48,7 +48,7 @@ class Configuration implements ConfigurationInterface
                 ->enumNode('client_type')
                     ->info('Type of search client to be used.')
                     ->values([ClientType::OPEN_SEARCH->value, ClientType::ELASTIC_SEARCH->value])
-                    ->defaultValue(ClientType::ELASTIC_SEARCH->value)
+                    ->defaultValue(ClientType::OPEN_SEARCH->value)
                 ->end()
                 ->arrayNode('index_configuration')
                     ->info('Add mapping between data object type and service implementation for field definition adapter')
