@@ -326,6 +326,7 @@ class Service
         $mapping = $this->generateMapping($classDefinition);
         if ($this->searchClient === null) {
             $this->openSearchClient->indices()->putMapping($mapping);
+
             return;
         }
 
@@ -893,7 +894,7 @@ class Service
     }
 
     // ToDo Remove this and use SearchClientInterface directly in version 7.0
-    private function getClient(): SearchClientInterface|OpenSearchClient
+    private function getClient(): SearchClientInterface | OpenSearchClient
     {
         if ($this->searchClient !== null) {
             return $this->searchClient;
