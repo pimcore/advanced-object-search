@@ -26,16 +26,20 @@ services:
         tags:
             - { name: monolog.logger, channel: advanced_object_search.es }
 
+    bundle.advanced_object_search.service.legacy_factory:
+        class: AdvancedObjectSearchBundle\Factory\OpenSearch\LegacyServiceFactory
+        arguments:
+            $client: '@pimcore.advanced_object_search.search-client'
+
     bundle.advanced_object_search.service:
         alias: AdvancedObjectSearchBundle\Service
 
     AdvancedObjectSearchBundle\Service:
+        factory: ['@bundle.advanced_object_search.service.legacy_factory', 'create']
         arguments:
             $filterLocator: '@bundle.advanced_object_search.filter_locator'
-            $openSearchClient: '@pimcore.advanced_object_search.opensearch-client'
         calls:
             - [setCoreFieldsConfig, ['%advanced_object_search.core_fields_configuration%']]
-            - [setSearchClientInterface, ['@pimcore.advanced_object_search.search-client']]
         tags:
             - { name: monolog.logger, channel: pimcore_advanced_object_search }
 

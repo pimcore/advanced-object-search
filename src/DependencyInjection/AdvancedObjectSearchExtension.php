@@ -66,15 +66,16 @@ class AdvancedObjectSearchExtension extends ConfigurableExtension implements Pre
 
         $definition = $container->getDefinition(UpdateQueueProcessor::class);
         $definition->setArgument('$messengerQueueActivated', $config['messenger_queue_processing']['activated']);
-
-        $openSearchClientId = 'pimcore.open_search_client.' . $config['client_name'];
-        $container->setAlias('pimcore.advanced_object_search.opensearch-client', $openSearchClientId)
-            ->setDeprecated(
-                'pimcore/advanced-object-search',
-                '6.1',
-                'The "%alias_id%" service alias is deprecated and will be removed in version 7.0. ' .
-                'Please use "pimcore.advanced_object_search.search-client" instead.'
-            );
+        if ($config['client_type'] === ClientType::OPEN_SEARCH->value) {
+            $openSearchClientId = 'pimcore.open_search_client.' . $config['client_name'];
+            $container->setAlias('pimcore.advanced_object_search.opensearch-client', $openSearchClientId)
+                ->setDeprecated(
+                    'pimcore/advanced-object-search',
+                    '6.1',
+                    'The "%alias_id%" service alias is deprecated and will be removed in version 7.0. ' .
+                    'Please use "pimcore.advanced_object_search.search-client" instead.'
+                );
+        }
 
         $clientId = $this->getDefaultSearchClientId($config);
         $container->setAlias('pimcore.advanced_object_search.search-client', $clientId);
