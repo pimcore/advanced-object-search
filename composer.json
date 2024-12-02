@@ -9,9 +9,9 @@
   "minimum-stability": "dev",
   "require": {
     "handcraftedinthealps/elasticsearch-dsl": "^8.0",
-    "pimcore/opensearch-client": "^1.x-dev",
-    "pimcore/elasticsearch-client": "^1.x-dev",
-    "pimcore/pimcore": "11.x-dev",
+    "pimcore/opensearch-client": "^1.1",
+    "pimcore/elasticsearch-client": "^1.1",
+    "pimcore/pimcore": "^11.5",
     "symfony/config": "^6.2",
     "symfony/console": "^6.2",
     "symfony/dependency-injection": "^6.2",
