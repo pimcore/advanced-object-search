@@ -35,7 +35,7 @@ bin/console pimcore:bundle:install AdvancedObjectSearchBundle
 ```
 
 **Warning:**
-Make sure your classes are not using any object data type names as `checksum` as this is currently a reserved field name for the search index.
+Before proceeding, please make sure your classes are not using any object data type named as `checksum` as this is currently a reserved field name for the search index.
 
 ## Required Backend User Permission
 To access the Advanced Object Search feature, a user needs to meet at least one of the following criteria:
