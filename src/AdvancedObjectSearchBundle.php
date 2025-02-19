@@ -15,6 +15,8 @@
 
 namespace AdvancedObjectSearchBundle;
 
+use AdvancedObjectSearchBundle\DependencyInjection\AdvancedObjectSearchExtension;
+use Pimcore\Bundle\AdminBundle\DependencyInjection\PimcoreAdminExtension;
 use Pimcore\Bundle\ElasticsearchClientBundle\PimcoreElasticsearchClientBundle;
 use Pimcore\Bundle\OpenSearchClientBundle\PimcoreOpenSearchClientBundle;
 use Pimcore\Bundle\SimpleBackendSearchBundle\PimcoreSimpleBackendSearchBundle;
@@ -24,6 +26,7 @@ use Pimcore\Extension\Bundle\Traits\BundleAdminClassicTrait;
 use Pimcore\Extension\Bundle\Traits\PackageVersionTrait;
 use Pimcore\HttpKernel\Bundle\DependentBundleInterface;
 use Pimcore\HttpKernel\BundleCollection\BundleCollection;
+use Symfony\Component\DependencyInjection\Extension\ExtensionInterface;
 
 class AdvancedObjectSearchBundle extends AbstractPimcoreBundle implements DependentBundleInterface, PimcoreBundleAdminClassicInterface
 {
@@ -36,6 +39,11 @@ class AdvancedObjectSearchBundle extends AbstractPimcoreBundle implements Depend
     protected function getComposerPackageName(): string
     {
         return 'pimcore/advanced-object-search';
+    }
+
+    public function getContainerExtension(): ExtensionInterface
+    {
+        return new AdvancedObjectSearchExtension();
     }
 
     /**
