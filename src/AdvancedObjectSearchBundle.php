@@ -16,7 +16,6 @@
 namespace AdvancedObjectSearchBundle;
 
 use AdvancedObjectSearchBundle\DependencyInjection\AdvancedObjectSearchExtension;
-use Pimcore\Bundle\AdminBundle\DependencyInjection\PimcoreAdminExtension;
 use Pimcore\Bundle\ElasticsearchClientBundle\PimcoreElasticsearchClientBundle;
 use Pimcore\Bundle\OpenSearchClientBundle\PimcoreOpenSearchClientBundle;
 use Pimcore\Bundle\SimpleBackendSearchBundle\PimcoreSimpleBackendSearchBundle;
