@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -75,7 +76,7 @@ class IndexUpdateListener
         try {
             $this->service->deleteIndex($classDefinition);
         } catch (\Exception $e) {
-            Logger::err($e);
+            Logger::err($e->getMessage());
         }
     }
 }

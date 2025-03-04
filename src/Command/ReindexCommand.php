@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Pimcore
@@ -76,7 +77,7 @@ class ReindexCommand extends ServiceAwareCommand
                     try {
                         $this->service->doUpdateIndexData($object, true);
                     } catch (\Exception $e) {
-                        $this->writeError($e);
+                        $this->writeError($e->getMessage());
                     }
                 }
                 \Pimcore::collectGarbage();
