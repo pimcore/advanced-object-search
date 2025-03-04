@@ -75,7 +75,7 @@ class IndexUpdateListener
         try {
             $this->service->deleteIndex($classDefinition);
         } catch (\Exception $e) {
-            Logger::err($e);
+            Logger::err($e->getMessage());
         }
     }
 }
