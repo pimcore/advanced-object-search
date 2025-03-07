@@ -497,8 +497,16 @@ class Service
             'id' => $object->getId()
         ];
 
-        $this->logger->info('Deleting data object ' . $object->getId() . ' from es index.');
-        $this->getClient()->delete($params);
+        try {
+            $exists = $this->getClient()->get($params);
+        } catch (Exception $e){
+            $exists = false;
+            $this->logger->debug($e->getMessage());
+        }
+        if($exists) {
+            $this->logger->info('Deleting data object ' . $object->getId() . ' from es index.');
+            $this->getClient()->delete($params);
+        }
     }
 
     /**
