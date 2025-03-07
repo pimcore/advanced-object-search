@@ -17,6 +17,8 @@
  */
 pimcore.events.onAdvancedObjectSearchResult = "pimcore.advancedObjectSearch.result.initialize";
 
+pimcore.events.onAdvancedObjectSearchResultRowContextMenu = "pimcore.advancedObjectSearch.result.onRowContextMenu";
+
 //TODO: delete once support for Pimcore 10.6 is dropped
 
 if(typeof addEventListenerCompatibilityForPlugins === "function") {

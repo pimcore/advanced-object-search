@@ -399,6 +399,16 @@ pimcore.bundle.advancedObjectSearch.searchConfig.resultPanel = Class.create(pimc
             }));
         }
 
+        const prepareOnRowContextmenu = new CustomEvent(pimcore.events.onAdvancedObjectSearchResultRowContextMenu, {
+            detail: {
+                menu: menu,
+                grid: this,
+                selectedRows: selectedRows
+            }
+        });
+
+        document.dispatchEvent(prepareOnRowContextmenu);
+
         e.stopEvent();
         menu.showAt(e.pageX, e.pageY);
     },
