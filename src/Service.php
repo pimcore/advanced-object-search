@@ -499,11 +499,11 @@ class Service
 
         try {
             $exists = $this->getClient()->get($params);
-        } catch (Exception $e){
+        } catch (Exception $e) {
             $exists = false;
             $this->logger->debug($e->getMessage());
         }
-        if($exists) {
+        if ($exists) {
             $this->logger->info('Deleting data object ' . $object->getId() . ' from es index.');
             $this->getClient()->delete($params);
         }
