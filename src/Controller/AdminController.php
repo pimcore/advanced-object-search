@@ -33,20 +33,17 @@ use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\Session\Attribute\AttributeBagInterface;
-use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Routing\Attribute\Route;
 
 /**
  * Class AdminController
- *
- * @Route("/admin")
  */
+#[Route('/admin')]
 class AdminController extends UserAwareController
 {
     use JsonHelperTrait;
 
-    /**
-     * @Route("/get-fields")
-     */
+    #[Route('/get-fields')]
     public function getFieldsAction(Request $request, Service $service): JsonResponse
     {
         $type = strip_tags($request->query->getString('type'));
@@ -90,9 +87,7 @@ class AdminController extends UserAwareController
         return $this->jsonResponse(['data' => $fields]);
     }
 
-    /**
-     * @Route("/grid-proxy")
-     */
+    #[Route('/grid-proxy')]
     public function gridProxyAction(Request $request, Service $service, EventDispatcherInterface $eventDispatcher): JsonResponse | Response
     {
         $requestedLanguage = $request->request->getString('language');
@@ -169,9 +164,7 @@ class AdminController extends UserAwareController
         }
     }
 
-    /**
-     * @Route("/get-batch-jobs")
-     */
+    #[Route('/get-batch-jobs')]
     public function getBatchJobsAction(Request $request, Service $service): JsonResponse
     {
         if ($request->request->getString('language')) {
@@ -207,9 +200,7 @@ class AdminController extends UserAwareController
         return $fileHandle . '.csv';
     }
 
-    /**
-     * @Route("/get-export-jobs")
-     */
+    #[Route('/get-export-jobs')]
     public function getExportJobsAction(Request $request, Service $service): JsonResponse
     {
         if ($request->request->has('language')) {
@@ -235,9 +226,7 @@ class AdminController extends UserAwareController
         return $this->jsonResponse(['success' => true, 'jobs' => $jobs, 'fileHandle' => $fileHandle]);
     }
 
-    /**
-     * @Route("/save")
-     */
+    #[Route('/save')]
     public function saveAction(Request $request): JsonResponse
     {
         $data = $request->request->getString('data');
@@ -265,9 +254,7 @@ class AdminController extends UserAwareController
         return $this->jsonResponse(['success' => true, 'id' => $savedSearch->getId()]);
     }
 
-    /**
-     * @Route("/delete")
-     */
+    #[Route('/delete')]
     public function deleteAction(Request $request): JsonResponse
     {
         $id = $request->request->getInt('id');
@@ -282,9 +269,7 @@ class AdminController extends UserAwareController
         return $this->jsonResponse(['success' => false, 'message' => "Saved Search with $id not found."]);
     }
 
-    /**
-     * @Route("/find")
-     */
+    #[Route('/find')]
     public function findAction(Request $request): JsonResponse
     {
         $user = $this->getPimcoreUser();
@@ -364,9 +349,7 @@ class AdminController extends UserAwareController
         return $this->jsonResponse(['data' => $results, 'success' => true, 'total' => $totalMatches]);
     }
 
-    /**
-     * @Route("/load-search")
-     */
+    #[Route('/load-search')]
     public function loadSearchAction(Request $request): JsonResponse
     {
         $id = $request->query->getInt('id');
@@ -426,9 +409,7 @@ class AdminController extends UserAwareController
         return $this->jsonResponse(['success' => false, 'message' => "Saved Search with $id not found."]);
     }
 
-    /**
-     * @Route("/load-short-cuts")
-     */
+    #[Route('/load-short-cuts')]
     public function loadShortCutsAction(Request $request): JsonResponse
     {
         $list = new SavedSearch\Listing();
@@ -454,9 +435,7 @@ class AdminController extends UserAwareController
         return $this->jsonResponse(['entries' => $entries]);
     }
 
-    /**
-     * @Route("/toggle-short-cut")
-     */
+    #[Route('/toggle-short-cut')]
     public function toggleShortCutAction(Request $request): JsonResponse
     {
         $id = $request->request->getInt('id');
@@ -476,9 +455,7 @@ class AdminController extends UserAwareController
         return $this->jsonResponse(['success' => 'false']);
     }
 
-    /**
-     * @Route("/get-users")
-     */
+    #[Route('/get-users')]
     public function getUsersAction(Request $request): JsonResponse
     {
         $users = [];
@@ -513,9 +490,7 @@ class AdminController extends UserAwareController
         return $this->jsonResponse(['success' => true, 'total' => count($users), 'data' => $users]);
     }
 
-    /**
-     * @Route("/get-roles")
-     */
+    #[Route('/get-roles')]
     public function getRolesAction(): JsonResponse
     {
         $roles = [];
@@ -535,9 +510,7 @@ class AdminController extends UserAwareController
         return $this->jsonResponse(['success' => true, 'total' => count($roles), 'data' => $roles]);
     }
 
-    /**
-     * @Route("/check-index-status")
-     */
+    #[Route('/check-index-status')]
     public function checkIndexStatusAction(Request $request, Service $service): JsonResponse
     {
         return $this->jsonResponse(['indexUptodate' => $service->updateQueueEmpty()]);
