@@ -26,7 +26,6 @@ use Pimcore\Controller\UserAwareController;
 use Pimcore\Db;
 use Pimcore\Model\DataObject;
 use Pimcore\Model\DataObject\Listing;
-use Pimcore\Model\DataObject\Service as DataObjectService;
 use Pimcore\Tool;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\HttpFoundation\JsonResponse;

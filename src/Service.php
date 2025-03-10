@@ -35,7 +35,6 @@ use Pimcore\Db;
 use Pimcore\Model\DataObject\ClassDefinition;
 use Pimcore\Model\DataObject\Concrete;
 use Pimcore\Model\DataObject\Fieldcollection\Definition;
-use Pimcore\Model\DataObject\Service as DataObjectService;
 use Pimcore\Model\User;
 use Pimcore\SearchClient\SearchClientInterface;
 use Pimcore\Security\User\TokenStorageUserResolver;
