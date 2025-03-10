@@ -132,9 +132,9 @@ class AdminController extends UserAwareController
             $list->setObjectTypes(['object', 'folder', 'variant']);
 
             $conditionFilters = [];
-            $idField = DataObjectService::getVersionDependentDatabaseColumnName('id');
-            $keyColumn = DataObjectService::getVersionDependentDatabaseColumnName('key');
-            $pathColumn = DataObjectService::getVersionDependentDatabaseColumnName('path');
+            $idField = 'id';
+            $keyColumn = 'key';
+            $pathColumn = 'path';
             if (!$this->getPimcoreUser()->isAdmin()) {
                 $userIds = $this->getPimcoreUser()->getRoles();
                 $userIds[] = $this->getPimcoreUser()->getId();
@@ -189,7 +189,7 @@ class AdminController extends UserAwareController
         $listClass = '\\Pimcore\\Model\\DataObject\\' . ucfirst($className) . '\\Listing';
         $list = new $listClass();
         $list->setObjectTypes(['object', 'folder', 'variant']);
-        $idField = DataObjectService::getVersionDependentDatabaseColumnName('id');
+        $idField = 'id';
         $list->setCondition($idField . ' IN (' . implode(',', $ids) . ')');
         $list->setOrderKey(' FIELD('. $idField .', ' . implode(',', $ids) . ')', false);
 

@@ -519,8 +519,8 @@ class Service
     public function fillupUpdateQueue(Concrete $object)
     {
         $db = Db::get();
-        $idField = DataObjectService::getVersionDependentDatabaseColumnName('id');
-        $pathField = DataObjectService::getVersionDependentDatabaseColumnName('path');
+        $idField = 'id';
+        $pathField = 'path';
         //need check, if there are sub objects because update on empty result set is too slow
 
         $objects = $db->fetchFirstColumn('SELECT `'. $idField .'` FROM objects WHERE `' . $pathField . '` LIKE ?', [$object->getFullPath() . '/%']);
