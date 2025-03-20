@@ -10,6 +10,7 @@
   "require": {
     "php": "~8.2.0 || ~8.3.0 || ~8.4.0",
     "handcraftedinthealps/elasticsearch-dsl": "^8.0",
+    "doctrine/dbal": "^3.2 || ^4.0",
     "pimcore/opensearch-client": "^1.1",
     "pimcore/elasticsearch-client": "^1.1",
     "pimcore/pimcore": "^11.5 || ^12.0",

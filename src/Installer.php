@@ -19,6 +19,7 @@ namespace AdvancedObjectSearchBundle;
 use AdvancedObjectSearchBundle\Model\SavedSearch;
 use Doctrine\DBAL\Connection;
 use Doctrine\DBAL\Exception;
+use Doctrine\DBAL\Schema\Comparator;
 use Pimcore\Db;
 use Pimcore\Extension\Bundle\Installer\SettingsStoreAwareInstaller;
 use Pimcore\Model\User\Permission\Definition;
