@@ -90,7 +90,8 @@ class Installer extends SettingsStoreAwareInstaller
             $savedSearchTable->setPrimaryKey(['id']);
         }
 
-        $sqlStatements = $currentSchema->getMigrateToSql($schema, $db->getDatabasePlatform());
+        $comparator = new Comparator($db->getDatabasePlatform());
+        $sqlStatements = $comparator->compareSchemas($currentSchema, $schema);
         if (!empty($sqlStatements)) {
             $db->executeStatement(implode(';', $sqlStatements));
         }
@@ -123,7 +124,8 @@ class Installer extends SettingsStoreAwareInstaller
             }
         }
 
-        $sqlStatements = $currentSchema->getMigrateToSql($schema, $db->getDatabasePlatform());
+        $comparator = new Comparator($db->getDatabasePlatform());
+        $sqlStatements = $comparator->compareSchemas($currentSchema, $schema);
         if (!empty($sqlStatements)) {
             $db->executeStatement(implode(';', $sqlStatements));
         }
