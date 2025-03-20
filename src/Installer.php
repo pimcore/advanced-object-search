@@ -92,7 +92,8 @@ class Installer extends SettingsStoreAwareInstaller
         }
 
         $comparator = new Comparator($db->getDatabasePlatform());
-        $sqlStatements = $comparator->compareSchemas($currentSchema, $schema);
+        $schemeDiff = $comparator->compareSchemas($currentSchema, $schema);
+        $sqlStatements = $db->getDatabasePlatform()->getAlterSchemaSQL($schemeDiff);
         if (!empty($sqlStatements)) {
             $db->executeStatement(implode(';', $sqlStatements));
         }
@@ -126,7 +127,8 @@ class Installer extends SettingsStoreAwareInstaller
         }
 
         $comparator = new Comparator($db->getDatabasePlatform());
-        $sqlStatements = $comparator->compareSchemas($currentSchema, $schema);
+        $schemeDiff = $comparator->compareSchemas($currentSchema, $schema);
+        $sqlStatements = $db->getDatabasePlatform()->getAlterSchemaSQL($schemeDiff);
         if (!empty($sqlStatements)) {
             $db->executeStatement(implode(';', $sqlStatements));
         }
