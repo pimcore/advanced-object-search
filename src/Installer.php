@@ -19,6 +19,7 @@ namespace AdvancedObjectSearchBundle;
 use AdvancedObjectSearchBundle\Model\SavedSearch;
 use Doctrine\DBAL\Connection;
 use Doctrine\DBAL\Exception;
+use Doctrine\DBAL\Schema\Comparator;
 use Pimcore\Db;
 use Pimcore\Extension\Bundle\Installer\SettingsStoreAwareInstaller;
 use Pimcore\Model\User\Permission\Definition;
@@ -90,7 +91,9 @@ class Installer extends SettingsStoreAwareInstaller
             $savedSearchTable->setPrimaryKey(['id']);
         }
 
-        $sqlStatements = $currentSchema->getMigrateToSql($schema, $db->getDatabasePlatform());
+        $comparator = new Comparator($db->getDatabasePlatform());
+        $schemeDiff = $comparator->compareSchemas($currentSchema, $schema);
+        $sqlStatements = $db->getDatabasePlatform()->getAlterSchemaSQL($schemeDiff);
         if (!empty($sqlStatements)) {
             $db->executeStatement(implode(';', $sqlStatements));
         }
@@ -123,7 +126,9 @@ class Installer extends SettingsStoreAwareInstaller
             }
         }
 
-        $sqlStatements = $currentSchema->getMigrateToSql($schema, $db->getDatabasePlatform());
+        $comparator = new Comparator($db->getDatabasePlatform());
+        $schemeDiff = $comparator->compareSchemas($currentSchema, $schema);
+        $sqlStatements = $db->getDatabasePlatform()->getAlterSchemaSQL($schemeDiff);
         if (!empty($sqlStatements)) {
             $db->executeStatement(implode(';', $sqlStatements));
         }

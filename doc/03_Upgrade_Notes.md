@@ -32,3 +32,6 @@ advanced_object_search:
 ```
 - Introduced new service alias `pimcore.advanced_object_search.search-client`. This will replace deprecated alias `pimcore.advanced_object_search.opensearch-client` which will be removed in the next major version.
   The new service alias can be used to inject the search client into your services. This search client is an instance of `Pimcore\SearchClient\SearchClientInterface` which is a common interface for OpenSearch and Elasticsearch clients.
+
+### Upgrade to v6.2.0
+- Added support for `doctrine/dbal` `v4`
