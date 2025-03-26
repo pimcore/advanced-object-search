@@ -126,9 +126,12 @@ class AdminController extends UserAwareController
             $list->setObjectTypes(['object', 'folder', 'variant']);
 
             $conditionFilters = [];
-            $idField = 'id';
-            $keyColumn = 'key';
-            $pathColumn = 'path';
+
+            // this is necessary to properly reference the columns from the main query in the workspaces related sub-query
+            $listingTableName = $list->getDao()->getTableName();
+            $idField = $listingTableName . '.' . 'id';
+            $keyColumn = $listingTableName . '.' . 'key';
+            $pathColumn = $listingTableName . '.' . 'path';
             if (!$this->getPimcoreUser()->isAdmin()) {
                 $userIds = $this->getPimcoreUser()->getRoles();
                 $userIds[] = $this->getPimcoreUser()->getId();
