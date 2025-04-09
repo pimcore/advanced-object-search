@@ -29,7 +29,7 @@ use Symfony\Component\HttpKernel\DependencyInjection\ConfigurableExtension;
 
 class AdvancedObjectSearchExtension extends ConfigurableExtension implements PrependExtensionInterface
 {
-    public function loadInternal(array $config, ContainerBuilder $container)
+    public function loadInternal(array $config, ContainerBuilder $container): void
     {
         $loader = new YamlFileLoader(
             $container,
@@ -85,7 +85,7 @@ class AdvancedObjectSearchExtension extends ConfigurableExtension implements Pre
     /**
      * @param ContainerBuilder $container
      */
-    public function prepend(ContainerBuilder $container)
+    public function prepend(ContainerBuilder $container): void
     {
         if ($container->hasExtension('doctrine_migrations')) {
             $loader = new YamlFileLoader(
