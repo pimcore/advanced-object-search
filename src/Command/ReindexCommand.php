@@ -32,7 +32,7 @@ class ReindexCommand extends ServiceAwareCommand
         parent::__construct();
     }
 
-    protected function configure()
+    protected function configure(): void
     {
         $this
             ->setName('advanced-object-search:re-index')
@@ -41,7 +41,7 @@ class ReindexCommand extends ServiceAwareCommand
         ;
     }
 
-    protected function execute(InputInterface $input, OutputInterface $output)
+    protected function execute(InputInterface $input, OutputInterface $output): int
     {
         $classes = [];
         if ($input->getOption('classes')) {

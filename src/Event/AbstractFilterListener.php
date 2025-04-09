@@ -64,7 +64,7 @@ abstract class AbstractFilterListener implements EventSubscriberInterface
     /**
      * {@inheritdoc}
      */
-    public static function getSubscribedEvents()
+    public static function getSubscribedEvents(): array
     {
         return [
             AdvancedObjectSearchEvents::SEARCH_FILTER => [

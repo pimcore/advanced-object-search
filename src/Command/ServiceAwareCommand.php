@@ -18,6 +18,7 @@ namespace AdvancedObjectSearchBundle\Command;
 
 use AdvancedObjectSearchBundle\Service;
 use Pimcore\Console\AbstractCommand;
+use Symfony\Contracts\Service\Attribute\Required;
 
 abstract class ServiceAwareCommand extends AbstractCommand
 {
@@ -36,8 +37,8 @@ abstract class ServiceAwareCommand extends AbstractCommand
 
     /**
      * @param Service $service
-     * @required
      */
+    #[Required]
     public function setService(Service $service): void
     {
         $this->service = $service;

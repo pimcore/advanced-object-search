@@ -23,7 +23,7 @@ use Symfony\Component\Console\Output\OutputInterface;
 
 class UpdateMappingCommand extends ServiceAwareCommand
 {
-    protected function configure()
+    protected function configure(): void
     {
         $this
             ->setName('advanced-object-search:update-mapping')
@@ -32,7 +32,7 @@ class UpdateMappingCommand extends ServiceAwareCommand
         ;
     }
 
-    protected function execute(InputInterface $input, OutputInterface $output)
+    protected function execute(InputInterface $input, OutputInterface $output): int
     {
         $classes = [];
 

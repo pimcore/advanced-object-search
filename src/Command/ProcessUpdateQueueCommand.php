@@ -21,7 +21,7 @@ use Symfony\Component\Console\Output\OutputInterface;
 
 class ProcessUpdateQueueCommand extends ServiceAwareCommand
 {
-    protected function configure()
+    protected function configure(): void
     {
         $this
             ->setName('advanced-object-search:process-update-queue')
@@ -29,7 +29,7 @@ class ProcessUpdateQueueCommand extends ServiceAwareCommand
         ;
     }
 
-    protected function execute(InputInterface $input, OutputInterface $output)
+    protected function execute(InputInterface $input, OutputInterface $output): int
     {
         $count = 1;
 
