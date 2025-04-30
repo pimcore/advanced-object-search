@@ -1,6 +1,6 @@
 {
   "name": "pimcore/advanced-object-search",
-  "license": "GPL-3.0+",
+  "license": "proprietary",
   "type": "pimcore-bundle",
   "config": {
     "sort-packages": true
