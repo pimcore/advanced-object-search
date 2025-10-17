@@ -13,6 +13,7 @@ declare(strict_types=1);
 
 namespace AdvancedObjectSearchBundle\Controller;
 
+use Pimcore\Helper\ParameterBagHelper;
 use AdvancedObjectSearchBundle\Event\AdvancedObjectSearchEvents;
 use AdvancedObjectSearchBundle\Event\FilterListingEvent;
 use AdvancedObjectSearchBundle\Model\SavedSearch;
@@ -107,8 +108,8 @@ class AdminController extends UserAwareController
 
             $fields = $request->request->all('fields');
 
-            $limit = $request->request->getInt('limit', 20);
-            $start = $request->request->getInt('start');
+            $limit = ParameterBagHelper::getInt($request->request, 'limit', 20);
+            $start = ParameterBagHelper::getInt($request->request, 'start');
 
             $listClass = '\\Pimcore\\Model\\DataObject\\' . ucfirst($className) . '\\Listing';
 
@@ -233,7 +234,7 @@ class AdminController extends UserAwareController
         $data = $request->request->getString('data');
         $data = json_decode($data);
 
-        $id = $request->request->getInt('id');
+        $id = ParameterBagHelper::getInt($request->request, 'id');
         if ($id) {
             $savedSearch = SavedSearch::getById($id);
         } else {
@@ -258,7 +259,7 @@ class AdminController extends UserAwareController
     #[Route('/delete')]
     public function deleteAction(Request $request): JsonResponse
     {
-        $id = $request->request->getInt('id');
+        $id = ParameterBagHelper::getInt($request->request, 'id');
         $savedSearch = SavedSearch::getById($id);
 
         if ($savedSearch) {
@@ -282,8 +283,8 @@ class AdminController extends UserAwareController
 
         $query = str_replace('%', '*', $query);
 
-        $offset = $request->query->getInt('start');
-        $limit = $request->query->getInt('limit', 50);
+        $offset = ParameterBagHelper::getInt($request->query, 'start');
+        $limit = ParameterBagHelper::getInt($request->query, 'limit', 50);
 
         $db = Db::get();
         $searcherList = new SavedSearch\Listing();
@@ -353,7 +354,7 @@ class AdminController extends UserAwareController
     #[Route('/load-search')]
     public function loadSearchAction(Request $request): JsonResponse
     {
-        $id = $request->query->getInt('id');
+        $id = ParameterBagHelper::getInt($request->query, 'id');
         $savedSearch = SavedSearch::getById($id);
         if ($savedSearch) {
             $config = json_decode($savedSearch->getConfig(), true);
@@ -439,7 +440,7 @@ class AdminController extends UserAwareController
     #[Route('/toggle-short-cut')]
     public function toggleShortCutAction(Request $request): JsonResponse
     {
-        $id = $request->request->getInt('id');
+        $id = ParameterBagHelper::getInt($request->request, 'id');
         $savedSearch = SavedSearch::getById($id);
         if ($savedSearch) {
             $user = $this->getPimcoreUser();
