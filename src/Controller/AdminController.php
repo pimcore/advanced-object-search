@@ -13,7 +13,6 @@ declare(strict_types=1);
 
 namespace AdvancedObjectSearchBundle\Controller;
 
-use Pimcore\Helper\ParameterBagHelper;
 use AdvancedObjectSearchBundle\Event\AdvancedObjectSearchEvents;
 use AdvancedObjectSearchBundle\Event\FilterListingEvent;
 use AdvancedObjectSearchBundle\Model\SavedSearch;
@@ -22,6 +21,7 @@ use Pimcore\Bundle\AdminBundle\Helper\QueryParams;
 use Pimcore\Controller\Traits\JsonHelperTrait;
 use Pimcore\Controller\UserAwareController;
 use Pimcore\Db;
+use Pimcore\Helper\ParameterBagHelper;
 use Pimcore\Model\DataObject;
 use Pimcore\Model\DataObject\Listing;
 use Pimcore\Tool;
