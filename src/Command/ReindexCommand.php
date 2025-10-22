@@ -15,10 +15,15 @@ namespace AdvancedObjectSearchBundle\Command;
 
 use Pimcore\Model\DataObject\AbstractObject;
 use Pimcore\Model\DataObject\ClassDefinition;
-use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
+use Symfony\Component\Console\Attribute\AsCommand;
+use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 
+#[AsCommand(
+    name: 'advanced-object-search:re-index',
+    description: 'Reindex all objects of given class. Does not delete index first or resets update queue.'
+)]
 class ReindexCommand extends ServiceAwareCommand
 {
     protected ?array $indexConfiguration = null;
@@ -31,11 +36,12 @@ class ReindexCommand extends ServiceAwareCommand
 
     protected function configure(): void
     {
-        $this
-            ->setName('advanced-object-search:re-index')
-            ->setDescription('Reindex all objects of given class. Does not delete index first or resets update queue.')
-            ->addOption('classes', 'c', InputOption::VALUE_OPTIONAL, 'just update specific classes, use "," (comma) to execute more than one class')
-        ;
+        $this->addOption(
+            'classes',
+            'c',
+            InputOption::VALUE_OPTIONAL,
+            'just update specific classes, use "," (comma) to execute more than one class'
+        );
     }
 
     protected function execute(InputInterface $input, OutputInterface $output): int

@@ -14,19 +14,25 @@ declare(strict_types=1);
 namespace AdvancedObjectSearchBundle\Command;
 
 use Pimcore\Model\DataObject\ClassDefinition;
-use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
+use Symfony\Component\Console\Attribute\AsCommand;
+use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 
+#[AsCommand(
+    name: 'advanced-object-search:update-mapping',
+    description: 'Deletes and recreates mapping of given classes. Resets update queue for given class.'
+)]
 class UpdateMappingCommand extends ServiceAwareCommand
 {
     protected function configure(): void
     {
-        $this
-            ->setName('advanced-object-search:update-mapping')
-            ->setDescription('Deletes and recreates mapping of given classes. Resets update queue for given class.')
-            ->addOption('classes', 'c', InputOption::VALUE_OPTIONAL, 'just update specific classes, use "," (comma) to execute more than one class')
-        ;
+        $this->addOption(
+            'classes',
+            'c',
+            InputOption::VALUE_OPTIONAL,
+            'just update specific classes, use "," (comma) to execute more than one class'
+        );
     }
 
     protected function execute(InputInterface $input, OutputInterface $output): int
