@@ -4,6 +4,9 @@ title: Advanced Object Search
 
 # Pimcore Advanced Object Search via OpenSearch or Elasticsearch
 
+> [!WARNING]
+> This bundle won't be migrated to Pimcore Studio and therefore will be deprecated with 7.1.
+
 Advanced Object Search bundle provides advanced object search in 
 Pimcore backend powered by search index technology (OpenSearch or Elasticsearch). 
 
