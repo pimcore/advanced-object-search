@@ -25,10 +25,22 @@ use Pimcore\HttpKernel\Bundle\DependentBundleInterface;
 use Pimcore\HttpKernel\BundleCollection\BundleCollection;
 use Symfony\Component\DependencyInjection\Extension\ExtensionInterface;
 
+/**
+ * @deprecated version 7.1
+ */
 class AdvancedObjectSearchBundle extends AbstractPimcoreBundle implements DependentBundleInterface, PimcoreBundleAdminClassicInterface
 {
     use PackageVersionTrait;
     use BundleAdminClassicTrait;
+
+    public function __construct()
+    {
+        trigger_deprecation(
+            'pimcore/advanced-object-search-bundle',
+            '7.1',
+            'The AdvancedObjectSearchBundle is deprecated and will be discontinued with Pimcore Studio.'
+        );
+    }
 
     /**
      * @inheritDoc
