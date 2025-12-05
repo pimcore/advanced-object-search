@@ -25,6 +25,9 @@
     }
   },
   "extra": {
+    "branch-alias": {
+      "dev-7.x": "7.1.x-dev"
+    },
     "pimcore": {
       "bundles": [
         "AdvancedObjectSearchBundle\\AdvancedObjectSearchBundle"
