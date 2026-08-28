@@ -404,7 +404,7 @@ class Service
         }
 
         $checksum = crc32(json_encode($data));
-        $data['checksum'] = $checksum;
+        $data[$this->indexNamePrefix.'checksum'] = $checksum;
 
         return [
             'index' => $this->getIndexName($object->getClassName()),
@@ -436,7 +436,7 @@ class Service
 
         try {
             $indexDocument = $this->getClient()->get($params);
-            $originalChecksum = $indexDocument['_source']['checksum'] ?? -1;
+            $originalChecksum = $indexDocument['_source'][$this->indexNamePrefix.'checksum'] ?? -1;
         } catch (Exception $e) {
             $this->logger->debug($e->getMessage());
             $originalChecksum = -1;
@@ -444,7 +444,7 @@ class Service
 
         $indexUpdateParams = $this->getIndexData($object);
 
-        if ($indexUpdateParams['body']['checksum'] != $originalChecksum) {
+        if ($indexUpdateParams['body'][$this->indexNamePrefix.'checksum'] != $originalChecksum) {
             $this->getClient()->index($indexUpdateParams);
             $this->logger->info('Updates es index for data object ' . $object->getId());
             $this->getClient()->index($indexUpdateParams);
